@@ -1,0 +1,9 @@
+<div class="license-item">
+  <div class="header"><a [routerLink]="['/license', license.id]">{{license.name}}</a></div>
+  <div class="middle">{{license.licenseType.name}} <span class="free" *ngIf="license.free">free</span></div>
+  <div class="footer">
+    <span class="can">{{license.canFeatureTags.length}} Rules</span>
+    <span class="cannot">{{license.cannotFeatureTags.length}} Rules</span>
+    <span class="must">{{license.mustFeatureTags.length}} Rules</span>
+  </div>
+</div>

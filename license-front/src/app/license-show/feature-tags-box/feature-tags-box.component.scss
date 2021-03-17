@@ -1,0 +1,32 @@
+.tags-box {
+  .body {
+    padding: 6px;
+  }
+  border: 1px solid #FFFFFF;
+  .header {
+    color: #FFFFFF;
+    text-align: center;
+    padding: 10px;
+    font-size: 1.3em;
+  }
+  &.can {
+    border-color: #379b35;
+    .header {
+      background-color: #379b35;
+    }
+  }
+  &.cannot {
+    border-color: #9b3535;
+    .header {
+      background-color: #9b3535;
+    }
+  }
+  &.must {
+    border-color: #35579b;
+    .header {
+      background-color: #35579b;
+    }
+  }
+
+
+}

@@ -1,0 +1,10 @@
+<div class="tags-box" [ngClass]="tagType">
+  <div class="header">
+    {{tagType | titlecase}}
+  </div>
+  <div class="body">
+    <mat-accordion>
+    <app-tag-item *ngFor="let tag of featureTags" [featureTag]="tag"></app-tag-item>
+    </mat-accordion>
+  </div>
+</div>

@@ -1,0 +1,75 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type License {
+  id: Int!
+  name: String!
+  spdxName: String!
+  summary: String!
+  licenseType: Dict!
+  free: Boolean!
+  fullText: String!
+  canFeatureTags: [FeatureTag!]!
+  cannotFeatureTags: [FeatureTag!]!
+  mustFeatureTags: [FeatureTag!]!
+}
+
+type Dict {
+  id: Int!
+  type: String!
+  order: Int
+  name: String!
+  description: String
+}
+
+type FeatureTag {
+  id: Int!
+  order: Int!
+  name: String!
+  description: String!
+}
+
+
+
+input LicenseInput {
+    name: String!
+    spdxName: String!
+    summary: String!
+    licenseType: String!
+    free: Boolean!
+    fullText: String!
+    canFeatureTags: [String!]!
+    cannotFeatureTags: [String!]!
+    mustFeatureTags: [String!]!
+}
+
+input FeatureTagInput {
+    name: String!
+    order: Int! = 0
+    description: String!
+}
+
+input DictInput {
+    type: String!
+    order: Int! = 0
+    name: String!
+    description: String
+}
+
+
+type Mutation {
+    createDict(input: DictInput!): Dict!
+    updateDict(dictID: Int!, input: DictInput!): Dict!
+    deleteDict(dictID: Int!) : Boolean!
+    createFeatureTag(input: FeatureTagInput!): FeatureTag!
+    updateFeatureTag(featureTagID: Int!, input: FeatureTagInput!): FeatureTag!
+    createLicense(input: LicenseInput!): License!
+    updateLicense(licenseID: Int!, input: LicenseInput!): License!
+    deleteLicense(licenseID: Int!): Boolean!
+}
+
+type Query {
+  licenses: [License!]!
+  license(licenseID: Int!): License!
+}

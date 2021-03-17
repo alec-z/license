@@ -1,0 +1,41 @@
+.license-item {
+  padding: 5px 0px 8px 0px;
+  border-bottom: 1px solid #eee;
+}
+.header a{
+  color: #45baf1;
+  font-weight: bold;
+  text-decoration: none;
+}
+.middle {
+  padding: 6px 0px;
+  color: #ccc;
+  span {
+    &.free {
+      background-color: #90D490;
+      color: #FFFFFF;
+      padding: 2px 4px;
+      border-radius: 2px;
+      font-size: 10px;
+      margin-left: 10px;
+    }
+  }
+}
+.footer {
+  span {
+    border-radius: 3px;
+    color: #FFFFFF;
+    padding: 4px;
+    font-size: 10px;
+    margin-right: 4px;
+    &.can {
+      background-color: #90D490;
+    }
+    &.cannot {
+      background-color: #D49090;
+    }
+    &.must {
+      background-color: #90ADD4;
+    }
+  }
+}

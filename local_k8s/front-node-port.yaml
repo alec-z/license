@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-node-port
+spec:
+  type: NodePort
+  selector:
+    component: front
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30010

@@ -1,0 +1,27 @@
+<mat-toolbar color="primary" class="nav-toolbar">
+  <button mat-button routerLink="/"><mat-icon>assignment</mat-icon> Licenses Showroom</button>
+  <div class="search-input-group">
+    <input class="search-input" placeholder="Lookup Licenses"/><mat-icon>search</mat-icon>
+  </div>
+
+  <div class="flex-spacer"></div>
+  <div fxHide fxShow.gt-sm="">
+    <button mat-button routerLink="/browser" routerLinkActive="mat-accent">浏览</button>
+    <button mat-button routerLink="/browser" routerLinkActive="mat-accent">API</button>
+    <button mat-button routerLink="/author" routerLinkActive="mat-accent">作者</button>
+  </div>
+  <button mat-button [mat-menu-trigger-for]="menu" fxHide.gt-sm>
+    <mat-icon>menu</mat-icon>
+  </button>
+</mat-toolbar>
+<mat-menu  #menu="matMenu" fxHide>
+  <button  mat-menu-item routerLink="/browser">
+    浏览
+  </button>
+  <button  mat-menu-item routerLink="/browser">
+    API
+  </button>
+  <button  mat-menu-item routerLink="/author">
+    作者
+  </button>
+</mat-menu>

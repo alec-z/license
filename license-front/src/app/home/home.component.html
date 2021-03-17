@@ -1,0 +1,22 @@
+<div class="banner">
+  <div class="container">
+    <div class="app-name">
+      License Showroom
+    </div>
+    <div class="app-description">
+      Anything important you should know about licenses
+    </div>
+    <div class="action">
+    <button mat-raised-button>Get Start</button>
+    <button mat-raised-button>Read API</button>
+    </div>
+  </div>
+
+</div>
+<div class="container">
+  <div fxLayout="row" fxLayout="row" fxLayoutAlign="space-between stretch">
+    <app-license-list title="Featured" fxFlex="30" title="featured" [licenses]="featuredLicenses"></app-license-list>
+    <app-license-list title="Most POPULAR" fxFlex="30"></app-license-list>
+    <app-license-list title="NEWEST" fxFlex="30"></app-license-list>
+  </div>
+</div>

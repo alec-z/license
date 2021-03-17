@@ -1,0 +1,28 @@
+.search-input {
+  border: none;
+  color: #777;
+  font-size: 14px;
+  outline: none;
+  padding: 5px 7px;
+  box-shadow: none;
+  background: #fff;
+  border-radius: 0px;
+
+}
+.search-input-group{
+  vertical-align: middle;
+  display: flex;
+  align-items: center;
+}
+.search-input-group mat-icon {
+  border: 1px solid #FFFFFF;
+  border-radius: 0px;
+}
+.nav-toolbar {
+  box-shadow: 0 3px 5px -1px rgb(0 0 0 / 20%), 0 6px 10px 0 rgb(0 0 0 / 14%), 0 1px 18px 0 rgb(0 0 0 / 12%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}

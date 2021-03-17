@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: back
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      component: back
+  template:
+    metadata:
+      labels:
+        component: back
+    spec:
+      containers:
+        - name: back
+          image: aleczheng/license-back
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MYSQL_HOST
+              value: db-mysql-node-port
+            - name: MYSQL_PASSWORD
+              value: root

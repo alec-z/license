@@ -1,0 +1,28 @@
+version: '3'
+services:
+  front:
+    build:
+      context: ./license-front
+      dockerfile: Dockerfile
+    image:
+      aleczheng/license-front
+    ports:
+      - '80:80'
+    environment:
+      - BACKEND_HOST=back
+  back:
+    build:
+      context: ./license-back
+      dockerfile: Dockerfile
+    image:
+      aleczheng/license-back
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_PASSWORD=root
+  db:
+    image:
+      'mysql:5'
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
