@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      component: front
+  template:
+    metadata:
+      labels:
+        component: front
+    spec:
+      containers:
+        - name: front
+          image: aleczheng/license-front
+          ports:
+            - containerPort: 80
+          env:
+            - name: BACKEND_HOST
+              value: back-cluster-ip

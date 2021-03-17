@@ -1,0 +1,78 @@
+mutation createDict($input: DictInput!) {
+    createDict(input: $input) {
+        id,
+        type,
+        order,
+        name,
+        description
+    }
+}
+
+{
+  "input": {
+    "type": "LicenseType",
+    "order": 1,
+    "name": "Copyleft Strong",
+    "description": ""
+  }
+}
+
+
+---
+
+
+mutation createFeatureTag($input: FeatureTagInput!) {
+  createFeatureTag(input: $input) {
+    id,
+    order,
+    name,
+    description
+  }
+}
+
+{
+  "input": {
+    "name": "Commercial Use",
+    "description": "The licensed material and derivatives may be used for commercial purposes.",
+    "order": 1
+  }
+}
+
+
+---
+
+mutation createLicense($input: LicenseInput!) {
+  createLicense(input: $input) {
+    id,
+    name,
+    spdxName,
+
+    canFeatureTags {
+      name
+    },
+    mustFeatureTags {
+      name
+    },
+    cannotFeatureTags {
+      name
+    },
+    licenseType {
+      name
+    },
+    free,
+  }
+}
+
+{
+  "input": {
+    "name": "bzip2 and libbzip2 License v1.0.6",
+    "spdxName": "bzip2-1.0.6",
+    "canFeatureTags": ["Commercial Use", "Distribution", "Modification", "Private Use"],
+    "mustFeatureTags": [ "License and Copyright Notice"],
+    "cannotFeatureTags": ["Liability", "Warranty"],
+    "licenseType": "Permisive",
+    "free": false,
+    "summary": "",
+    "fullText": ""
+  }
+}

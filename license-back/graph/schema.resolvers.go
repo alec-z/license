@@ -31,7 +31,7 @@ func (r *mutationResolver) DeleteDict(ctx context.Context, dictID int) (bool, er
 
 func (r *mutationResolver) CreateFeatureTag(ctx context.Context, input model.FeatureTagInput) (*model.FeatureTag, error) {
 	featureTag := createFeatureTagFromInput(&input)
-	r.DB.Model(&featureTag).Update(&featureTag)
+	r.DB.Create(&featureTag)
 	return featureTag, nil
 }
 
