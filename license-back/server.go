@@ -27,7 +27,7 @@ func main() {
 	initDB()
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{ DB: db}}))
 
-	http.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
+	http.Handle("/api_test", playground.Handler("GraphQL playground", "/graphql"))
 	http.Handle("/graphql", srv)
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
