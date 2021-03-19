@@ -43,6 +43,12 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	CompareResult struct {
+		CanFeatureTags    func(childComplexity int) int
+		CannotFeatureTags func(childComplexity int) int
+		MustFeatureTags   func(childComplexity int) int
+	}
+
 	Dict struct {
 		Description func(childComplexity int) int
 		ID          func(childComplexity int) int
@@ -58,9 +64,15 @@ type ComplexityRoot struct {
 		Order       func(childComplexity int) int
 	}
 
+	FeatureTagDifference struct {
+		Less func(childComplexity int) int
+		More func(childComplexity int) int
+	}
+
 	License struct {
 		CanFeatureTags    func(childComplexity int) int
 		CannotFeatureTags func(childComplexity int) int
+		CompareWith       func(childComplexity int, licenseID int) int
 		Free              func(childComplexity int) int
 		FullText          func(childComplexity int) int
 		ID                func(childComplexity int) int
@@ -83,8 +95,10 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		License  func(childComplexity int, licenseID int) int
-		Licenses func(childComplexity int) int
+		License            func(childComplexity int, licenseID int) int
+		Licenses           func(childComplexity int) int
+		ListLicensesByName func(childComplexity int, name string, limit int) int
+		ListLicensesByType func(childComplexity int, indexType string, limit int) int
 	}
 }
 
@@ -101,6 +115,8 @@ type MutationResolver interface {
 type QueryResolver interface {
 	Licenses(ctx context.Context) ([]*model.License, error)
 	License(ctx context.Context, licenseID int) (*model.License, error)
+	ListLicensesByType(ctx context.Context, indexType string, limit int) ([]*model.License, error)
+	ListLicensesByName(ctx context.Context, name string, limit int) ([]*model.License, error)
 }
 
 type executableSchema struct {
@@ -117,6 +133,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "CompareResult.canFeatureTags":
+		if e.complexity.CompareResult.CanFeatureTags == nil {
+			break
+		}
+
+		return e.complexity.CompareResult.CanFeatureTags(childComplexity), true
+
+	case "CompareResult.cannotFeatureTags":
+		if e.complexity.CompareResult.CannotFeatureTags == nil {
+			break
+		}
+
+		return e.complexity.CompareResult.CannotFeatureTags(childComplexity), true
+
+	case "CompareResult.mustFeatureTags":
+		if e.complexity.CompareResult.MustFeatureTags == nil {
+			break
+		}
+
+		return e.complexity.CompareResult.MustFeatureTags(childComplexity), true
 
 	case "Dict.description":
 		if e.complexity.Dict.Description == nil {
@@ -181,6 +218,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.FeatureTag.Order(childComplexity), true
 
+	case "FeatureTagDifference.less":
+		if e.complexity.FeatureTagDifference.Less == nil {
+			break
+		}
+
+		return e.complexity.FeatureTagDifference.Less(childComplexity), true
+
+	case "FeatureTagDifference.more":
+		if e.complexity.FeatureTagDifference.More == nil {
+			break
+		}
+
+		return e.complexity.FeatureTagDifference.More(childComplexity), true
+
 	case "License.canFeatureTags":
 		if e.complexity.License.CanFeatureTags == nil {
 			break
@@ -194,6 +245,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.License.CannotFeatureTags(childComplexity), true
+
+	case "License.compareWith":
+		if e.complexity.License.CompareWith == nil {
+			break
+		}
+
+		args, err := ec.field_License_compareWith_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.License.CompareWith(childComplexity, args["licenseId"].(int)), true
 
 	case "License.free":
 		if e.complexity.License.Free == nil {
@@ -366,6 +429,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Licenses(childComplexity), true
 
+	case "Query.listLicensesByName":
+		if e.complexity.Query.ListLicensesByName == nil {
+			break
+		}
+
+		args, err := ec.field_Query_listLicensesByName_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ListLicensesByName(childComplexity, args["name"].(string), args["limit"].(int)), true
+
+	case "Query.listLicensesByType":
+		if e.complexity.Query.ListLicensesByType == nil {
+			break
+		}
+
+		args, err := ec.field_Query_listLicensesByType_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ListLicensesByType(childComplexity, args["indexType"].(string), args["limit"].(int)), true
+
 	}
 	return 0, false
 }
@@ -445,6 +532,18 @@ type License {
   canFeatureTags: [FeatureTag!]!
   cannotFeatureTags: [FeatureTag!]!
   mustFeatureTags: [FeatureTag!]!
+  compareWith(licenseId: Int!): CompareResult!
+}
+
+type CompareResult {
+    canFeatureTags: FeatureTagDifference!
+    cannotFeatureTags: FeatureTagDifference!
+    mustFeatureTags: FeatureTagDifference!
+}
+
+type FeatureTagDifference {
+    more: [FeatureTag!]!
+    less: [FeatureTag!]!
 }
 
 type Dict {
@@ -504,6 +603,8 @@ type Mutation {
 type Query {
   licenses: [License!]!
   license(licenseID: Int!): License!
+  listLicensesByType(indexType: String!, limit: Int!): [License!]!
+  listLicensesByName(name: String!, limit: Int!): [License!]
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -511,6 +612,21 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_License_compareWith_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["licenseId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("licenseId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["licenseId"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_createDict_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -689,6 +805,54 @@ func (ec *executionContext) field_Query_license_args(ctx context.Context, rawArg
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_listLicensesByName_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["name"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["name"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["limit"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_listLicensesByType_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["indexType"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("indexType"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["indexType"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["limit"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field___Type_enumValues_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -726,6 +890,111 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _CompareResult_canFeatureTags(ctx context.Context, field graphql.CollectedField, obj *model.CompareResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CompareResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CanFeatureTags, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.FeatureTagDifference)
+	fc.Result = res
+	return ec.marshalNFeatureTagDifference2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐFeatureTagDifference(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CompareResult_cannotFeatureTags(ctx context.Context, field graphql.CollectedField, obj *model.CompareResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CompareResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CannotFeatureTags, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.FeatureTagDifference)
+	fc.Result = res
+	return ec.marshalNFeatureTagDifference2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐFeatureTagDifference(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CompareResult_mustFeatureTags(ctx context.Context, field graphql.CollectedField, obj *model.CompareResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CompareResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MustFeatureTags, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.FeatureTagDifference)
+	fc.Result = res
+	return ec.marshalNFeatureTagDifference2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐFeatureTagDifference(ctx, field.Selections, res)
+}
 
 func (ec *executionContext) _Dict_id(ctx context.Context, field graphql.CollectedField, obj *model.Dict) (ret graphql.Marshaler) {
 	defer func() {
@@ -1034,6 +1303,76 @@ func (ec *executionContext) _FeatureTag_description(ctx context.Context, field g
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FeatureTagDifference_more(ctx context.Context, field graphql.CollectedField, obj *model.FeatureTagDifference) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FeatureTagDifference",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.More, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.FeatureTag)
+	fc.Result = res
+	return ec.marshalNFeatureTag2ᚕᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐFeatureTagᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FeatureTagDifference_less(ctx context.Context, field graphql.CollectedField, obj *model.FeatureTagDifference) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FeatureTagDifference",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Less, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.FeatureTag)
+	fc.Result = res
+	return ec.marshalNFeatureTag2ᚕᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐFeatureTagᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _License_id(ctx context.Context, field graphql.CollectedField, obj *model.License) (ret graphql.Marshaler) {
@@ -1384,6 +1723,48 @@ func (ec *executionContext) _License_mustFeatureTags(ctx context.Context, field 
 	res := resTmp.([]*model.FeatureTag)
 	fc.Result = res
 	return ec.marshalNFeatureTag2ᚕᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐFeatureTagᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _License_compareWith(ctx context.Context, field graphql.CollectedField, obj *model.License) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "License",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_License_compareWith_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CompareWith(args["licenseId"].(int)), nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.CompareResult)
+	fc.Result = res
+	return ec.marshalNCompareResult2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐCompareResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createDict(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -1797,6 +2178,87 @@ func (ec *executionContext) _Query_license(ctx context.Context, field graphql.Co
 	res := resTmp.(*model.License)
 	fc.Result = res
 	return ec.marshalNLicense2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐLicense(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_listLicensesByType(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_listLicensesByType_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ListLicensesByType(rctx, args["indexType"].(string), args["limit"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.License)
+	fc.Result = res
+	return ec.marshalNLicense2ᚕᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐLicenseᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_listLicensesByName(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_listLicensesByName_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ListLicensesByName(rctx, args["name"].(string), args["limit"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.License)
+	fc.Result = res
+	return ec.marshalOLicense2ᚕᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐLicenseᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3129,6 +3591,43 @@ func (ec *executionContext) unmarshalInputLicenseInput(ctx context.Context, obj 
 
 // region    **************************** object.gotpl ****************************
 
+var compareResultImplementors = []string{"CompareResult"}
+
+func (ec *executionContext) _CompareResult(ctx context.Context, sel ast.SelectionSet, obj *model.CompareResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, compareResultImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CompareResult")
+		case "canFeatureTags":
+			out.Values[i] = ec._CompareResult_canFeatureTags(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "cannotFeatureTags":
+			out.Values[i] = ec._CompareResult_cannotFeatureTags(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "mustFeatureTags":
+			out.Values[i] = ec._CompareResult_mustFeatureTags(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var dictImplementors = []string{"Dict"}
 
 func (ec *executionContext) _Dict(ctx context.Context, sel ast.SelectionSet, obj *model.Dict) graphql.Marshaler {
@@ -3212,6 +3711,38 @@ func (ec *executionContext) _FeatureTag(ctx context.Context, sel ast.SelectionSe
 	return out
 }
 
+var featureTagDifferenceImplementors = []string{"FeatureTagDifference"}
+
+func (ec *executionContext) _FeatureTagDifference(ctx context.Context, sel ast.SelectionSet, obj *model.FeatureTagDifference) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, featureTagDifferenceImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FeatureTagDifference")
+		case "more":
+			out.Values[i] = ec._FeatureTagDifference_more(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "less":
+			out.Values[i] = ec._FeatureTagDifference_less(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var licenseImplementors = []string{"License"}
 
 func (ec *executionContext) _License(ctx context.Context, sel ast.SelectionSet, obj *model.License) graphql.Marshaler {
@@ -3270,6 +3801,11 @@ func (ec *executionContext) _License(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "mustFeatureTags":
 			out.Values[i] = ec._License_mustFeatureTags(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "compareWith":
+			out.Values[i] = ec._License_compareWith(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -3391,6 +3927,31 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
+				return res
+			})
+		case "listLicensesByType":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_listLicensesByType(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "listLicensesByName":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_listLicensesByName(ctx, field)
 				return res
 			})
 		case "__type":
@@ -3668,6 +4229,16 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) marshalNCompareResult2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐCompareResult(ctx context.Context, sel ast.SelectionSet, v *model.CompareResult) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._CompareResult(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNDict2githubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐDict(ctx context.Context, sel ast.SelectionSet, v model.Dict) graphql.Marshaler {
 	return ec._Dict(ctx, sel, &v)
 }
@@ -3736,6 +4307,16 @@ func (ec *executionContext) marshalNFeatureTag2ᚖgithubᚗcomᚋalecᚑzᚋlice
 		return graphql.Null
 	}
 	return ec._FeatureTag(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNFeatureTagDifference2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐFeatureTagDifference(ctx context.Context, sel ast.SelectionSet, v *model.FeatureTagDifference) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._FeatureTagDifference(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNFeatureTagInput2githubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐFeatureTagInput(ctx context.Context, v interface{}) (model.FeatureTagInput, error) {
@@ -4119,6 +4700,46 @@ func (ec *executionContext) unmarshalOInt2int(ctx context.Context, v interface{}
 
 func (ec *executionContext) marshalOInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
 	return graphql.MarshalInt(v)
+}
+
+func (ec *executionContext) marshalOLicense2ᚕᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐLicenseᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.License) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNLicense2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐLicense(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

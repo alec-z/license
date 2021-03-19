@@ -37,6 +37,8 @@ export class HomeComponent implements OnInit {
   loading = true;
   error: any;
   featuredLicenses: LicenseModel[];
+  newLicenses: LicenseModel[];
+  popularLicenses: LicenseModel[];
   constructor(private apollo: Apollo) {
   }
 
@@ -44,7 +46,9 @@ export class HomeComponent implements OnInit {
     this.apollo.watchQuery<any>({
       query: GET_LICENSES
     }).valueChanges.subscribe(({data, loading, error}) => {
-      this.featuredLicenses = data?.licenses;
+      this.featuredLicenses = data?.licenses.slice(0, 6);
+      this.newLicenses = data?.licenses.slice(6, 11);
+      this.popularLicenses = data?.licenses.slice(6, 11);
       this.loading = loading;
       this.error = error;
     });

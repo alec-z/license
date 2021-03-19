@@ -76,3 +76,58 @@ mutation createLicense($input: LicenseInput!) {
     "fullText": ""
   }
 }
+
+---
+
+
+query license {
+  license(licenseID: 9) {
+    id,
+    name,
+    spdxName
+    licenseType {
+      name
+    },
+    canFeatureTags {
+      id,
+      name
+    }
+    mustFeatureTags {
+      id,
+      name
+    }
+    cannotFeatureTags {
+      id,
+      name
+    }
+    free,
+    summary
+  }
+}
+
+---
+
+query licenses {
+  licenses {
+    id,
+    name,
+    spdxName
+    licenseType {
+      name
+    },
+    canFeatureTags {
+      id,
+      name
+    }
+    mustFeatureTags {
+      id,
+      name
+    }
+    cannotFeatureTags {
+      id,
+      name
+    }
+    free,
+    summary
+  }
+}

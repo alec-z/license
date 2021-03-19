@@ -2,11 +2,22 @@
 
 package model
 
+type CompareResult struct {
+	CanFeatureTags    *FeatureTagDifference `json:"canFeatureTags"`
+	CannotFeatureTags *FeatureTagDifference `json:"cannotFeatureTags"`
+	MustFeatureTags   *FeatureTagDifference `json:"mustFeatureTags"`
+}
+
 type DictInput struct {
 	Type        string  `json:"type"`
 	Order       int     `json:"order"`
 	Name        string  `json:"name"`
 	Description *string `json:"description"`
+}
+
+type FeatureTagDifference struct {
+	More []*FeatureTag `json:"more"`
+	Less []*FeatureTag `json:"less"`
 }
 
 type FeatureTagInput struct {

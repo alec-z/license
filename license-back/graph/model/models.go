@@ -59,6 +59,43 @@ func filterFeatureTag(licenseFeatureTags []*LicenseFeatureTag, tagType string) [
 	return res
 }
 
+func differenceFeatureTag(tags1, tags2 []*FeatureTag) []*FeatureTag {
+	m := make(map[int]bool)
+	res := make([]*FeatureTag, 0)
+
+	for _, v2 := range tags2 {
+		m[v2.ID] = true
+	}
+
+	for _, v1 := range tags1 {
+		_, ok := m[v1.ID]
+		if !ok {
+			res = append(res, v1)
+		}
+	}
+	return res
+}
+
+
+func (l *License) CompareWith(licenseID int) *CompareResult {
+	var otherLicense License
+	DB.Preload("LicenseType").Preload("LicenseFeatureTags").First(&otherLicense, licenseID)
+	var compareResult CompareResult
+	compareResult.CanFeatureTags = new(FeatureTagDifference)
+	compareResult.CannotFeatureTags = new(FeatureTagDifference)
+	compareResult.MustFeatureTags = new(FeatureTagDifference)
+
+	compareResult.CanFeatureTags.More = differenceFeatureTag(l.CanFeatureTags(), otherLicense.CanFeatureTags())
+	compareResult.CanFeatureTags.Less = differenceFeatureTag(otherLicense.CanFeatureTags(), l.CanFeatureTags())
+
+	compareResult.CannotFeatureTags.More = differenceFeatureTag(l.CannotFeatureTags(), otherLicense.CannotFeatureTags())
+	compareResult.CannotFeatureTags.Less = differenceFeatureTag(otherLicense.CannotFeatureTags(), l.CannotFeatureTags())
+
+	compareResult.MustFeatureTags.More = differenceFeatureTag(l.MustFeatureTags(), otherLicense.MustFeatureTags())
+	compareResult.MustFeatureTags.Less = differenceFeatureTag(otherLicense.MustFeatureTags(), l.MustFeatureTags())
+
+	return &compareResult
+}
 type FeatureTag struct {
 	ID        int `gorm:"primary_key"`
 	CreatedAt time.Time

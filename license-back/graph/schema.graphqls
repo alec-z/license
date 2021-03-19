@@ -13,6 +13,18 @@ type License {
   canFeatureTags: [FeatureTag!]!
   cannotFeatureTags: [FeatureTag!]!
   mustFeatureTags: [FeatureTag!]!
+  compareWith(licenseId: Int!): CompareResult!
+}
+
+type CompareResult {
+    canFeatureTags: FeatureTagDifference!
+    cannotFeatureTags: FeatureTagDifference!
+    mustFeatureTags: FeatureTagDifference!
+}
+
+type FeatureTagDifference {
+    more: [FeatureTag!]!
+    less: [FeatureTag!]!
 }
 
 type Dict {
@@ -72,4 +84,6 @@ type Mutation {
 type Query {
   licenses: [License!]!
   license(licenseID: Int!): License!
+  listLicensesByType(indexType: String!, limit: Int!): [License!]!
+  listLicensesByName(name: String!, limit: Int!): [License!]
 }
