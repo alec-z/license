@@ -23,6 +23,9 @@ import { FeatureTagsBoxComponent } from './license-show/feature-tags-box/feature
 import { TagItemComponent } from './license-show/feature-tags-box/tag-item/tag-item.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCardModule } from '@angular/material/card';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { FormsModule } from '@angular/forms';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -50,7 +53,10 @@ import { MatCardModule } from '@angular/material/card';
     HttpClientModule,
     MatTabsModule,
     MatExpansionModule,
-    MatCardModule
+    MatCardModule,
+    MatAutocompleteModule,
+    FormsModule,
+    MatProgressSpinnerModule
 
 
   ],

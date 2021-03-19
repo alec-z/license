@@ -1,4 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { Apollo, gql } from 'apollo-angular';
+import { map } from 'rxjs/operators';
+import { of } from 'rxjs';
+
+const LIST_LICENSES = gql`
+    query listLicenseBytName($name: String!){
+        listLicensesByName(name: $name, limit: 8) {
+            id,
+            name,
+            spdxName
+        }
+    }
+`;
 
 @Component({
   selector: 'app-navbar',
@@ -6,11 +19,27 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit {
-
-  constructor() {
+  options = ['123', '234'];
+  licenses$: any;
+  name = '';
+  loading: boolean;
+  error: any;
+  constructor(private apollo: Apollo) {
   }
 
   ngOnInit(): void {
   }
 
+  filterName(name: any): void {
+    this.name = name;
+    this.licenses$ = this.apollo.watchQuery<any>({
+      query: LIST_LICENSES,
+      variables: { name }
+    }).valueChanges.pipe(
+      map((({data, loading, error}) => {
+      this.loading = loading;
+      this.error = error;
+      return data?.listLicensesByName;
+    })));
+  }
 }

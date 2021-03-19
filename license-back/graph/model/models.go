@@ -77,9 +77,9 @@ func differenceFeatureTag(tags1, tags2 []*FeatureTag) []*FeatureTag {
 }
 
 
-func (l *License) CompareWith(licenseID int) *CompareResult {
+func (l *License) CompareWith(otherLicenseID int) *CompareResult {
 	var otherLicense License
-	DB.Preload("LicenseType").Preload("LicenseFeatureTags").First(&otherLicense, licenseID)
+	DB.Preload("LicenseType").Preload("LicenseFeatureTags").First(&otherLicense, otherLicenseID)
 	var compareResult CompareResult
 	compareResult.CanFeatureTags = new(FeatureTagDifference)
 	compareResult.CannotFeatureTags = new(FeatureTagDifference)

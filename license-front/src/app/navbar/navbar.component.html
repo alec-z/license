@@ -1,7 +1,16 @@
 <mat-toolbar color="primary" class="nav-toolbar">
   <button mat-button routerLink="/"><mat-icon>assignment</mat-icon> Licenses Showroom</button>
+  <div class="search-input-group-auto" matAutocompleteOrigin #origin="matAutocompleteOrigin">
   <div class="search-input-group">
-    <input class="search-input" placeholder="Lookup Licenses"/><mat-icon>search</mat-icon>
+    <input class="search-input" placeholder="Lookup Licenses"
+           matInput
+           [matAutocomplete]="auto"
+           [ngModel]="name"
+           (ngModelChange)="filterName($event)"
+           [matAutocompleteConnectedTo]="origin"
+    /><mat-icon *ngIf="!loading">search</mat-icon>
+    <mat-spinner *ngIf="loading" diameter="26" color="accent"></mat-spinner>
+  </div>
   </div>
 
   <div class="flex-spacer"></div>
@@ -25,3 +34,10 @@
     作者
   </button>
 </mat-menu>
+
+<mat-autocomplete #auto="matAutocomplete">
+  <mat-option *ngFor="let license of licenses$ | async" [value]="license.name" [routerLink]="['/license', license.id]">
+    {{license.name}} ({{license.spdxName}})
+
+  </mat-option>
+</mat-autocomplete>

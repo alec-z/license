@@ -72,7 +72,7 @@ type ComplexityRoot struct {
 	License struct {
 		CanFeatureTags    func(childComplexity int) int
 		CannotFeatureTags func(childComplexity int) int
-		CompareWith       func(childComplexity int, licenseID int) int
+		CompareWith       func(childComplexity int, otherLicenseID int) int
 		Free              func(childComplexity int) int
 		FullText          func(childComplexity int) int
 		ID                func(childComplexity int) int
@@ -256,7 +256,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.License.CompareWith(childComplexity, args["licenseId"].(int)), true
+		return e.complexity.License.CompareWith(childComplexity, args["otherLicenseID"].(int)), true
 
 	case "License.free":
 		if e.complexity.License.Free == nil {
@@ -532,7 +532,7 @@ type License {
   canFeatureTags: [FeatureTag!]!
   cannotFeatureTags: [FeatureTag!]!
   mustFeatureTags: [FeatureTag!]!
-  compareWith(licenseId: Int!): CompareResult!
+  compareWith(otherLicenseID: Int!): CompareResult!
 }
 
 type CompareResult {
@@ -617,14 +617,14 @@ func (ec *executionContext) field_License_compareWith_args(ctx context.Context, 
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
-	if tmp, ok := rawArgs["licenseId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("licenseId"))
+	if tmp, ok := rawArgs["otherLicenseID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("otherLicenseID"))
 		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["licenseId"] = arg0
+	args["otherLicenseID"] = arg0
 	return args, nil
 }
 
@@ -1750,7 +1750,7 @@ func (ec *executionContext) _License_compareWith(ctx context.Context, field grap
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.CompareWith(args["licenseId"].(int)), nil
+		return obj.CompareWith(args["otherLicenseID"].(int)), nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)

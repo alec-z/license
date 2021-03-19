@@ -13,7 +13,7 @@ type License {
   canFeatureTags: [FeatureTag!]!
   cannotFeatureTags: [FeatureTag!]!
   mustFeatureTags: [FeatureTag!]!
-  compareWith(licenseId: Int!): CompareResult!
+  compareWith(otherLicenseID: Int!): CompareResult!
 }
 
 type CompareResult {
