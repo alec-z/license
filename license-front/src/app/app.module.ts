@@ -26,6 +26,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { FormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AuthorComponent } from './author/author.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     LicenseItemComponent,
     LicenseShowComponent,
     FeatureTagsBoxComponent,
-    TagItemComponent
+    TagItemComponent,
+    AuthorComponent
   ],
   imports: [
     BrowserModule,

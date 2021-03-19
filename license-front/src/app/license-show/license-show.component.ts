@@ -49,17 +49,18 @@ export class LicenseShowComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.pipe(
       pluck('id'),
-      concatMap((id: any) =>
-        this.apollo.watchQuery<any>({
-          query: GET_LICENSE,
-          variables: {id}
-        }).valueChanges
-      )
-    ).subscribe(({data, loading, error}) => {
-          this.license = data?.license;
-          this.loading = loading;
-          this.error = error;
+    ).subscribe((id) => {
+      this.apollo.watchQuery<any>({
+        query: GET_LICENSE,
+        variables: {id}
+      }).valueChanges.subscribe(({data, loading, error}) => {
+        this.license = data?.license;
+        this.loading = loading;
+        this.error = error;
+      });
     });
+
+
   }
 
 }

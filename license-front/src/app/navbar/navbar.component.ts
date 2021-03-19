@@ -42,4 +42,8 @@ export class NavbarComponent implements OnInit {
       return data?.listLicensesByName;
     })));
   }
+
+  goToLink(url: string): void{
+    window.open(url, '_blank');
+  }
 }

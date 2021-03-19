@@ -72,7 +72,10 @@ export class HomeComponent implements OnInit {
       this.loading = loading;
       this.error = error;
     });
+  }
 
+  goToLink(url: string): void{
+    window.open(url, '_blank');
   }
 
 }
