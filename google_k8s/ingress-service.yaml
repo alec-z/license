@@ -9,7 +9,7 @@ spec:
     - http:
         paths:
           - backend:
-              servcieName: front-cluster-ip
+              serviceName: front-cluster-ip
               servicePort: 80
             path: /
 
