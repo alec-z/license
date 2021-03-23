@@ -14,10 +14,10 @@ spec:
             path: /
           - backend:
               serviceName: back-cluster-ip
-              servicePort: 80
+              servicePort: 8080
             path: /graphql
           - backend:
               serviceName: back-cluster-ip
-              servicePort: 80
+              servicePort: 8080
             path: /api_test
 
