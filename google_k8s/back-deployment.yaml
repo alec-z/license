@@ -21,4 +21,7 @@ spec:
             - name: MYSQL_HOST
               value: db-mysql-cluster-ip
             - name: MYSQL_PASSWORD
-              value: root
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-password
+                  key: MYSQL_PASSWORD
