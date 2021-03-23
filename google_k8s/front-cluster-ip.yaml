@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: front-cluster-ip
 spec:
-  type: CluserIP
+  type: ClusterIP
   selector:
     component: front
   ports:
