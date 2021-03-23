@@ -8,4 +8,4 @@ docker push aleczheng/license-back:$SHA
 kubectl apply -f google_k8s
 
 kubectl set image deployments/front front=aleczheng/license-front:$SHA
-kubectl set image deployments/back back=aleczheng/license-backt:$SHA
+kubectl set image deployments/back back=aleczheng/license-back:$SHA
