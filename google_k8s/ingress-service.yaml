@@ -12,4 +12,12 @@ spec:
               serviceName: front-cluster-ip
               servicePort: 80
             path: /
+          - backend:
+              serviceName: back-cluster-ip
+              servicePort: 80
+            path: /graphql
+          - backend:
+              serviceName: back-cluster-ip
+              servicePort: 80
+            path: /api_test
 
