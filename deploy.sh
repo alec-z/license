@@ -1,3 +1,4 @@
+SHA=$(git rev-parse HEAD)
 docker build -t aleczheng/license-front -t aleczheng/license-front:$SHA -f ./license-front/Dockerfile ./license-front
 docker build -t aleczheng/license-back -t aleczheng/license-back:$SHA -f ./license-back/Dockerfile ./license-back
 
