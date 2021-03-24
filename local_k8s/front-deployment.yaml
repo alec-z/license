@@ -17,6 +17,3 @@ spec:
           image: aleczheng/license-front
           ports:
             - containerPort: 80
-          env:
-            - name: BACKEND_HOST
-              value: back-cluster-ip

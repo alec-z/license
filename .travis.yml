@@ -15,6 +15,7 @@ before_install:
   - gcloud config set compute/zone asia-east2-c
   - gcloud container clusters get-credentials main-cluster
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - curl https://sdk.cloud.google.com | bash
 
 script:
   - echo "Test Pass"

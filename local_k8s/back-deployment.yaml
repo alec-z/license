@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: back
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       component: back
@@ -19,6 +19,9 @@ spec:
             - containerPort: 8080
           env:
             - name: MYSQL_HOST
-              value: db-mysql-node-port
+              value: db-mysql-cluster-ip
             - name: MYSQL_PASSWORD
-              value: root
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-password
+                  key: MYSQL_PASSWORD

@@ -8,19 +8,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
 spec:
   rules:
-    - host: www.youdaodai.com
-      http:
-        paths:
-          - backend:
-              serviceName: interests-front-cluster-ip
-              servicePort: 80
-            path: /
-          - backend:
-              serviceName: interests-back-cluster-ip
-              servicePort: 3000
-            path: /api
-    - host: license.youdaodai.com
-      http:
+    - http:
         paths:
           - backend:
               serviceName: front-cluster-ip
