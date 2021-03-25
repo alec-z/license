@@ -2,15 +2,13 @@ apiVersion: cert-manager.io/v1
 
 kind: Certificate
 metadata:
-  name: youdaodai-com-tls
+  name: compliance-openeuler-org-tls
 spec:
-  secretName: youdaodai-com
+  secretName: compliance-openeuler-org
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer
     group: cert-manager.io
-  commonName: youdaodai.com
+  commonName: compliance.openeuler.com
   dnsNames:
-    - youdaodai.com
-    - www.youdaodai.com
-    - license.youdaodai.com
+    - compliance.openeuler.org
