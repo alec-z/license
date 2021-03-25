@@ -8,10 +8,12 @@ spec:
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer
+    group: cert-manager.io
   commonName: youdaodai.com
   dnsNames:
     - youdaodai.com
     - www.youdaodai.com
+    - license.youdaodai.com
   acme:
     config:
       - http01:
@@ -19,3 +21,4 @@ spec:
         domains:
           - youdaodai.com
           - www.youdaodai.com
+          - license.youdaodai.com
