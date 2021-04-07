@@ -7,7 +7,32 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .flex-spacer {
   flex: 1 1 auto;
 }
+
 .container {
-  width: 1170px;
   margin: 0 auto;
+}
+@media (min-width: 576px) {
+  .container {
+    max-width: 540px;
+  }
+}
+@media (min-width: 768px) {
+  .container{
+    max-width: 720px;
+  }
+}
+@media (min-width: 992px) {
+ .container {
+    max-width: 960px;
+ }
+}
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+}
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1320px;
+  }
 }
