@@ -12,7 +12,6 @@ spec:
   tls:
     - hosts:
         - youdaodai.com
-        - www.yourdomain.com
         - license.youdaodai.com
       secretName: youdaodai-com
     - hosts:
