@@ -42,6 +42,15 @@ type FeatureTag {
   description: String!
 }
 
+type ChangeRequestInput {
+    id: Int!
+    type: String!
+    objectId: Int
+    objectUpdatedAt: String!
+    changeOperation: String!
+    attributes: String!
+}
+
 
 
 input LicenseInput {
@@ -68,6 +77,8 @@ input DictInput {
     name: String!
     description: String
 }
+
+
 
 
 type Mutation {

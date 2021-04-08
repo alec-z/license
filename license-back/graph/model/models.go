@@ -118,3 +118,5 @@ type LicenseFeatureTag struct {
 	FeatureTag *FeatureTag
 	FeatureTagID int
 }
+
+
