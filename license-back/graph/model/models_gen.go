@@ -2,6 +2,15 @@
 
 package model
 
+type ChangeRequestInput struct {
+	ID              int    `json:"id"`
+	Type            string `json:"type"`
+	ObjectID        *int   `json:"objectId"`
+	ObjectUpdatedAt string `json:"objectUpdatedAt"`
+	ChangeOperation string `json:"changeOperation"`
+	Attributes      string `json:"attributes"`
+}
+
 type CompareResult struct {
 	CanFeatureTags    *FeatureTagDifference `json:"canFeatureTags"`
 	CannotFeatureTags *FeatureTagDifference `json:"cannotFeatureTags"`

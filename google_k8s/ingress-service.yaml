@@ -71,3 +71,7 @@ spec:
               serviceName: back-cluster-ip
               servicePort: 8080
             path: /api_test
+          - backend:
+              serviceName: back-cluster-ip
+              servicePort: 8080
+            path: /ci

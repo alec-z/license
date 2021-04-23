@@ -28,6 +28,8 @@ import { FormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthorComponent } from './author/author.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { LoginComponent } from './login/login.component';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,9 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     LicenseShowComponent,
     FeatureTagsBoxComponent,
     TagItemComponent,
-    AuthorComponent
+    AuthorComponent,
+    LoginComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,

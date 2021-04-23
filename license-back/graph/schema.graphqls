@@ -97,4 +97,5 @@ type Query {
   license(licenseID: Int!): License!
   listLicensesByType(indexType: String!, limit: Int!): [License!]!
   listLicensesByName(name: String!, limit: Int!): [License!]
+  oauth2AuthURL(provider: String!): String!
 }

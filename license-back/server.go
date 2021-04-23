@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/alec-z/license-back/graph/model"
 	"github.com/jinzhu/gorm"
@@ -29,9 +30,34 @@ func main() {
 
 	http.Handle("/api_test", playground.Handler("GraphQL playground", "/graphql"))
 	http.Handle("/graphql", srv)
-
+	http.Handle("/ci", generateCISrv())
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
+}
+
+func generateCISrv() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Content-Type", "application/json")
+		var request model.CIRequest
+		err := json.NewDecoder(r.Body).Decode(&request)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		var result model.CIResult
+		result.Pass = true
+		result.Synchronous = false
+		result.ReportFlag = "INFO"
+		result.ReportSummary = request.Action + ":" + request.ActionParameter + ":" + request.Repo + ":"+ request.Branch + ":" + "Report will be generate in 10-15 minutes, please check the report url since then"
+		result.ReportUrl = "http://compliance.openeuler.org/xxx"
+		resultBytes, err := json.Marshal(result)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		fmt.Fprint(w, string(resultBytes))
+	}
+
 }
 
 func initDB() {

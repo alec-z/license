@@ -7,4 +7,5 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/vektah/gqlparser/v2 v2.1.0
+	golang.org/x/oauth2 v0.0.0-20210413134643-5e61552d6c78
 )

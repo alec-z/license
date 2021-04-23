@@ -43,6 +43,15 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	ChangeRequestInput struct {
+		Attributes      func(childComplexity int) int
+		ChangeOperation func(childComplexity int) int
+		ID              func(childComplexity int) int
+		ObjectID        func(childComplexity int) int
+		ObjectUpdatedAt func(childComplexity int) int
+		Type            func(childComplexity int) int
+	}
+
 	CompareResult struct {
 		CanFeatureTags    func(childComplexity int) int
 		CannotFeatureTags func(childComplexity int) int
@@ -99,6 +108,7 @@ type ComplexityRoot struct {
 		Licenses           func(childComplexity int) int
 		ListLicensesByName func(childComplexity int, name string, limit int) int
 		ListLicensesByType func(childComplexity int, indexType string, limit int) int
+		Oauth2AuthURL      func(childComplexity int, provider string) int
 	}
 }
 
@@ -117,6 +127,7 @@ type QueryResolver interface {
 	License(ctx context.Context, licenseID int) (*model.License, error)
 	ListLicensesByType(ctx context.Context, indexType string, limit int) ([]*model.License, error)
 	ListLicensesByName(ctx context.Context, name string, limit int) ([]*model.License, error)
+	Oauth2AuthURL(ctx context.Context, provider string) (string, error)
 }
 
 type executableSchema struct {
@@ -133,6 +144,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "ChangeRequestInput.attributes":
+		if e.complexity.ChangeRequestInput.Attributes == nil {
+			break
+		}
+
+		return e.complexity.ChangeRequestInput.Attributes(childComplexity), true
+
+	case "ChangeRequestInput.changeOperation":
+		if e.complexity.ChangeRequestInput.ChangeOperation == nil {
+			break
+		}
+
+		return e.complexity.ChangeRequestInput.ChangeOperation(childComplexity), true
+
+	case "ChangeRequestInput.id":
+		if e.complexity.ChangeRequestInput.ID == nil {
+			break
+		}
+
+		return e.complexity.ChangeRequestInput.ID(childComplexity), true
+
+	case "ChangeRequestInput.objectId":
+		if e.complexity.ChangeRequestInput.ObjectID == nil {
+			break
+		}
+
+		return e.complexity.ChangeRequestInput.ObjectID(childComplexity), true
+
+	case "ChangeRequestInput.objectUpdatedAt":
+		if e.complexity.ChangeRequestInput.ObjectUpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.ChangeRequestInput.ObjectUpdatedAt(childComplexity), true
+
+	case "ChangeRequestInput.type":
+		if e.complexity.ChangeRequestInput.Type == nil {
+			break
+		}
+
+		return e.complexity.ChangeRequestInput.Type(childComplexity), true
 
 	case "CompareResult.canFeatureTags":
 		if e.complexity.CompareResult.CanFeatureTags == nil {
@@ -453,6 +506,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ListLicensesByType(childComplexity, args["indexType"].(string), args["limit"].(int)), true
 
+	case "Query.oauth2AuthURL":
+		if e.complexity.Query.Oauth2AuthURL == nil {
+			break
+		}
+
+		args, err := ec.field_Query_oauth2AuthURL_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Oauth2AuthURL(childComplexity, args["provider"].(string)), true
+
 	}
 	return 0, false
 }
@@ -561,6 +626,15 @@ type FeatureTag {
   description: String!
 }
 
+type ChangeRequestInput {
+    id: Int!
+    type: String!
+    objectId: Int
+    objectUpdatedAt: String!
+    changeOperation: String!
+    attributes: String!
+}
+
 
 
 input LicenseInput {
@@ -589,6 +663,8 @@ input DictInput {
 }
 
 
+
+
 type Mutation {
     createDict(input: DictInput!): Dict!
     updateDict(dictID: Int!, input: DictInput!): Dict!
@@ -605,6 +681,7 @@ type Query {
   license(licenseID: Int!): License!
   listLicensesByType(indexType: String!, limit: Int!): [License!]!
   listLicensesByName(name: String!, limit: Int!): [License!]
+  oauth2AuthURL(provider: String!): String!
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -853,6 +930,21 @@ func (ec *executionContext) field_Query_listLicensesByType_args(ctx context.Cont
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_oauth2AuthURL_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["provider"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("provider"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["provider"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field___Type_enumValues_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -890,6 +982,213 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _ChangeRequestInput_id(ctx context.Context, field graphql.CollectedField, obj *model.ChangeRequestInput) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ChangeRequestInput",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChangeRequestInput_type(ctx context.Context, field graphql.CollectedField, obj *model.ChangeRequestInput) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ChangeRequestInput",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChangeRequestInput_objectId(ctx context.Context, field graphql.CollectedField, obj *model.ChangeRequestInput) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ChangeRequestInput",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ObjectID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChangeRequestInput_objectUpdatedAt(ctx context.Context, field graphql.CollectedField, obj *model.ChangeRequestInput) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ChangeRequestInput",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ObjectUpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChangeRequestInput_changeOperation(ctx context.Context, field graphql.CollectedField, obj *model.ChangeRequestInput) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ChangeRequestInput",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ChangeOperation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChangeRequestInput_attributes(ctx context.Context, field graphql.CollectedField, obj *model.ChangeRequestInput) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ChangeRequestInput",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Attributes, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
 
 func (ec *executionContext) _CompareResult_canFeatureTags(ctx context.Context, field graphql.CollectedField, obj *model.CompareResult) (ret graphql.Marshaler) {
 	defer func() {
@@ -2261,6 +2560,48 @@ func (ec *executionContext) _Query_listLicensesByName(ctx context.Context, field
 	return ec.marshalOLicense2ᚕᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐLicenseᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_oauth2AuthURL(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_oauth2AuthURL_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Oauth2AuthURL(rctx, args["provider"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3591,6 +3932,55 @@ func (ec *executionContext) unmarshalInputLicenseInput(ctx context.Context, obj 
 
 // region    **************************** object.gotpl ****************************
 
+var changeRequestInputImplementors = []string{"ChangeRequestInput"}
+
+func (ec *executionContext) _ChangeRequestInput(ctx context.Context, sel ast.SelectionSet, obj *model.ChangeRequestInput) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, changeRequestInputImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ChangeRequestInput")
+		case "id":
+			out.Values[i] = ec._ChangeRequestInput_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "type":
+			out.Values[i] = ec._ChangeRequestInput_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "objectId":
+			out.Values[i] = ec._ChangeRequestInput_objectId(ctx, field, obj)
+		case "objectUpdatedAt":
+			out.Values[i] = ec._ChangeRequestInput_objectUpdatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "changeOperation":
+			out.Values[i] = ec._ChangeRequestInput_changeOperation(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "attributes":
+			out.Values[i] = ec._ChangeRequestInput_attributes(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var compareResultImplementors = []string{"CompareResult"}
 
 func (ec *executionContext) _CompareResult(ctx context.Context, sel ast.SelectionSet, obj *model.CompareResult) graphql.Marshaler {
@@ -3952,6 +4342,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_listLicensesByName(ctx, field)
+				return res
+			})
+		case "oauth2AuthURL":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_oauth2AuthURL(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			})
 		case "__type":
@@ -4700,6 +5104,21 @@ func (ec *executionContext) unmarshalOInt2int(ctx context.Context, v interface{}
 
 func (ec *executionContext) marshalOInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
 	return graphql.MarshalInt(v)
+}
+
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalInt(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return graphql.MarshalInt(*v)
 }
 
 func (ec *executionContext) marshalOLicense2ᚕᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐLicenseᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.License) graphql.Marshaler {
