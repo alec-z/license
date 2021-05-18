@@ -51,6 +51,24 @@ type ChangeRequestInput {
     attributes: String!
 }
 
+type Tool {
+    id: Int!
+    name: String!
+    scanRate: Float!
+    stepNumber: Int!
+}
+
+type ToolResult {
+    id: Int!
+    repo: String!
+    branch: String!
+    repoBranchHash: String!
+    tool: Tool!
+    outputRawJson: String!
+    fileCount: Int!
+    scanedFileCount: Int!
+}
+
 
 
 input LicenseInput {
@@ -81,6 +99,8 @@ input DictInput {
 
 
 
+
+
 type Mutation {
     createDict(input: DictInput!): Dict!
     updateDict(dictID: Int!, input: DictInput!): Dict!
@@ -98,4 +118,5 @@ type Query {
   listLicensesByType(indexType: String!, limit: Int!): [License!]!
   listLicensesByName(name: String!, limit: Int!): [License!]
   oauth2AuthURL(provider: String!): String!
+  toolResult(toolResultID: Int!): ToolResult!
 }

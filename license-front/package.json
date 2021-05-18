@@ -30,6 +30,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.2",
     "apollo-angular": "^2.4.0",
     "graphql": "^15.0.0",
+    "ngx-cookie-service": "^11.0.2",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.3"

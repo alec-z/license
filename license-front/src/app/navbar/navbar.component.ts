@@ -32,10 +32,10 @@ export class NavbarComponent implements OnInit {
 
   filterName(name: any): void {
     this.name = name;
-    this.licenses$ = this.apollo.watchQuery<any>({
+    this.licenses$ = this.apollo.query<any>({
       query: LIST_LICENSES,
       variables: { name }
-    }).valueChanges.pipe(
+    }).pipe(
       map((({data, loading, error}) => {
       this.loading = loading;
       this.error = error;

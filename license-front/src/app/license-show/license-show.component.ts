@@ -40,7 +40,7 @@ const GET_LICENSE = gql`
   styleUrls: ['./license-show.component.scss']
 })
 export class LicenseShowComponent implements OnInit {
-  license: any;
+  license: any = {};
   loading = true;
   error: any;
 
@@ -50,10 +50,10 @@ export class LicenseShowComponent implements OnInit {
     this.route.params.pipe(
       pluck('id'),
     ).subscribe((id) => {
-      this.apollo.watchQuery<any>({
+      this.apollo.query<any>({
         query: GET_LICENSE,
         variables: {id}
-      }).valueChanges.subscribe(({data, loading, error}) => {
+      }).subscribe(({data, loading, error}) => {
         this.license = data?.license;
         this.loading = loading;
         this.error = error;

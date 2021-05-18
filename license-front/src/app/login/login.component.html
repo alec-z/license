@@ -5,7 +5,7 @@
   </mat-card-header>
 
   <mat-card-content>
-    <button mat-raised-button color="primary">Login By &nbsp;&nbsp;<img src="/assets/icons/logo-black.svg" style="width:90px"/></button>
-    <button mat-raised-button color="primary">Login By &nbsp;&nbsp;<img src="/assets/icons/logo-github.png" style="width:90px"/></button>
+    <button mat-raised-button color="primary" (click)="goToLink(giteeAuthURL)"><img src="/assets/icons/logo-black.svg" style="width:90px">&nbsp;&nbsp;Continue with Gitee </button>
+    <button mat-raised-button color="primary" (click)="goToLink(githubAuthURL)"><img src="/assets/icons/logo-github.png" style="width:90px" >&nbsp;&nbsp;Continue with Github</button>
   </mat-card-content>
 </mat-card>

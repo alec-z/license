@@ -5,6 +5,8 @@ package graph
 
 import (
 	"context"
+	"fmt"
+	"github.com/alec-z/license-back/graph/auth"
 	"os"
 
 	"github.com/alec-z/license-back/graph/generated"
@@ -54,6 +56,7 @@ func (r *mutationResolver) UpdateLicense(ctx context.Context, licenseID int, inp
 	license := createLicenseFromInput(r.DB, &input)
 	license.ID = licenseID
 	r.DB.Model(&license).Updates(license)
+
 	return license, nil
 }
 
@@ -90,8 +93,8 @@ func (r *queryResolver) ListLicensesByName(ctx context.Context, name string, lim
 func (r *queryResolver) Oauth2AuthURL(ctx context.Context, provider string) (string, error) {
 	const GithubClientID = "27467ab957f157bfc95b"
 	const GiteeClientID = "faf8951baad9617a1fa7c69dc02894f5a7d6e9ac0e66d3f9624abd6bd168f4a4"
-	const GiteeAuthURL = "https://gitee.com/oauth/authorize?redirect_uri=https://compliance.openeuler.org/oauth2/redirect"
-	const GiteeTokenURL = "https://gitee.com/oauth/token?redirect_uri=https://compliance.openeuler.org/oauth2/redirect"
+	const GiteeAuthURL = "https://gitee.com/oauth/authorize?redirect_uri=https://compliance.openeuler.org/oauth2/gitee_redirect"
+	const GiteeTokenURL = "https://gitee.com/oauth/token?redirect_uri=https://compliance.openeuler.org/oauth2/gitee_redirect"
 
 	if provider == "github" {
 		githubSecret := os.Getenv("GITHUB_SECRET")
@@ -120,6 +123,18 @@ func (r *queryResolver) Oauth2AuthURL(ctx context.Context, provider string) (str
 	return url, nil
 }
 
+func (r *queryResolver) ToolResult(ctx context.Context, toolResultID int) (*model.ToolResult, error) {
+	var toolResult model.ToolResult
+
+	if user := auth.ForContext(ctx) ; user == nil {
+		return &toolResult, fmt.Errorf("Access denied")
+	}
+
+
+	r.DB.Preload("Tool").First(&toolResult, toolResultID)
+	return &toolResult, nil
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
@@ -128,5 +143,3 @@ func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-
-

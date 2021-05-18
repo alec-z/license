@@ -6,6 +6,32 @@ import (
 )
 
 var DB *gorm.DB
+type Tool struct {
+	ID        int `gorm:"primary_key"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time `sql:"index"`
+
+	Name     string  `json:"name"`
+	ScanRate float64 `json:"scanRate"`
+	StepNumber int `json:"stepNumber"`
+}
+
+type ToolResult struct {
+	ID        int `gorm:"primary_key"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time `sql:"index"`
+
+	Repo            string `json:"repo"`
+	Branch          string `json:"branch"`
+	RepoBranchHash  string `json:"repoBranchHash"`
+	Tool            *Tool    `json:"tool"`
+	ToolID          int
+	OutputRawJSON   string `json:"outputRawJson"`
+	FileCount       int    `json:"fileCount"`
+	ScanedFileCount int    `json:"scanedFileCount"`
+}
 
 type Dict struct {
 	ID        int `gorm:"primary_key"`
@@ -24,7 +50,6 @@ type License struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt *time.Time `sql:"index"`
-
 	Name        string `json:"name"`
 	SpdxName    string `json:"spdxName"`
 	Summary     string `json:"summary"`
@@ -118,5 +143,19 @@ type LicenseFeatureTag struct {
 	FeatureTag *FeatureTag
 	FeatureTagID int
 }
+
+type User struct {
+	ID        int `gorm:"primary_key"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time `sql:"index"`
+	AuthType string `json:"authType"`
+	AuthID   string  `json:"authID"`
+	AuthLogin string `json:"authLogin"`
+	AuthPrimaryEmail string `json:"authEmail"`
+	AuthRawJson string
+	AvatarUrl string `json:"avatarUrl"`
+}
+
 
 

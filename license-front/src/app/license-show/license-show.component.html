@@ -4,7 +4,7 @@
       {{ license.name }}
     </div>
     <div class="sub-title">
-      {{ license.licenseType.name }}  <span class="free" *ngIf="license.free">free</span>
+      {{ license.licenseType?.name }}  <span class="free" *ngIf="license.free">free</span>
     </div>
   </div>
 </div>

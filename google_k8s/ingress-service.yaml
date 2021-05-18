@@ -56,6 +56,11 @@ spec:
               serviceName: back-cluster-ip
               servicePort: 8080
             path: /api_test
+          - backend:
+              serviceName: back-cluster-ip
+              servicePort: 8080
+            path: /oauth2
+            pathType: prefix
     - host: compliance.openeuler.org
       http:
         paths:
@@ -72,6 +77,11 @@ spec:
               servicePort: 8080
             path: /api_test
           - backend:
+              serviceName: wrapper-cluster-ip
+              servicePort: 8081
+            path: /ci
+          - backend:
               serviceName: back-cluster-ip
               servicePort: 8080
-            path: /ci
+            path: /oauth2
+            pathType: Prefix

@@ -7,5 +7,5 @@ import (
 
 type Resolver struct{
 	DB *gorm.DB
-	oauth2Config *  oauth2.Config
+	oauth2Config *oauth2.Config
 }

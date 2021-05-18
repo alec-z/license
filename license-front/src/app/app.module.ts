@@ -17,7 +17,7 @@ import { LicenseListComponent } from './home/license-list/license-list.component
 import { LicenseItemComponent } from './home/license-list/license-item/license-item.component';
 import { LicenseShowComponent } from './license-show/license-show.component';
 import { GraphQLModule } from './graphql.module';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FeatureTagsBoxComponent } from './license-show/feature-tags-box/feature-tags-box.component';
 import { TagItemComponent } from './license-show/feature-tags-box/tag-item/tag-item.component';
@@ -30,6 +30,10 @@ import { AuthorComponent } from './author/author.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
+import { CookieService } from 'ngx-cookie-service';
+import { AuthFunctionComponent } from './auth-function/auth-function.component';
+import { AuthInterceptor } from './service/auth.interceptor';
+import { ReportComponent } from './report/report.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +47,9 @@ import { ProfileComponent } from './profile/profile.component';
     TagItemComponent,
     AuthorComponent,
     LoginComponent,
-    ProfileComponent
+    ProfileComponent,
+    AuthFunctionComponent,
+    ReportComponent
   ],
   imports: [
     BrowserModule,
@@ -68,7 +74,7 @@ import { ProfileComponent } from './profile/profile.component';
 
 
   ],
-  providers: [],
+  providers: [CookieService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

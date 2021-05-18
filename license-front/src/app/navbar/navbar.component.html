@@ -17,7 +17,7 @@
   <div fxHide fxShow.gt-sm="">
     <button mat-button (click)="goToLink('/api_test')" routerLinkActive="mat-accent">API</button>
     <button mat-button routerLink="/authors" routerLinkActive="mat-accent">作者</button>
-    <!-- <button mat-button routerLink="/login" routerLinkActive="mat-accent">登录</button> -->
+    <button mat-button routerLink="/login" routerLinkActive="mat-accent">登录</button>
   </div>
   <button mat-button [mat-menu-trigger-for]="menu" fxHide.gt-sm>
     <mat-icon>menu</mat-icon>
@@ -39,6 +39,5 @@
 <mat-autocomplete #auto="matAutocomplete">
   <mat-option *ngFor="let license of licenses$ | async" [value]="license.name" [routerLink]="['/license', license.id]">
     {{license.name}} ({{license.spdxName}})
-
   </mat-option>
 </mat-autocomplete>

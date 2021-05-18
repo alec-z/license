@@ -44,30 +44,30 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     let indexType = 'featured';
-    this.apollo.watchQuery<any>({
+    this.apollo.query<any>({
       query: LIST_LICENSES,
       variables: {indexType}
-    }).valueChanges.subscribe(({data, loading, error}) => {
+    }).subscribe(({data, loading, error}) => {
       this.featuredLicenses = data?.listLicensesByType;
       this.loading = loading;
       this.error = error;
     });
 
     indexType = 'new';
-    this.apollo.watchQuery<any>({
+    this.apollo.query<any>({
       query: LIST_LICENSES,
       variables: {indexType}
-    }).valueChanges.subscribe(({data, loading, error}) => {
+    }).subscribe(({data, loading, error}) => {
       this.newLicenses = data?.listLicensesByType;
       this.loading = loading;
       this.error = error;
     });
 
     indexType = 'popular';
-    this.apollo.watchQuery<any>({
+    this.apollo.query<any>({
       query: LIST_LICENSES,
       variables: {indexType}
-    }).valueChanges.subscribe(({data, loading, error}) => {
+    }).subscribe(({data, loading, error}) => {
       this.popularLicenses = data?.listLicensesByType;
       this.loading = loading;
       this.error = error;

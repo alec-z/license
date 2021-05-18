@@ -109,6 +109,25 @@ type ComplexityRoot struct {
 		ListLicensesByName func(childComplexity int, name string, limit int) int
 		ListLicensesByType func(childComplexity int, indexType string, limit int) int
 		Oauth2AuthURL      func(childComplexity int, provider string) int
+		ToolResult         func(childComplexity int, toolResultID int) int
+	}
+
+	Tool struct {
+		ID         func(childComplexity int) int
+		Name       func(childComplexity int) int
+		ScanRate   func(childComplexity int) int
+		StepNumber func(childComplexity int) int
+	}
+
+	ToolResult struct {
+		Branch          func(childComplexity int) int
+		FileCount       func(childComplexity int) int
+		ID              func(childComplexity int) int
+		OutputRawJSON   func(childComplexity int) int
+		Repo            func(childComplexity int) int
+		RepoBranchHash  func(childComplexity int) int
+		ScanedFileCount func(childComplexity int) int
+		Tool            func(childComplexity int) int
 	}
 }
 
@@ -128,6 +147,7 @@ type QueryResolver interface {
 	ListLicensesByType(ctx context.Context, indexType string, limit int) ([]*model.License, error)
 	ListLicensesByName(ctx context.Context, name string, limit int) ([]*model.License, error)
 	Oauth2AuthURL(ctx context.Context, provider string) (string, error)
+	ToolResult(ctx context.Context, toolResultID int) (*model.ToolResult, error)
 }
 
 type executableSchema struct {
@@ -518,6 +538,102 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Oauth2AuthURL(childComplexity, args["provider"].(string)), true
 
+	case "Query.toolResult":
+		if e.complexity.Query.ToolResult == nil {
+			break
+		}
+
+		args, err := ec.field_Query_toolResult_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ToolResult(childComplexity, args["toolResultID"].(int)), true
+
+	case "Tool.id":
+		if e.complexity.Tool.ID == nil {
+			break
+		}
+
+		return e.complexity.Tool.ID(childComplexity), true
+
+	case "Tool.name":
+		if e.complexity.Tool.Name == nil {
+			break
+		}
+
+		return e.complexity.Tool.Name(childComplexity), true
+
+	case "Tool.scanRate":
+		if e.complexity.Tool.ScanRate == nil {
+			break
+		}
+
+		return e.complexity.Tool.ScanRate(childComplexity), true
+
+	case "Tool.stepNumber":
+		if e.complexity.Tool.StepNumber == nil {
+			break
+		}
+
+		return e.complexity.Tool.StepNumber(childComplexity), true
+
+	case "ToolResult.branch":
+		if e.complexity.ToolResult.Branch == nil {
+			break
+		}
+
+		return e.complexity.ToolResult.Branch(childComplexity), true
+
+	case "ToolResult.fileCount":
+		if e.complexity.ToolResult.FileCount == nil {
+			break
+		}
+
+		return e.complexity.ToolResult.FileCount(childComplexity), true
+
+	case "ToolResult.id":
+		if e.complexity.ToolResult.ID == nil {
+			break
+		}
+
+		return e.complexity.ToolResult.ID(childComplexity), true
+
+	case "ToolResult.outputRawJson":
+		if e.complexity.ToolResult.OutputRawJSON == nil {
+			break
+		}
+
+		return e.complexity.ToolResult.OutputRawJSON(childComplexity), true
+
+	case "ToolResult.repo":
+		if e.complexity.ToolResult.Repo == nil {
+			break
+		}
+
+		return e.complexity.ToolResult.Repo(childComplexity), true
+
+	case "ToolResult.repoBranchHash":
+		if e.complexity.ToolResult.RepoBranchHash == nil {
+			break
+		}
+
+		return e.complexity.ToolResult.RepoBranchHash(childComplexity), true
+
+	case "ToolResult.scanedFileCount":
+		if e.complexity.ToolResult.ScanedFileCount == nil {
+			break
+		}
+
+		return e.complexity.ToolResult.ScanedFileCount(childComplexity), true
+
+	case "ToolResult.tool":
+		if e.complexity.ToolResult.Tool == nil {
+			break
+		}
+
+		return e.complexity.ToolResult.Tool(childComplexity), true
+
 	}
 	return 0, false
 }
@@ -635,6 +751,24 @@ type ChangeRequestInput {
     attributes: String!
 }
 
+type Tool {
+    id: Int!
+    name: String!
+    scanRate: Float!
+    stepNumber: Int!
+}
+
+type ToolResult {
+    id: Int!
+    repo: String!
+    branch: String!
+    repoBranchHash: String!
+    tool: Tool!
+    outputRawJson: String!
+    fileCount: Int!
+    scanedFileCount: Int!
+}
+
 
 
 input LicenseInput {
@@ -665,6 +799,8 @@ input DictInput {
 
 
 
+
+
 type Mutation {
     createDict(input: DictInput!): Dict!
     updateDict(dictID: Int!, input: DictInput!): Dict!
@@ -682,6 +818,7 @@ type Query {
   listLicensesByType(indexType: String!, limit: Int!): [License!]!
   listLicensesByName(name: String!, limit: Int!): [License!]
   oauth2AuthURL(provider: String!): String!
+  toolResult(toolResultID: Int!): ToolResult!
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -942,6 +1079,21 @@ func (ec *executionContext) field_Query_oauth2AuthURL_args(ctx context.Context, 
 		}
 	}
 	args["provider"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_toolResult_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["toolResultID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("toolResultID"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["toolResultID"] = arg0
 	return args, nil
 }
 
@@ -2602,6 +2754,48 @@ func (ec *executionContext) _Query_oauth2AuthURL(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_toolResult(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_toolResult_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ToolResult(rctx, args["toolResultID"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ToolResult)
+	fc.Result = res
+	return ec.marshalNToolResult2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐToolResult(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -2671,6 +2865,426 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	res := resTmp.(*introspection.Schema)
 	fc.Result = res
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Tool_id(ctx context.Context, field graphql.CollectedField, obj *model.Tool) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Tool",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Tool_name(ctx context.Context, field graphql.CollectedField, obj *model.Tool) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Tool",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Tool_scanRate(ctx context.Context, field graphql.CollectedField, obj *model.Tool) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Tool",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ScanRate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Tool_stepNumber(ctx context.Context, field graphql.CollectedField, obj *model.Tool) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Tool",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StepNumber, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ToolResult_id(ctx context.Context, field graphql.CollectedField, obj *model.ToolResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ToolResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ToolResult_repo(ctx context.Context, field graphql.CollectedField, obj *model.ToolResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ToolResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Repo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ToolResult_branch(ctx context.Context, field graphql.CollectedField, obj *model.ToolResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ToolResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Branch, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ToolResult_repoBranchHash(ctx context.Context, field graphql.CollectedField, obj *model.ToolResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ToolResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RepoBranchHash, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ToolResult_tool(ctx context.Context, field graphql.CollectedField, obj *model.ToolResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ToolResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Tool, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Tool)
+	fc.Result = res
+	return ec.marshalNTool2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐTool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ToolResult_outputRawJson(ctx context.Context, field graphql.CollectedField, obj *model.ToolResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ToolResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OutputRawJSON, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ToolResult_fileCount(ctx context.Context, field graphql.CollectedField, obj *model.ToolResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ToolResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FileCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ToolResult_scanedFileCount(ctx context.Context, field graphql.CollectedField, obj *model.ToolResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ToolResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ScanedFileCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
@@ -4358,10 +4972,128 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "toolResult":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_toolResult(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
 			out.Values[i] = ec._Query___schema(ctx, field)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var toolImplementors = []string{"Tool"}
+
+func (ec *executionContext) _Tool(ctx context.Context, sel ast.SelectionSet, obj *model.Tool) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, toolImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Tool")
+		case "id":
+			out.Values[i] = ec._Tool_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+			out.Values[i] = ec._Tool_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "scanRate":
+			out.Values[i] = ec._Tool_scanRate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "stepNumber":
+			out.Values[i] = ec._Tool_stepNumber(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var toolResultImplementors = []string{"ToolResult"}
+
+func (ec *executionContext) _ToolResult(ctx context.Context, sel ast.SelectionSet, obj *model.ToolResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, toolResultImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ToolResult")
+		case "id":
+			out.Values[i] = ec._ToolResult_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "repo":
+			out.Values[i] = ec._ToolResult_repo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "branch":
+			out.Values[i] = ec._ToolResult_branch(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "repoBranchHash":
+			out.Values[i] = ec._ToolResult_repoBranchHash(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "tool":
+			out.Values[i] = ec._ToolResult_tool(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "outputRawJson":
+			out.Values[i] = ec._ToolResult_outputRawJson(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "fileCount":
+			out.Values[i] = ec._ToolResult_fileCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "scanedFileCount":
+			out.Values[i] = ec._ToolResult_scanedFileCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4728,6 +5460,21 @@ func (ec *executionContext) unmarshalNFeatureTagInput2githubᚗcomᚋalecᚑzᚋ
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {
+	res, err := graphql.UnmarshalFloat(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
+	res := graphql.MarshalFloat(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
+}
+
 func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
 	res, err := graphql.UnmarshalInt(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -4842,6 +5589,30 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	}
 
 	return ret
+}
+
+func (ec *executionContext) marshalNTool2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐTool(ctx context.Context, sel ast.SelectionSet, v *model.Tool) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Tool(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNToolResult2githubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐToolResult(ctx context.Context, sel ast.SelectionSet, v model.ToolResult) graphql.Marshaler {
+	return ec._ToolResult(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNToolResult2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐToolResult(ctx context.Context, sel ast.SelectionSet, v *model.ToolResult) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ToolResult(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {

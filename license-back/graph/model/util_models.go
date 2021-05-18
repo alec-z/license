@@ -1,5 +1,10 @@
 package model
-
+import (
+	"context"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/github"
+	"os"
+)
 type CIResult struct{
 	Pass bool `json:"pass"`
 	Synchronous bool `json:"synchronous"`
@@ -13,4 +18,45 @@ type CIRequest struct {
 	Repo string `json:"repo"`
 	Branch string `json:"branch"`
 	ActionParameter string `json:"action_parameter"`
+}
+
+type OAuth2Config struct {
+	GithubConfig *oauth2.Config
+	GiteeConfig *oauth2.Config
+	Ctx context.Context
+	JWTSecret string
+}
+
+var OAuth2ConfigObj OAuth2Config
+
+func init() {
+	githubSecret := os.Getenv("GITHUB_SECRET")
+	giteeSecret := os.Getenv("GITEE_SECRET")
+
+	const GithubClientID = "27467ab957f157bfc95b"
+	const GiteeClientID = "faf8951baad9617a1fa7c69dc02894f5a7d6e9ac0e66d3f9624abd6bd168f4a4"
+	const GiteeAuthURL = "https://gitee.com/oauth/authorize?redirect_uri=https://compliance.openeuler.org/oauth2/redirect"
+	const GiteeTokenURL = "https://gitee.com/oauth/token?redirect_uri=https://compliance.openeuler.org/oauth2/redirect"
+
+	OAuth2ConfigObj.GiteeConfig = &oauth2.Config{
+		ClientID:     GiteeClientID,
+		ClientSecret: giteeSecret,
+		Scopes:       []string{},
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  GiteeAuthURL,
+			TokenURL: GiteeTokenURL,
+		},
+	}
+
+	OAuth2ConfigObj.GithubConfig = &oauth2.Config{
+		ClientID:     GithubClientID,
+		ClientSecret: githubSecret,
+		Scopes:       []string{},
+		Endpoint: oauth2.Endpoint{
+		AuthURL:  github.Endpoint.AuthURL,
+		TokenURL: github.Endpoint.TokenURL,
+		},
+	}
+	OAuth2ConfigObj.Ctx = context.Background()
+	OAuth2ConfigObj.JWTSecret = os.Getenv("JWT_SECRET")
 }

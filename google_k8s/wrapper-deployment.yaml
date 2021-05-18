@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wrapper
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: wrapper
+  template:
+    metadata:
+      labels:
+        component: wrapper
+    spec:
+      containers:
+        - name: wrapper
+          image: aleczheng/wrapper-tool
+          ports:
+            - containerPort: 8081
+          env:
+            - name: MYSQL_HOST
+              value: db-mysql-cluster-ip
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-password
+                  key: MYSQL_PASSWORD
