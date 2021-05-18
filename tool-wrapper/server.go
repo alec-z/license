@@ -23,7 +23,7 @@ import (
 
 const DefaultPort = "8081"
 const BaseDir = "/tmp"
-const ReportBaseUrl ="http://localhost:4200/report/"
+const ReportBaseUrl ="https://compliance.openeuler.org/report/"
 const StepNum = 5
 
 var db *gorm.DB
@@ -41,6 +41,13 @@ func main() {
 }
 
 func handleCI(w http.ResponseWriter, r *http.Request) {
+
+	defer func() {
+		if e := recover(); e != nil {
+			log.Println("recover from request")
+		}
+	}()
+
 	w.Header().Add("Content-Type", "application/json")
 	var request model.CIRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
@@ -48,6 +55,8 @@ func handleCI(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+
 	toolResult := findOrCreateToolResult(request.Action, request.Repo, request.Branch)
 
 	go runTool(toolResult, request.Repo, request.Branch)
@@ -65,10 +74,12 @@ func handleCI(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, string(resultBytes))
 }
 func findOrCreateToolResult(toolName string, repo string, branch string) *model.ToolResult {
+
+
 	var tool model.Tool
 	db.Where("name = ?", toolName).First(&tool)
 	if tool.ID == 0 {
-		log.Fatalln("Cannot find this tool " + toolName)
+		log.Println("Cannot find this tool " + toolName)
 		panic("Cannot find this tool " + toolName)
 	}
 	tagHash :=checkBranch(repo, branch)
@@ -84,6 +95,10 @@ func findOrCreateToolResult(toolName string, repo string, branch string) *model.
 
 func runTool(toolResult *model.ToolResult, repo string, branch string) {
 	if toolResult.OutputRawJson == "" {
+		begin := time.Now()
+		toolResult.BeginAt = &begin
+		db.Save(toolResult)
+
 		db.Model(toolResult).Association("Tool").Find(&toolResult.Tool)
 		tool := &toolResult.Tool
 		workDir := strconv.FormatInt(time.Now().Unix(), 10) + "_" +
@@ -99,6 +114,8 @@ func runTool(toolResult *model.ToolResult, repo string, branch string) {
 		outputJson := readOutput(dir)
 		clearUp(dir)
 		toolResult.OutputRawJson = outputJson
+		finish := time.Now()
+		toolResult.FinishAt = &finish
 		db.Save(toolResult)
 	}
 }
@@ -107,7 +124,7 @@ func checkBranch(repo, branch string) string {
 	cmd := exec.Command("git","ls-remote", repo, branch)
 	result, err := cmd.Output()
 	if err != nil {
-		log.Fatalln("git ls-remote " + repo + " " + branch + "Execute Command failed:" + err.Error())
+		log.Println("git ls-remote " + repo + " " + branch + "Execute Command failed:" + err.Error())
 		panic("git ls-remote " + repo + " " + branch + "Execute Command failed:" + err.Error())
 	}
 	re := regexp.MustCompile("\\s+")
@@ -124,7 +141,7 @@ func createWorkDir(dir string) {
 	cmd := exec.Command("mkdir","-p", dir)
 	err := cmd.Run()
 	if err != nil {
-		log.Fatalln("mkdir " + dir + " Execute Command failed:" + err.Error())
+		log.Println("mkdir " + dir + " Execute Command failed:" + err.Error())
 		panic("mkdir " + dir + " Execute Command failed:" + err.Error())
 	}
 	log.Println("mkdir " + dir + "Execute Command finished.")
@@ -136,7 +153,7 @@ func gitCloneAndCount(dir string, repo string, branch string) int {
 	cmd := exec.Command("git", "clone", "-b", branch, repo, dir + "/" + repoName)
 	err := cmd.Run()
 	if err != nil {
-		log.Fatalln("Git clone Execute Command failed:" + err.Error())
+		log.Println("Git clone Execute Command failed:" + err.Error())
 		panic("Git clone Execute Command failed:" + err.Error())
 	}
 	log.Println("git clone " + dir + "Execute Command finished.")
@@ -144,7 +161,7 @@ func gitCloneAndCount(dir string, repo string, branch string) int {
 	cmdCount := exec.Command("bash", "-c", cmdStr)
 	output, err2 := cmdCount.Output()
 	if err2 != nil {
-		log.Fatalln("Git ls-files count Execute Command failed:" + err.Error())
+		log.Println("Git ls-files count Execute Command failed:" + err.Error())
 		panic("Git ls-files count Execute Command failed:" + err.Error())
 	}
 	reg := regexp.MustCompile(`\s+`)
@@ -220,7 +237,7 @@ func execTool(dir string, toolResult *model.ToolResult) {
 	err = cmd.Wait()
 
 	if err != nil {
-		log.Fatalln("scancode Execute Command failed:" + err.Error())
+		log.Println("scancode Execute Command failed:" + err.Error())
 		panic("scancode Execute Command failed:" + err.Error())
 	}
 
@@ -230,7 +247,7 @@ func execTool(dir string, toolResult *model.ToolResult) {
 func readOutput(dir string) string {
 	content, err := ioutil.ReadFile(dir + "/output.json")
 	if err != nil {
-		log.Fatalln("read output Execute Command failed:" + err.Error())
+		log.Println("read output Execute Command failed:" + err.Error())
 		panic("read output Execute Command failed:" + err.Error())
 	}
 	log.Println("read output " + dir + "Execute Command finished.")
@@ -242,7 +259,7 @@ func clearUp(dir string) {
 	cmd := exec.Command("rm","-rf", dir)
 	err := cmd.Run()
 	if err != nil {
-		log.Fatalln("rm clear up Execute Command failed:" + err.Error())
+		log.Println("rm clear up Execute Command failed:" + err.Error())
 		panic("rm clear up Execute Command failed:" + err.Error())
 	}
 	log.Println("rm clear up " + dir + "Execute Command finished.")
@@ -264,7 +281,7 @@ func initDB() {
 	db, err = gorm.Open(mysql.Open(dataSourceName), &gorm.Config{})
 
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 		panic("failed to connect database")
 	}
 

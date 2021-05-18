@@ -20,6 +20,8 @@ type ToolResult struct {
 	ScanedFileCount int `json:"scanedFileCount"`
 	Tool Tool
 	ToolID int
+	BeginAt *time.Time `json:"beginAt"`
+	FinishAt *time.Time `json:"finishAt"`
 	OutputRawJson string `gorm:"type:longtext;not null" json:"repoBranch`
 }
 
