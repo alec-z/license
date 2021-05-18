@@ -60,7 +60,7 @@ spec:
               serviceName: back-cluster-ip
               servicePort: 8080
             path: /oauth2
-            pathType: prefix
+            pathType: Prefix
     - host: compliance.openeuler.org
       http:
         paths:
