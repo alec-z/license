@@ -8,5 +8,13 @@
     "target": "http://127.0.0.1:8080",
     "secure": false,
     "ws": false
+  },
+  "/analysis": {
+    "target": "http://127.0.0.1:9200",
+    "secure": false,
+    "ws": false,
+    "pathRewrite": {
+      "^/analysis/": "/"
+    }
   }
 }

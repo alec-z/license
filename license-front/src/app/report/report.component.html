@@ -17,7 +17,7 @@
   </mat-card-actions>
 </mat-card>
 
-<mat-card class="report" [hidden]="!complete">
+<mat-card class="report" *ngIf="complete">
   <mat-card-header>
     <mat-card-title>报告已生成</mat-card-title>
     <mat-card-subtitle>Repository: {{toolResult.repo}} </mat-card-subtitle>
@@ -25,9 +25,7 @@
   </mat-card-header>
   <img mat-card-image src="/assets/images/report_already.png" class="waiting-image">
   <mat-card-content>
-    <p>
-      <b>这里显示可视化报告</b>
-    </p>
+    <app-report-content [toolResult]="toolResult"></app-report-content>
   </mat-card-content>
   <mat-card-actions>
     <p style="margin-left: 9px;">

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"github.com/alec-z/tool-wrapper/indexer"
 	"github.com/alec-z/tool-wrapper/model"
 	"github.com/go-chi/chi/v5"
 	"gorm.io/driver/mysql"
@@ -27,6 +28,7 @@ const ReportBaseUrl ="https://compliance.openeuler.org/report/"
 const StepNum = 5
 
 var db *gorm.DB
+
 
 func main() {
 	port := os.Getenv("PORT")
@@ -60,6 +62,7 @@ func handleCI(w http.ResponseWriter, r *http.Request) {
 	toolResult := findOrCreateToolResult(request.Action, request.Repo, request.Branch)
 
 	go runTool(toolResult, request.Repo, request.Branch)
+
 	var result model.CIResult
 	result.Pass = true
 	result.Synchronous = false
@@ -117,7 +120,12 @@ func runTool(toolResult *model.ToolResult, repo string, branch string) {
 		finish := time.Now()
 		toolResult.FinishAt = &finish
 		db.Save(toolResult)
+		indexer.BulkIndexer(toolResult)
+	} else {
+		db.Model(toolResult).Association("Tool").Find(&toolResult.Tool)
+		indexer.BulkIndexer(toolResult)
 	}
+
 }
 
 func checkBranch(repo, branch string) string {
@@ -287,6 +295,8 @@ func initDB() {
 
 	db.AutoMigrate(&model.ToolResult{}, &model.Tool{})
 	model.DB = db
+}
 
+func initES() {
 
 }

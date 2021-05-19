@@ -34,6 +34,13 @@ import { CookieService } from 'ngx-cookie-service';
 import { AuthFunctionComponent } from './auth-function/auth-function.component';
 import { AuthInterceptor } from './service/auth.interceptor';
 import { ReportComponent } from './report/report.component';
+import { ReportContentComponent } from './report/report-content/report-content.component';
+import { ReportFileListComponent } from './report/report-content/report-file-list/report-file-list.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { YesNoPipe } from './yes-no.pipe';
+import { ReportBucketsComponent } from './report/report-content/report-buckets/report-buckets.component';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @NgModule({
   declarations: [
@@ -49,7 +56,11 @@ import { ReportComponent } from './report/report.component';
     LoginComponent,
     ProfileComponent,
     AuthFunctionComponent,
-    ReportComponent
+    ReportComponent,
+    ReportContentComponent,
+    ReportFileListComponent,
+    YesNoPipe,
+    ReportBucketsComponent
   ],
   imports: [
     BrowserModule,
@@ -62,15 +73,19 @@ import { ReportComponent } from './report/report.component';
     MatMenuModule,
     MatFormFieldModule,
     MatInputModule,
+    MatExpansionModule,
     GraphQLModule,
     HttpClientModule,
     MatTabsModule,
     MatExpansionModule,
     MatCardModule,
     MatAutocompleteModule,
+    MatTableModule,
+    MatPaginatorModule,
     FormsModule,
     MatProgressSpinnerModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    NgxChartsModule
 
 
   ],

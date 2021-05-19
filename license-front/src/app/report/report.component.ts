@@ -28,7 +28,7 @@ const GET_TOOL_RESULT = gql`
 })
 
 export class ReportComponent implements AfterViewInit {
-
+  panelOpenState = false;
 
   @ViewChild('download') download: ElementRef;
 
@@ -79,7 +79,6 @@ export class ReportComponent implements AfterViewInit {
       this.error = error;
       if (this.toolResult.outputRawJson === '') {
         let nextRequestInterval = 2000;
-        console.log(this.toolResult);
         if (this.toolResult.fileCount !== 0) {
           this.fileCount = this.toolResult.fileCount;
           this.scanedFileCount = this.toolResult.scanedFileCount;
