@@ -18,11 +18,11 @@ var bi esutil.BulkIndexer
 func init() {
 	retryBackoff := backoff.NewExponentialBackOff()
 	var err error
-	esHost := os.Getenv("ES_HOST")
+	esURL := os.Getenv("ES_URL")
 	esPassword := os.Getenv("ES_PASSWORD")
 	es, err = elasticsearch.NewClient(elasticsearch.Config{
 		Addresses: []string{
-			esHost,
+			esURL,
 		},
 
 		Username: "elastic",
