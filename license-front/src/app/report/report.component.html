@@ -18,12 +18,14 @@
 </mat-card>
 
 <mat-card class="report" *ngIf="complete">
+
+
   <mat-card-header>
+    <img mat-card-avatar src="/assets/images/report_already.png" class="already-image" style="width: 100px;height:75px;">
     <mat-card-title>报告已生成</mat-card-title>
     <mat-card-subtitle>Repository: {{toolResult.repo}} </mat-card-subtitle>
     <mat-card-subtitle>Branch: {{toolResult.branch}}</mat-card-subtitle>
   </mat-card-header>
-  <img mat-card-image src="/assets/images/report_already.png" class="waiting-image">
   <mat-card-content>
     <app-report-content [toolResult]="toolResult"></app-report-content>
   </mat-card-content>
