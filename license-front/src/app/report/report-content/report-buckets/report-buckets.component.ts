@@ -15,32 +15,36 @@ export class ReportBucketsComponent implements OnInit, AfterViewInit {
   @Output() resultsCountChange = new EventEmitter<number>();
   // options
   single: any;
-  showXAxis = true;
-  showYAxis = true;
+
   gradient = false;
-  showLegend = true;
-  showXAxisLabel = true;
-  yAxisLabel = 'License';
-  showYAxisLabel = true;
-  xAxisLabel = 'Files Count';
+
+
   isLoadingResults = false;
   resultsLength = 0;
   colorScheme = {
-    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
+    domain: ['rgba(255, 99, 132, 0.3)',
+      'rgba(54, 162, 235, 0.3)',
+      'rgba(255, 206, 86, 0.3)',
+      'rgba(75, 192, 192, 0.3)',
+      'rgba(153, 102, 255, 0.3)',
+      'rgba(255, 159, 64, 0.3)']
   };
-  currentLicense = '';
+  currentType = '';
   @Input() listType = '';
+  fileListType = '';
   query: string;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+  }
 
   ngOnInit(): void {
-    this.query = Searchs.LicenseTypes;
-    if (this.listType === 'Copyrights') {
-      this.yAxisLabel = 'Copyright';
-      this.query = Searchs.Copyrights;
+    this.query = Searchs[this.listType];
+    if (this.listType === 'LicenseTypes') {
+      this.fileListType = 'SomeLicenseFiles';
     }
-
+    else if (this.listType === 'CopyrightTypes') {
+      this.fileListType = 'SomeCopyrightFiles';
+    }
   }
 
   ngAfterViewInit(): void {
@@ -48,21 +52,14 @@ export class ReportBucketsComponent implements OnInit, AfterViewInit {
       tap((data: any) => {
         // Flip flag to show that loading has finished.
         this.isLoadingResults = false;
-        if (this.listType === 'LicenseTypes') {
-          this.resultsLength = data?.aggregations?.license_types?.buckets.length;
-        } else {
-          this.resultsLength = data?.aggregations?.copyrights?.buckets.length;
-        }
+        this.resultsLength = data?.aggregations?.aggs_types?.buckets.length;
+
         this.resultsCountChange.emit(this.resultsLength);
-        if (this.listType === 'LicenseTypes') {
-          this.single = _(data.aggregations?.license_types?.buckets).map((o: any) => {
-            return {name: o.key, value: o.doc_count};
-          }).value();
-        } else {
-          this.single = _(data.aggregations?.copyrights?.buckets).map((o: any) => {
-            return {name: o.key, value: o.doc_count};
-          }).value();
-        }
+
+        this.single = _(data.aggregations?.aggs_types?.buckets).map((o: any) => {
+          return {name: o.key, value: o.doc_count};
+        }).value();
+
       }),
     ).subscribe();
 
@@ -70,7 +67,7 @@ export class ReportBucketsComponent implements OnInit, AfterViewInit {
 
   onSelect(data: any): void {
     console.log('Item clicked', JSON.parse(JSON.stringify(data)));
-    this.currentLicense = data.name;
+    this.currentType = data.name;
   }
 
   getBuckets(): Observable<any> {

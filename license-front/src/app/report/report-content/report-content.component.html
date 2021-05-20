@@ -3,13 +3,13 @@
                        (closed)="panelOpenStates[0] = false">
     <mat-expansion-panel-header>
       <mat-panel-title>
-        找到<span class="warning">{{lackLicenseFileCount}}</span>个缺乏license申明的文本文件
+        找到<span class="warning">{{noneLicenseFilesCount}}</span>个缺乏license申明的文本文件
       </mat-panel-title>
       <mat-panel-description>
-        Find {{lackLicenseFileCount}} text-files lack of license header
+        Find {{noneLicenseFilesCount}} text-files lack of license header
       </mat-panel-description>
     </mat-expansion-panel-header>
-    <app-report-file-list (resultsCountChange)="lackLicenseFileCount = $event" [repoBranchHash]="toolResult.repoBranchHash" listType="WithoutLicenseFiles"></app-report-file-list>
+    <app-report-file-list (resultsCountChange)="noneLicenseFilesCount = $event" [repoBranchHash]="toolResult.repoBranchHash" listType="NoneLicenseFiles"></app-report-file-list>
   </mat-expansion-panel>
 
 
@@ -17,13 +17,13 @@
                        (closed)="panelOpenStates[1] = false">
     <mat-expansion-panel-header>
       <mat-panel-title>
-        找到{{badLicenseFileCount}}个文件疑似申明了传染性license
+        找到{{badLicenseFilesCount}}个文件疑似申明了传染性license
       </mat-panel-title>
       <mat-panel-description>
-        Find {{badLicenseFileCount}} text-files lack of license header
+        Find {{badLicenseFilesCount}} text-files lack of license header
       </mat-panel-description>
     </mat-expansion-panel-header>
-    <app-report-file-list (resultsCountChange)="badLicenseFileCount = $event" [repoBranchHash]="toolResult.repoBranchHash" listType="BadLicenseFiles"></app-report-file-list>
+    <app-report-file-list (resultsCountChange)="badLicenseFilesCount = $event" [repoBranchHash]="toolResult.repoBranchHash" listType="BadLicenseFiles"></app-report-file-list>
   </mat-expansion-panel>
 
 
@@ -31,13 +31,13 @@
                        (closed)="panelOpenStates[2] = false">
     <mat-expansion-panel-header>
       <mat-panel-title>
-        该项目疑似申明了{{licenseTypeCount}}种不同的license
+        该项目疑似申明了{{licenseTypesCount}}种不同的license
       </mat-panel-title>
       <mat-panel-description>
         Currently I am {{panelOpenStates[2] ? 'open' : 'closed'}}
       </mat-panel-description>
     </mat-expansion-panel-header>
-    <app-report-buckets (resultsCountChange)="licenseTypeCount = $event" [repoBranchHash]="toolResult.repoBranchHash" listType="LicenseTypes"></app-report-buckets>
+    <app-report-buckets (resultsCountChange)="licenseTypesCount = $event" [repoBranchHash]="toolResult.repoBranchHash" listType="LicenseTypes"></app-report-buckets>
   </mat-expansion-panel>
 
 
@@ -45,13 +45,13 @@
                        (closed)="panelOpenStates[3] = false">
     <mat-expansion-panel-header>
       <mat-panel-title>
-        找到<span class="warning">{{lackCopyrightFileCount}}</span>个缺乏Copyright申明的文本文件
+        找到<span class="warning">{{noneCopyrightFilesCount}}</span>个缺乏Copyright申明的文本文件
       </mat-panel-title>
       <mat-panel-description>
         Currently I am {{panelOpenStates[3] ? 'open' : 'closed'}}
       </mat-panel-description>
     </mat-expansion-panel-header>
-    <app-report-file-list (resultsCountChange)="lackCopyrightFileCount = $event" [repoBranchHash]="toolResult.repoBranchHash" listType="WithoutCopyrightFiles"></app-report-file-list>
+    <app-report-file-list (resultsCountChange)="noneCopyrightFilesCount = $event" [repoBranchHash]="toolResult.repoBranchHash" listType="NoneCopyrightFiles"></app-report-file-list>
   </mat-expansion-panel>
 
 
@@ -65,7 +65,7 @@
         Currently I am {{panelOpenStates[4] ? 'open' : 'closed'}}
       </mat-panel-description>
     </mat-expansion-panel-header>
-    <app-report-buckets (resultsCountChange)="copyrightCount = $event" [repoBranchHash]="toolResult.repoBranchHash" listType="Copyrights"></app-report-buckets>
+    <app-report-buckets (resultsCountChange)="copyrightCount = $event" [repoBranchHash]="toolResult.repoBranchHash" listType="CopyrightTypes"></app-report-buckets>
 
 
   </mat-expansion-panel>

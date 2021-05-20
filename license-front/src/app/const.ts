@@ -1,4 +1,4 @@
-const WithoutLicenseFiles = `
+const NoneLicenseFiles = `
 {
   "from": $from,
   "size": $size,
@@ -20,6 +20,29 @@ const WithoutLicenseFiles = `
   "sort": { "path.keyword": { "order": "asc" }}
 }
 `;
+
+const SomeLicenseFiles = `
+{
+  "from": $from,
+  "size": $size,
+  "query" : {
+    "constant_score" : { 
+      "filter" : {
+        "bool": {
+          "must": [
+            { "term": {"is_text": true} },
+            { "term": {"repo_branch_hash": "$repoBranchHash"} },
+            { "term": {"license_expressions.keyword": "$someType"} }
+          ]
+        }
+      }
+    }
+  },
+  "sort": { "path.keyword": { "order": "asc" }}
+}
+`;
+
+
 const BadLicenseFiles = `
 {
   "from": $from,
@@ -55,14 +78,14 @@ const LicenseTypes = `
     }
   },
   "aggs": {
-    "license_types": {
+    "aggs_types": {
       "terms": { "field": "license_expressions.keyword" } 
     }
   }
 }
 `;
 
-const WithoutCopyrightFiles = `
+const NoneCopyrightFiles = `
 {
   "from": $from,
   "size": $size,
@@ -85,7 +108,28 @@ const WithoutCopyrightFiles = `
 }
 `;
 
-const Copyrights = `
+const SomeCopyrightFiles = `
+{
+  "from": $from,
+  "size": $size,
+  "query" : {
+    "constant_score" : { 
+      "filter" : {
+        "bool": {
+          "must": [
+            { "term": {"is_text": true} },
+            { "term": {"repo_branch_hash": "$repoBranchHash"} },
+            { "term": {"copyrights.value.keyword": "$someType"} }
+          ]
+        }
+      }
+    }
+  },
+  "sort": { "path.keyword": { "order": "asc" }}
+}
+`;
+
+const CopyrightTypes = `
 {
   "size": 0,
   "query" : {
@@ -101,7 +145,7 @@ const Copyrights = `
     }
   },
   "aggs": {
-    "copyrights": {
+    "aggs_types": {
       "terms": { "field": "copyrights.value.keyword" } 
     }
   }
@@ -109,12 +153,14 @@ const Copyrights = `
 `;
 
 
-export const Searchs = {
-  WithoutLicenseFiles,
+export const Searchs: any = {
+  NoneLicenseFiles,
   BadLicenseFiles,
   LicenseTypes,
-  WithoutCopyrightFiles,
-  Copyrights
+  NoneCopyrightFiles,
+  CopyrightTypes,
+  SomeCopyrightFiles,
+  SomeLicenseFiles
 };
 
 

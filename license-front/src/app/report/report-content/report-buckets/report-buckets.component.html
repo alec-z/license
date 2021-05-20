@@ -2,14 +2,12 @@
   [scheme]="colorScheme"
   [results]="single"
   [gradient]="gradient"
-  [xAxis]="showXAxis"
-  [yAxis]="showYAxis"
-  [legend]="showLegend"
-  [showXAxisLabel]="showXAxisLabel"
-  [showYAxisLabel]="showYAxisLabel"
-  [xAxisLabel]="xAxisLabel"
-  [yAxisLabel]="yAxisLabel"
+  [xAxis]="true"
+  [yAxis]="true"
+  [legend]="false"
+  [trimYAxisTicks]="false"
   (select)="onSelect($event)"
   >
 </ngx-charts-bar-horizontal>
 
+<app-report-file-list [repoBranchHash]="repoBranchHash" [listType]="fileListType"  [currentType]="currentType"></app-report-file-list>
