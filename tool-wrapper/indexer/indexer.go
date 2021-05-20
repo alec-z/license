@@ -10,6 +10,7 @@ import (
 	"github.com/elastic/go-elasticsearch/v7"
 	"github.com/elastic/go-elasticsearch/v7/esutil"
 	"log"
+	"os"
 	"time"
 )
 var es *elasticsearch.Client
@@ -17,7 +18,15 @@ var bi esutil.BulkIndexer
 func init() {
 	retryBackoff := backoff.NewExponentialBackOff()
 	var err error
+	esHost := os.Getenv("ES_HOST")
+	esPassword := os.Getenv("ES_PASSWORD")
 	es, err = elasticsearch.NewClient(elasticsearch.Config{
+		Addresses: []string{
+			esHost,
+		},
+
+		Username: "elastic",
+		Password: esPassword,
 		// Retry on 429 TooManyRequests statuses
 		//
 		RetryOnStatus: []int{502, 503, 504, 429},

@@ -30,3 +30,5 @@ spec:
                 secretKeyRef:
                   name: quickstart-es-elastic-user
                   key: elastic
+            - name: ES_HOST
+                value: 'https://quickstart-es-http:9200'
