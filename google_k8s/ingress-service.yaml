@@ -83,3 +83,5 @@ spec:
               serviceName: back-cluster-ip
               servicePort: 8080
             path: /oauth2
+            pathType: Prefix
+
