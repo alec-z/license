@@ -21,6 +21,15 @@ const GET_TOOL_RESULT = gql`
     }
 `;
 
+
+const UPDATE_USER_VISIT = gql`
+    mutation CreateUserVisit($id: Int!){
+        createUserVisit(toolResultID: $id) {
+            id
+        }
+    }
+`;
+
 @Component({
   selector: 'app-report',
   templateUrl: './report.component.html',
@@ -50,11 +59,17 @@ export class ReportComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.id = this.activeRoute.snapshot.params.id;
+    this.apollo.mutate<any>({
+      mutation: UPDATE_USER_VISIT,
+      variables: {id: this.id}
+    }).subscribe();
+
     this.refresh();
     if (this.timer !== -1) {
       clearInterval(this.timer);
     }
     this.timer = setInterval(() => {this.countDown.call(this); }, 1000);
+
   }
 
   countDown(): void {

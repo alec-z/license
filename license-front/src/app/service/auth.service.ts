@@ -14,29 +14,20 @@ export class AuthService {
     return this._isAuthenticated.asObservable();
   }
 
-  saveUserDate(id: number, token: string): void {
-    localStorage.setItem('userID', id + '');
-    localStorage.setItem('userToken', token);
-    this.setUserID(id);
-  }
-
-  setUserID(id: number): void {
-    this.userID = id;
+  setUser(user: any): void {
+    this.userID = user.id;
+    localStorage.setItem('userID', user.id + '');
+    localStorage.setItem('authLogin', user.authLogin);
+    localStorage.setItem('avatarUrl', user.avatarUrl);
     this._isAuthenticated.next(true);
   }
 
   logout(): void {
     localStorage.removeItem('userID');
-    localStorage.removeItem('userToken');
+    localStorage.removeItem('login');
+    localStorage.removeItem('avatarUrl');
+    localStorage.removeItem('jwt');
     this.userID = 0;
     this._isAuthenticated.next(false);
   }
-
-  autoLogin(): void {
-    const id = localStorage.getItem('userID');
-    if (id) {
-      this.setUserID(parseInt(id, 10));
-    }
-  }
-
 }

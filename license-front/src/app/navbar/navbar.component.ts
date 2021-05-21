@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import { map } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { AuthService } from '../service/auth.service';
 
 const LIST_LICENSES = gql`
     query listLicenseBytName($name: String!){
@@ -19,15 +20,26 @@ const LIST_LICENSES = gql`
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit {
-  options = ['123', '234'];
   licenses$: any;
   name = '';
   loading: boolean;
   error: any;
-  constructor(private apollo: Apollo) {
+  login = false;
+  avatarUrl: string | null;
+  constructor(private apollo: Apollo, private authService: AuthService) {
   }
 
   ngOnInit(): void {
+    this.authService.isAuthenticated.subscribe((data: boolean) => {
+        if (data) {
+          this.login = true;
+          this.avatarUrl = localStorage.getItem('avatarUrl');
+        } else {
+          this.login = false;
+          this.avatarUrl = localStorage.getItem('avatarUrl');
+        }
+      }
+    );
   }
 
   filterName(name: any): void {

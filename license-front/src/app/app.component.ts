@@ -1,13 +1,11 @@
 import { Component } from '@angular/core';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptor } from './service/auth.interceptor';
-import { CookieService } from 'ngx-cookie-service';
+import { AuthService } from './service/auth.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  providers: []
+  providers: [AuthService]
 })
 
 export class AppComponent {

@@ -1,0 +1,45 @@
+<div class="container">
+<mat-tab-group>
+  <mat-tab label="我浏览过的报告">
+
+
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+      <!--- Note that these columns can be defined in any order.
+            The actual rendered columns are set as a property on the row definition" -->
+
+      <!-- Position Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> Report Id </th>
+        <td mat-cell *matCellDef="let element">
+          <a (click)="goToLink(element.id)" href="#">{{element.id}}</a>
+        </td>
+      </ng-container>
+
+
+      <ng-container matColumnDef="repo">
+        <th mat-header-cell *matHeaderCellDef> Repository </th>
+        <td mat-cell *matCellDef="let element"> {{element.repo}} </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="branch">
+        <th mat-header-cell *matHeaderCellDef> Branch </th>
+        <td mat-cell *matCellDef="let element"> {{element.branch}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="repoBranchHash">
+        <th mat-header-cell *matHeaderCellDef> Commit Hash </th>
+        <td mat-cell *matCellDef="let element"> {{element.repoBranchHash}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+
+  </mat-tab>
+  <mat-tab label="我的看板"> 管理员权限有相应的看板，看板开发中 </mat-tab>
+  <mat-tab label="账户设置"> 账户设置开发中 </mat-tab>
+</mat-tab-group>
+</div>

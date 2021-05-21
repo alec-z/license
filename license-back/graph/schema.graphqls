@@ -110,6 +110,7 @@ type Mutation {
     createLicense(input: LicenseInput!): License!
     updateLicense(licenseID: Int!, input: LicenseInput!): License!
     deleteLicense(licenseID: Int!): Boolean!
+    createUserVisit(toolResultID: Int!): UserVisit!
 }
 
 type Query {
@@ -119,4 +120,21 @@ type Query {
   listLicensesByName(name: String!, limit: Int!): [License!]
   oauth2AuthURL(provider: String!): String!
   toolResult(toolResultID: Int!): ToolResult!
+  currentUser: User!
+  userVisits: [UserVisit!]!
+
+}
+
+type User {
+    id: Int!
+    authType: String!
+    authID: String!
+    authLogin: String!
+    avatarUrl: String!
+}
+
+type UserVisit {
+    id: Int!
+    user: User!
+    toolResult: ToolResult!
 }

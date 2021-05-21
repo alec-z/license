@@ -41,6 +41,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { YesNoPipe } from './yes-no.pipe';
 import { ReportBucketsComponent } from './report/report-content/report-buckets/report-buckets.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { UserComponent } from './user/user.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,8 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     ReportContentComponent,
     ReportFileListComponent,
     YesNoPipe,
-    ReportBucketsComponent
+    ReportBucketsComponent,
+    UserComponent
   ],
   imports: [
     BrowserModule,

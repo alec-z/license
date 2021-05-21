@@ -17,7 +17,13 @@
   <div fxHide fxShow.gt-sm="">
     <button mat-button (click)="goToLink('/api_test')" routerLinkActive="mat-accent">API</button>
     <button mat-button routerLink="/authors" routerLinkActive="mat-accent">作者</button>
-    <button mat-button routerLink="/login" routerLinkActive="mat-accent">登录</button>
+    <button mat-button routerLink="/login" routerLinkActive="mat-accent" *ngIf="!login">
+      登录
+    </button>
+
+    <button mat-button routerLink="/user" routerLinkActive="mat-accent" *ngIf="login">
+      <img [src]="avatarUrl" class="avatar-user" />
+    </button>
   </div>
   <button mat-button [mat-menu-trigger-for]="menu" fxHide.gt-sm>
     <mat-icon>menu</mat-icon>
@@ -33,7 +39,13 @@
   <button  mat-menu-item routerLink="/author">
     作者
   </button>
-  <button mat-button routerLink="/login" routerLinkActive="mat-accent">登录</button>
+  <button mat-button routerLink="/login" routerLinkActive="mat-accent" *ngIf="!login">
+    登录
+  </button>
+
+  <button mat-button routerLink="/login" routerLinkActive="mat-accent" *ngIf="login">
+    <img [src]="avatarUrl" class="avatar-user" />
+  </button>
 </mat-menu>
 
 <mat-autocomplete #auto="matAutocomplete">

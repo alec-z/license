@@ -7,12 +7,14 @@ import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AuthFunctionComponent } from './auth-function/auth-function.component';
 import { ReportComponent } from './report/report.component';
+import { UserComponent } from './user/user.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'license/:id', component: LicenseShowComponent},
   {path: 'authors', component: AuthorComponent},
   {path: 'login', component: LoginComponent},
+  {path: 'user', component: UserComponent},
   {path: 'profile', component: ProfileComponent},
   {path: 'auth-redirect', component: AuthFunctionComponent},
   {path: 'report/:id', component: ReportComponent}

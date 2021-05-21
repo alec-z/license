@@ -155,6 +155,18 @@ type User struct {
 	AuthPrimaryEmail string `json:"authEmail"`
 	AuthRawJson string
 	AvatarUrl string `json:"avatarUrl"`
+	UserVisits []*UserVisit
+}
+
+type UserVisit struct {
+	ID        int `gorm:"primary_key"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time `sql:"index"`
+	ToolResult *ToolResult  `json:"toolResult"`
+	ToolResultID int
+	User *User  `json:"user"`
+	UserID int
 }
 
 

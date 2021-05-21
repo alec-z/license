@@ -6,9 +6,9 @@ package graph
 import (
 	"context"
 	"fmt"
-	"github.com/alec-z/license-back/graph/auth"
 	"os"
 
+	"github.com/alec-z/license-back/graph/auth"
 	"github.com/alec-z/license-back/graph/generated"
 	"github.com/alec-z/license-back/graph/model"
 	"golang.org/x/oauth2"
@@ -64,6 +64,18 @@ func (r *mutationResolver) DeleteLicense(ctx context.Context, licenseID int) (bo
 	license := model.License{ID: licenseID}
 	r.DB.Delete(&license)
 	return true, nil
+}
+
+func (r *mutationResolver) CreateUserVisit(ctx context.Context, toolResultID int) (*model.UserVisit, error) {
+	var userVisit model.UserVisit
+	user := auth.ForContext(ctx)
+	if user == nil {
+		return &userVisit, fmt.Errorf("Access denied")
+	}
+	userVisit.UserID = user.ID
+	userVisit.ToolResultID = toolResultID
+	r.DB.FirstOrCreate(&userVisit, model.UserVisit{UserID: user.ID, ToolResultID: toolResultID})
+	return &userVisit, nil
 }
 
 func (r *queryResolver) Licenses(ctx context.Context) ([]*model.License, error) {
@@ -126,13 +138,30 @@ func (r *queryResolver) Oauth2AuthURL(ctx context.Context, provider string) (str
 func (r *queryResolver) ToolResult(ctx context.Context, toolResultID int) (*model.ToolResult, error) {
 	var toolResult model.ToolResult
 
-	if user := auth.ForContext(ctx) ; user == nil {
+	if user := auth.ForContext(ctx); user == nil {
 		return &toolResult, fmt.Errorf("Access denied")
 	}
 
-
 	r.DB.Preload("Tool").First(&toolResult, toolResultID)
 	return &toolResult, nil
+}
+
+func (r *queryResolver) CurrentUser(ctx context.Context) (*model.User, error) {
+	if user := auth.ForContext(ctx); user == nil {
+		return &model.User{}, nil
+	} else {
+		return user, nil
+	}
+}
+
+func (r *queryResolver) UserVisits(ctx context.Context) ([]*model.UserVisit, error) {
+	var visits []*model.UserVisit
+	if user := auth.ForContext(ctx); user != nil {
+		r.DB.Model(user).Association("UserVisits")
+		r.DB.Where("user_id = ?", user.ID).Preload("ToolResult").Find(&visits)
+		return visits, nil
+	}
+	return visits, fmt.Errorf("Access denied")
 }
 
 // Mutation returns generated.MutationResolver implementation.
