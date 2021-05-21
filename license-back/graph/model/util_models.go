@@ -35,16 +35,18 @@ func init() {
 
 	const GithubClientID = "27467ab957f157bfc95b"
 	const GiteeClientID = "faf8951baad9617a1fa7c69dc02894f5a7d6e9ac0e66d3f9624abd6bd168f4a4"
-	const GiteeAuthURL = "https://gitee.com/oauth/authorize?redirect_uri=https://compliance.openeuler.org/oauth2/redirect"
-	const GiteeTokenURL = "https://gitee.com/oauth/token?redirect_uri=https://compliance.openeuler.org/oauth2/redirect"
+	const GiteeAuthURL = "https://gitee.com/oauth/authorize"
+	const GiteeTokenURL = "https://gitee.com/oauth/token"
 
 	OAuth2ConfigObj.GiteeConfig = &oauth2.Config{
 		ClientID:     GiteeClientID,
 		ClientSecret: giteeSecret,
-		Scopes:       []string{},
+		Scopes:       []string{"user_info"},
+		RedirectURL: "http://localhost:4200/gitee_redirect",
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  GiteeAuthURL,
 			TokenURL: GiteeTokenURL,
+			AuthStyle: 1,
 		},
 	}
 

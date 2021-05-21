@@ -12,9 +12,11 @@ import (
 	"github.com/go-chi/chi/v5"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
+	"golang.org/x/oauth2"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 )
@@ -45,16 +47,28 @@ func main() {
 
 func handleOAuth2Gitee(w http.ResponseWriter, r *http.Request) {
 	code := r.URL.Query().Get("code")
-	token, err := model.OAuth2ConfigObj.GiteeConfig.Exchange(
-		model.OAuth2ConfigObj.Ctx,
-		code,
-	)
-	if err != nil {
-		log.Println("An error occurred while trying to exchange the authorisation code with the gitee API.")
-		log.Fatalln(err)
+
+
+
+	respToken, errToken := http.PostForm(model.OAuth2ConfigObj.GiteeConfig.Endpoint.TokenURL +
+		"?grant_type=authorization_code&code=" + code + "&client_id=" +
+		model.OAuth2ConfigObj.GiteeConfig.ClientID +
+		"&redirect_uri=" + model.OAuth2ConfigObj.GiteeConfig.RedirectURL,
+		url.Values{
+			"client_secret": {model.OAuth2ConfigObj.GiteeConfig.ClientSecret},
+		})
+	if errToken != nil {
+		log.Println(errToken)
+	}
+	tokenStr, _ := ioutil.ReadAll(respToken.Body)
+	var token oauth2.Token
+	if err := json.Unmarshal([]byte(tokenStr), &token); err != nil {
+		log.Println(err)
 	}
 
-	client :=  model.OAuth2ConfigObj.GiteeConfig.Client(model.OAuth2ConfigObj.Ctx, token)
+
+
+	client :=  model.OAuth2ConfigObj.GiteeConfig.Client(model.OAuth2ConfigObj.Ctx, &token)
 	resp, err := client.Get("https://gitee.com/api/v5/user")
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -69,7 +83,7 @@ func handleOAuth2Gitee(w http.ResponseWriter, r *http.Request) {
 	db.FirstOrCreate(&user, model.User{AuthType: "gitee", AuthID: authID})
 	user.AuthRawJson = string(body)
 	user.AuthLogin = res["login"].(string)
-	user.AuthPrimaryEmail = res["email"].(string)
+	//user.AuthPrimaryEmail = res["email"]
 	user.AvatarUrl = res["avatar_url"].(string)
 	db.Save(&user)
 	jwt, err := auth.CreateToken(user.ID)
@@ -85,7 +99,7 @@ func handleOAuth2Github(w http.ResponseWriter, r *http.Request) {
 		code,
 	)
 	if err != nil {
-		log.Fatal("An error occurred while trying to exchange the authorisation code with the Github API." + err.Error())
+		log.Println("An error occurred while trying to exchange the authorisation code with the Github API." + err.Error())
 		return
 	}
 	client :=  model.OAuth2ConfigObj.GithubConfig.Client(model.OAuth2ConfigObj.Ctx, token)
@@ -106,7 +120,7 @@ func handleOAuth2Github(w http.ResponseWriter, r *http.Request) {
 	db.FirstOrCreate(&user, model.User{AuthType: "github", AuthID: authID})
 	user.AuthRawJson = string(body)
 	user.AuthLogin = res["login"].(string)
-	user.AuthPrimaryEmail = res["email"].(string)
+	//user.AuthPrimaryEmail = res["email"].(string)
 	user.AvatarUrl = res["avatar_url"].(string)
 	db.Save(&user)
 	jwt, err := auth.CreateToken(user.ID)

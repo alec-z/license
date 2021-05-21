@@ -154,7 +154,7 @@ type User struct {
 	AuthType string `json:"authType"`
 	AuthID   string  `json:"authID"`
 	AuthLogin string `json:"authLogin"`
-	AuthPrimaryEmail string `json:"authEmail"`
+	AuthPrimaryEmail *string `json:"authEmail"`
 	AuthRawJson string
 	AvatarUrl string `json:"avatarUrl"`
 	UserVisits []*UserVisit

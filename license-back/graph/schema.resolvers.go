@@ -6,13 +6,10 @@ package graph
 import (
 	"context"
 	"fmt"
-	"os"
-
 	"github.com/alec-z/license-back/graph/auth"
 	"github.com/alec-z/license-back/graph/generated"
 	"github.com/alec-z/license-back/graph/model"
 	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/github"
 )
 
 func (r *mutationResolver) CreateDict(ctx context.Context, input model.DictInput) (*model.Dict, error) {
@@ -103,35 +100,14 @@ func (r *queryResolver) ListLicensesByName(ctx context.Context, name string, lim
 }
 
 func (r *queryResolver) Oauth2AuthURL(ctx context.Context, provider string) (string, error) {
-	const GithubClientID = "27467ab957f157bfc95b"
-	const GiteeClientID = "faf8951baad9617a1fa7c69dc02894f5a7d6e9ac0e66d3f9624abd6bd168f4a4"
-	const GiteeAuthURL = "https://gitee.com/oauth/authorize?redirect_uri=https://compliance.openeuler.org/gitee_redirect"
-	const GiteeTokenURL = "https://gitee.com/oauth/token?redirect_uri=https://compliance.openeuler.org/gitee_redirect"
 
+	var url string
 	if provider == "github" {
-		githubSecret := os.Getenv("GITHUB_SECRET")
-		r.oauth2Config = &oauth2.Config{
-			ClientID:     GithubClientID,
-			ClientSecret: githubSecret,
-			Scopes:       []string{},
-			Endpoint: oauth2.Endpoint{
-				AuthURL:  github.Endpoint.AuthURL,
-				TokenURL: github.Endpoint.TokenURL,
-			},
-		}
+		url = model.OAuth2ConfigObj.GithubConfig.AuthCodeURL("state", oauth2.AccessTypeOnline)
 	} else {
-		giteeSecret := os.Getenv("GITEE_SECRET")
-		r.oauth2Config = &oauth2.Config{
-			ClientID:     GiteeClientID,
-			ClientSecret: giteeSecret,
-			Scopes:       []string{},
-			Endpoint: oauth2.Endpoint{
-				AuthURL:  GiteeAuthURL,
-				TokenURL: GiteeTokenURL,
-			},
-		}
+
+		url =  model.OAuth2ConfigObj.GiteeConfig.AuthCodeURL("state", oauth2.AccessTypeOnline)
 	}
-	url := r.oauth2Config.AuthCodeURL("state", oauth2.AccessTypeOnline)
 	return url, nil
 }
 
