@@ -23,65 +23,78 @@ spec:
       http:
         paths:
           - backend:
-              serviceName: interests-front-cluster-ip
-              servicePort: 80
+              service:
+                name: interests-front-cluster-ip
+                port: 80
             path: /
           - backend:
-              serviceName: interests-back-cluster-ip
-              servicePort: 3000
+              service:
+                name: interests-back-cluster-ip
+                port: 3000
             path: /api
     - host: youdaodai.com
       http:
         paths:
           - backend:
-              serviceName: interests-front-cluster-ip
-              servicePort: 80
+              service:
+                name: interests-front-cluster-ip
+                port: 80
             path: /
           - backend:
-              serviceName: interests-back-cluster-ip
-              servicePort: 3000
+              service:
+                name: interests-back-cluster-ip
+                port: 3000
             path: /api
     - host: license.youdaodai.com
       http:
         paths:
           - backend:
-              serviceName: front-cluster-ip
-              servicePort: 80
+              service:
+                name: front-cluster-ip
+                port: 80
             path: /
           - backend:
-              serviceName: back-cluster-ip
-              servicePort: 8080
+              service:
+                name: back-cluster-ip
+                port: 8080
             path: /graphql
           - backend:
-              serviceName: back-cluster-ip
-              servicePort: 8080
+              service:
+                name: back-cluster-ip
+                port: 8080
             path: /api_test
           - backend:
-              serviceName: back-cluster-ip
-              servicePort: 8080
+              service:
+                name: back-cluster-ip
+                port: 8080
             path: /oauth2
     - host: compliance.openeuler.org
       http:
         paths:
           - backend:
-              serviceName: front-cluster-ip
-              servicePort: 80
+              service:
+                name: front-cluster-ip
+                port: 80
             path: /
           - backend:
-              serviceName: back-cluster-ip
-              servicePort: 8080
+              service:
+                name: back-cluster-ip
+                port: 8080
             path: /graphql
           - backend:
-              serviceName: back-cluster-ip
-              servicePort: 8080
+              service:
+                name: back-cluster-ip
+                port: 8080
             path: /api_test
           - backend:
-              serviceName: wrapper-cluster-ip
-              servicePort: 8081
+              service:
+                name: wrapper-cluster-ip
+                port: 8081
             path: /ci
           - backend:
-              serviceName: back-cluster-ip
-              servicePort: 8080
+              service:
+                name: back-cluster-ip
+                port: 8080
             path: /oauth2
             pathType: Prefix
 
