@@ -121,9 +121,6 @@ func runTool(toolResult *model.ToolResult, repo string, branch string) {
 		toolResult.FinishAt = &finish
 		db.Save(toolResult)
 		indexer.BulkIndexer(toolResult)
-	} else {
-		db.Model(toolResult).Association("Tool").Find(&toolResult.Tool)
-		indexer.BulkIndexer(toolResult)
 	}
 
 }

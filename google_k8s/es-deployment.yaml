@@ -12,13 +12,21 @@ spec:
       labels:
         component: elasticsearch
     spec:
+      volumes:
+        - name: db-es-pv
+          persistentVolumeClaim:
+            claimName: db-mysql-pvc
       containers:
         - name: elasticsearch
           image: docker.elastic.co/elasticsearch/elasticsearch:7.12.1
           ports:
-            - containerPort: 8080
+            - containerPort: 9200
           env:
             - name: discovery.type
               value: single-node
             - name: ES_JAVA_OPTS
               value: '-Xms512m -Xmx512m'
+          volumeMounts:
+            - name: db-es-pv
+              mountPath: /usr/share/elasticsearch/data
+              subPath: elasticsearch
