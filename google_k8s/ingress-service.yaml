@@ -69,14 +69,14 @@ spec:
                 port:
                   number: 8080
             path: /graphql
-            pathType: Prefix
+            pathType: Exact
           - backend:
               service:
                 name: back-cluster-ip
                 port:
                   number: 8080
             path: /api_test
-            pathType: Prefix
+            pathType: Exact
           - backend:
               service:
                 name: back-cluster-ip
@@ -100,21 +100,21 @@ spec:
                 port:
                   number: 80
             path: /graphql
-            pathType: Prefix
+            pathType: Exact
           - backend:
               service:
                 name: back-cluster-ip
                 port:
                   number: 8080
             path: /api_test
-            pathType: Prefix
+            pathType: Exact
           - backend:
               service:
                 name: wrapper-cluster-ip
                 port:
                   number: 8081
             path: /ci
-            pathType: Prefix
+            pathType: Exact
           - backend:
               service:
                 name: back-cluster-ip
