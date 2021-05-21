@@ -94,5 +94,5 @@ export class ReportFileListComponent implements OnInit, AfterViewInit, OnChanges
   }
 }
 
-const SEARCH_BASE = '/analysis/';
+const SEARCH_BASE = '/';
 

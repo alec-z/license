@@ -90,4 +90,4 @@ spec:
           - backend:
               serviceName: es-cluster-ip
               servicePort: 9200
-              path: /scan_file_results
+            path: /scan_file_results
