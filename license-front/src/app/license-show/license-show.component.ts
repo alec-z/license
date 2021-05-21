@@ -14,6 +14,7 @@ const GET_LICENSE = gql`
             licenseMainTags {
                 mainTag {
                     name
+                    description
                 }
             }
             mustFeatureTags {
