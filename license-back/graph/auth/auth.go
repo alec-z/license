@@ -73,7 +73,7 @@ func CreateToken(userID int) (string, error) {
 	//Creating Access Token
 	atClaims := jwt.StandardClaims{}
 	atClaims.Subject =strconv.Itoa(userID)
-	atClaims.ExpiresAt = time.Now().Add(time.Minute * 15).Unix()
+	atClaims.ExpiresAt = time.Now().Add(time.Minute * 60).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(model.OAuth2ConfigObj.JWTSecret))
 	if err != nil {

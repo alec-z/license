@@ -1,12 +1,14 @@
 <ngx-charts-bar-horizontal
   [scheme]="colorScheme"
   [results]="single"
-  [gradient]="gradient"
-  [xAxis]="true"
-  [yAxis]="true"
+    [gradient]="gradient"
+    [xAxis]="true"
+    [yAxis]="true"
   [legend]="false"
   [trimYAxisTicks]="false"
   (select)="onSelect($event)"
+  
+  [showDataLabel]="true"
   >
 </ngx-charts-bar-horizontal>
 

@@ -60,7 +60,7 @@ func BulkIndexer(result *model.ToolResult) {
 	files := r["files"].([]interface{})
 
 
-	
+
 	for _, file := range files {
 		// Prepare the data payload: encode article to JSON
 		//
