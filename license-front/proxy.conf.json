@@ -4,7 +4,12 @@
     "secure": false,
     "ws": false
   },
-  "/oauth2": {
+  "/github_redirect": {
+    "target": "http://127.0.0.1:8080",
+    "secure": false,
+    "ws": false
+  },
+  "/gitee_redirect": {
     "target": "http://127.0.0.1:8080",
     "secure": false,
     "ws": false

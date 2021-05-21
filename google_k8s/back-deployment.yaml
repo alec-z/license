@@ -25,3 +25,18 @@ spec:
                 secretKeyRef:
                   name: mysql-password
                   key: MYSQL_PASSWORD
+            - name: GITHUB_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: oauth-secret
+                  key: GITHUB_SECRET
+            - name: GITEE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: oauth-secret
+                  key: GITEE_SECRET
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_SECRET

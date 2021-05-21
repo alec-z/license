@@ -17,3 +17,10 @@ spec:
               requests:
                 storage: 20Gi
             storageClassName: standard
+      podTemplate:
+        spec:
+          initContainers:
+            - name: sysctl
+              securityContext:
+                privileged: true
+              command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
