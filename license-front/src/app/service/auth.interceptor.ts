@@ -28,7 +28,10 @@ export class AuthInterceptor implements HttpInterceptor {
         if ('errors' in resp.body) {
           const errors = resp.body.errors;
           if (errors.some((e: any) => e.message === 'Access denied')) {
-            localStorage.setItem('access_denied_url', this.router.url);
+            const accessDeniedUrl = localStorage.getItem('access_denied_url');
+            if (accessDeniedUrl === undefined || accessDeniedUrl === null || accessDeniedUrl === '') {
+              localStorage.setItem('access_denied_url', this.router.url);
+            }
             this.router.navigate(['login']);
           }
         } else {
