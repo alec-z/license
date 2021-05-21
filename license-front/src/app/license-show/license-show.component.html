@@ -4,7 +4,18 @@
       {{ license.name }}
     </div>
     <div class="sub-title">
-      {{ license.licenseType?.name }}  <span class="free" *ngIf="license.free">free</span>
+      <button mat-button
+              [matTooltip]="lmt.mainTag.description"
+              matTooltipClass="tooltip-warning"
+              aria-label="Button that shows a red tooltip"
+              *ngFor="let lmt of license.licenseMainTags"
+              class="license-main-tag"
+              >
+        #{{lmt.mainTag.name}}
+      </button>
+
+
+
     </div>
   </div>
 </div>

@@ -9,11 +9,12 @@ const GET_LICENSE = gql`
             id
             name
             spdxName
-            free
             fullText
             summary
-            licenseType {
-                name
+            licenseMainTags {
+                mainTag {
+                    name
+                }
             }
             mustFeatureTags {
                 id

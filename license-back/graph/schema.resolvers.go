@@ -78,25 +78,25 @@ func (r *mutationResolver) CreateUserVisit(ctx context.Context, toolResultID int
 
 func (r *queryResolver) Licenses(ctx context.Context) ([]*model.License, error) {
 	var licenses []*model.License
-	r.DB.Preload("LicenseType").Preload("LicenseFeatureTags").Find(&licenses)
+	r.DB.Preload("LicenseMainTags.MainTag").Preload("LicenseFeatureTags").Find(&licenses)
 	return licenses, nil
 }
 
 func (r *queryResolver) License(ctx context.Context, licenseID int) (*model.License, error) {
 	var license model.License
-	r.DB.Preload("LicenseType").Preload("LicenseFeatureTags").First(&license, licenseID)
+	r.DB.Preload("LicenseMainTags.MainTag").Preload("LicenseFeatureTags").First(&license, licenseID)
 	return &license, nil
 }
 
 func (r *queryResolver) ListLicensesByType(ctx context.Context, indexType string, limit int) ([]*model.License, error) {
 	var licenses []*model.License
-	r.DB.Where("index_type = ?", indexType).Preload("LicenseType").Preload("LicenseFeatureTags").Limit(limit).Find(&licenses)
+	r.DB.Where("index_type = ?", indexType).Preload("LicenseFeatureTags").Limit(limit).Find(&licenses)
 	return licenses, nil
 }
 
 func (r *queryResolver) ListLicensesByName(ctx context.Context, name string, limit int) ([]*model.License, error) {
 	var licenses []*model.License
-	r.DB.Where("MATCH (spdx_name, name) AGAINST (?)", name).Preload("LicenseType").Preload("LicenseFeatureTags").Limit(limit).Find(&licenses)
+	r.DB.Where("MATCH (spdx_name, name) AGAINST (?)", name).Preload("LicenseFeatureTags").Limit(limit).Find(&licenses)
 	return licenses, nil
 }
 

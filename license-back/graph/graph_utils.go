@@ -30,12 +30,8 @@ func createLicenseFromInput(db *gorm.DB, input *model.LicenseInput) *model.Licen
 		Name:     input.Name,
 		SpdxName: input.SpdxName,
 		Summary:  input.Summary,
-		Free:     input.Free,
 		FullText: input.FullText,
 	}
-	var licenseType model.Dict
-	db.Where("type = ? and name = ?", "LicenseType", input.LicenseType).First(&licenseType)
-	license.LicenseType = &licenseType
 	licenseFeatureTags := make([]*model.LicenseFeatureTag, 0)
 	licenseFeatureTags = append(licenseFeatureTags, createLicenseFeatureTags(db, input.CanFeatureTags, "can")...)
 	licenseFeatureTags = append(licenseFeatureTags, createLicenseFeatureTags(db, input.CannotFeatureTags, "cannot")...)

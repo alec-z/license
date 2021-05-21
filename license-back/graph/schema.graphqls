@@ -7,13 +7,18 @@ type License {
   name: String!
   spdxName: String!
   summary: String!
-  licenseType: Dict!
-  free: Boolean!
+  licenseMainTags: [LicenseMainTag!]!
+
   fullText: String!
   canFeatureTags: [FeatureTag!]!
   cannotFeatureTags: [FeatureTag!]!
   mustFeatureTags: [FeatureTag!]!
   compareWith(otherLicenseID: Int!): CompareResult!
+}
+
+type LicenseMainTag {
+    id: Int!
+    mainTag: Dict!
 }
 
 type CompareResult {
@@ -77,8 +82,6 @@ input LicenseInput {
     name: String!
     spdxName: String!
     summary: String!
-    licenseType: String!
-    free: Boolean!
     fullText: String!
     canFeatureTags: [String!]!
     cannotFeatureTags: [String!]!

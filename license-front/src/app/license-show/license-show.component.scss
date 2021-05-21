@@ -1,9 +1,9 @@
 .header {
-  height:200px;
+  height:160px;
   background-color:#3f51b5;
   color: #FFFFFF;
   .title {
-    padding-top: 80px;
+    padding-top: 50px;
     font-size: 2em;
     line-height: 1.5em;
   }
@@ -18,7 +18,7 @@
 
 .summary, .full-text {
   &.small {
-    width: 50%;
+    width: 60%;
   }
   &.wider {
     width: 80%;
@@ -34,5 +34,13 @@
     line-height: 1.4em;
     padding-bottom: 1em;
   }
+}
+
+.license-main-tag {
+  margin: 0 10px;
+}
+
+.tooltip-warning {
+  background: #ff4081;
 }
 

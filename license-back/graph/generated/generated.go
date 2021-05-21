@@ -83,14 +83,18 @@ type ComplexityRoot struct {
 		CanFeatureTags    func(childComplexity int) int
 		CannotFeatureTags func(childComplexity int) int
 		CompareWith       func(childComplexity int, otherLicenseID int) int
-		Free              func(childComplexity int) int
 		FullText          func(childComplexity int) int
 		ID                func(childComplexity int) int
-		LicenseType       func(childComplexity int) int
+		LicenseMainTags   func(childComplexity int) int
 		MustFeatureTags   func(childComplexity int) int
 		Name              func(childComplexity int) int
 		SpdxName          func(childComplexity int) int
 		Summary           func(childComplexity int) int
+	}
+
+	LicenseMainTag struct {
+		ID      func(childComplexity int) int
+		MainTag func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -354,13 +358,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.License.CompareWith(childComplexity, args["otherLicenseID"].(int)), true
 
-	case "License.free":
-		if e.complexity.License.Free == nil {
-			break
-		}
-
-		return e.complexity.License.Free(childComplexity), true
-
 	case "License.fullText":
 		if e.complexity.License.FullText == nil {
 			break
@@ -375,12 +372,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.License.ID(childComplexity), true
 
-	case "License.licenseType":
-		if e.complexity.License.LicenseType == nil {
+	case "License.licenseMainTags":
+		if e.complexity.License.LicenseMainTags == nil {
 			break
 		}
 
-		return e.complexity.License.LicenseType(childComplexity), true
+		return e.complexity.License.LicenseMainTags(childComplexity), true
 
 	case "License.mustFeatureTags":
 		if e.complexity.License.MustFeatureTags == nil {
@@ -409,6 +406,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.License.Summary(childComplexity), true
+
+	case "LicenseMainTag.id":
+		if e.complexity.LicenseMainTag.ID == nil {
+			break
+		}
+
+		return e.complexity.LicenseMainTag.ID(childComplexity), true
+
+	case "LicenseMainTag.mainTag":
+		if e.complexity.LicenseMainTag.MainTag == nil {
+			break
+		}
+
+		return e.complexity.LicenseMainTag.MainTag(childComplexity), true
 
 	case "Mutation.createDict":
 		if e.complexity.Mutation.CreateDict == nil {
@@ -826,13 +837,18 @@ type License {
   name: String!
   spdxName: String!
   summary: String!
-  licenseType: Dict!
-  free: Boolean!
+  licenseMainTags: [LicenseMainTag!]!
+
   fullText: String!
   canFeatureTags: [FeatureTag!]!
   cannotFeatureTags: [FeatureTag!]!
   mustFeatureTags: [FeatureTag!]!
   compareWith(otherLicenseID: Int!): CompareResult!
+}
+
+type LicenseMainTag {
+    id: Int!
+    mainTag: Dict!
 }
 
 type CompareResult {
@@ -896,8 +912,6 @@ input LicenseInput {
     name: String!
     spdxName: String!
     summary: String!
-    licenseType: String!
-    free: Boolean!
     fullText: String!
     canFeatureTags: [String!]!
     cannotFeatureTags: [String!]!
@@ -2115,7 +2129,7 @@ func (ec *executionContext) _License_summary(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _License_licenseType(ctx context.Context, field graphql.CollectedField, obj *model.License) (ret graphql.Marshaler) {
+func (ec *executionContext) _License_licenseMainTags(ctx context.Context, field graphql.CollectedField, obj *model.License) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -2133,7 +2147,7 @@ func (ec *executionContext) _License_licenseType(ctx context.Context, field grap
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.LicenseType, nil
+		return obj.LicenseMainTags, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2145,44 +2159,9 @@ func (ec *executionContext) _License_licenseType(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Dict)
+	res := resTmp.([]*model.LicenseMainTag)
 	fc.Result = res
-	return ec.marshalNDict2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐDict(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _License_free(ctx context.Context, field graphql.CollectedField, obj *model.License) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "License",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Free, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalNLicenseMainTag2ᚕᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐLicenseMainTagᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _License_fullText(ctx context.Context, field graphql.CollectedField, obj *model.License) (ret graphql.Marshaler) {
@@ -2365,6 +2344,76 @@ func (ec *executionContext) _License_compareWith(ctx context.Context, field grap
 	res := resTmp.(*model.CompareResult)
 	fc.Result = res
 	return ec.marshalNCompareResult2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐCompareResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _LicenseMainTag_id(ctx context.Context, field graphql.CollectedField, obj *model.LicenseMainTag) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "LicenseMainTag",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _LicenseMainTag_mainTag(ctx context.Context, field graphql.CollectedField, obj *model.LicenseMainTag) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "LicenseMainTag",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MainTag, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Dict)
+	fc.Result = res
+	return ec.marshalNDict2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐDict(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createDict(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -5092,22 +5141,6 @@ func (ec *executionContext) unmarshalInputLicenseInput(ctx context.Context, obj 
 			if err != nil {
 				return it, err
 			}
-		case "licenseType":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("licenseType"))
-			it.LicenseType, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "free":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("free"))
-			it.Free, err = ec.unmarshalNBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "fullText":
 			var err error
 
@@ -5386,13 +5419,8 @@ func (ec *executionContext) _License(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "licenseType":
-			out.Values[i] = ec._License_licenseType(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "free":
-			out.Values[i] = ec._License_free(ctx, field, obj)
+		case "licenseMainTags":
+			out.Values[i] = ec._License_licenseMainTags(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -5418,6 +5446,38 @@ func (ec *executionContext) _License(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "compareWith":
 			out.Values[i] = ec._License_compareWith(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var licenseMainTagImplementors = []string{"LicenseMainTag"}
+
+func (ec *executionContext) _LicenseMainTag(ctx context.Context, sel ast.SelectionSet, obj *model.LicenseMainTag) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, licenseMainTagImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LicenseMainTag")
+		case "id":
+			out.Values[i] = ec._LicenseMainTag_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "mainTag":
+			out.Values[i] = ec._LicenseMainTag_mainTag(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -6276,6 +6336,53 @@ func (ec *executionContext) marshalNLicense2ᚖgithubᚗcomᚋalecᚑzᚋlicense
 func (ec *executionContext) unmarshalNLicenseInput2githubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐLicenseInput(ctx context.Context, v interface{}) (model.LicenseInput, error) {
 	res, err := ec.unmarshalInputLicenseInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNLicenseMainTag2ᚕᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐLicenseMainTagᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.LicenseMainTag) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNLicenseMainTag2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐLicenseMainTag(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNLicenseMainTag2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐLicenseMainTag(ctx context.Context, sel ast.SelectionSet, v *model.LicenseMainTag) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._LicenseMainTag(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {

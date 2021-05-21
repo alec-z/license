@@ -42,6 +42,7 @@ import { YesNoPipe } from './yes-no.pipe';
 import { ReportBucketsComponent } from './report/report-content/report-buckets/report-buckets.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { UserComponent } from './user/user.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -84,6 +85,7 @@ import { UserComponent } from './user/user.component';
     MatAutocompleteModule,
     MatTableModule,
     MatPaginatorModule,
+    MatTooltipModule,
     FormsModule,
     MatProgressSpinnerModule,
     FontAwesomeModule,

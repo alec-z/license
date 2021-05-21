@@ -7,21 +7,16 @@ const LIST_LICENSES = gql`
             id,
             name,
             spdxName,
-            free,
-            licenseType {
-                id,
-                name
-            },
             mustFeatureTags {
                 id,
                 name
             }
             canFeatureTags {
-                id
+                id,
                 name
             }
             cannotFeatureTags {
-                id
+                id,
                 name
             }
         }

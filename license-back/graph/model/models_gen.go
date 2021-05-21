@@ -39,8 +39,6 @@ type LicenseInput struct {
 	Name              string   `json:"name"`
 	SpdxName          string   `json:"spdxName"`
 	Summary           string   `json:"summary"`
-	LicenseType       string   `json:"licenseType"`
-	Free              bool     `json:"free"`
 	FullText          string   `json:"fullText"`
 	CanFeatureTags    []string `json:"canFeatureTags"`
 	CannotFeatureTags []string `json:"cannotFeatureTags"`

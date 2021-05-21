@@ -37,6 +37,7 @@ type 	Tool struct {
 	Description string
 	ProcessPipe string
 	ProcessFileFeature string
+	StepNumber int
 }
 
 type CIRequest struct {

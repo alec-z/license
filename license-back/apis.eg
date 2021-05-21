@@ -10,7 +10,6 @@ mutation createDict($input: DictInput!) {
 
 {
   "input": {
-    "type": "LicenseType",
     "order": 1,
     "name": "Copyleft Strong",
     "description": ""

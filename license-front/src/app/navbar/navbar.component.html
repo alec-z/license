@@ -62,6 +62,6 @@
 
 <mat-autocomplete #auto="matAutocomplete">
   <mat-option *ngFor="let license of licenses$ | async" [value]="license.name" [routerLink]="['/license', license.id]">
-    {{license.name}} ({{license.spdxName}})
+    {{license.name}} <span *ngIf="license.spdxName">({{license.spdxName}})</span>
   </mat-option>
 </mat-autocomplete>

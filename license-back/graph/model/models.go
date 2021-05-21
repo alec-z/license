@@ -47,6 +47,17 @@ type Dict struct {
 	Description *string `json:"description"`
 }
 
+type LicenseMainTag struct {
+	ID  int `gorm:"primary_key"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time `sql:"index"`
+	License *License
+	LicenseID int
+	MainTag *Dict `json:"mainTag"`
+	MainTagID int
+}
+
 type License struct {
 	ID        int `gorm:"primary_key"`
 	CreatedAt time.Time
@@ -55,10 +66,8 @@ type License struct {
 	Name        string `json:"name"`
 	SpdxName    string `json:"spdxName"`
 	Summary     string `json:"summary"`
-	LicenseType *Dict  `json:"licenseType"`
-	LicenseTypeID int
-	Free        bool   `json:"free"`
 	FullText    string `json:"fullText"`
+	LicenseMainTags []*LicenseMainTag
 	LicenseFeatureTags []*LicenseFeatureTag
 }
 
@@ -106,7 +115,7 @@ func differenceFeatureTag(tags1, tags2 []*FeatureTag) []*FeatureTag {
 
 func (l *License) CompareWith(otherLicenseID int) *CompareResult {
 	var otherLicense License
-	DB.Preload("LicenseType").Preload("LicenseFeatureTags").First(&otherLicense, otherLicenseID)
+	DB.Preload("LicenseFeatureTags").First(&otherLicense, otherLicenseID)
 	var compareResult CompareResult
 	compareResult.CanFeatureTags = new(FeatureTagDifference)
 	compareResult.CannotFeatureTags = new(FeatureTagDifference)

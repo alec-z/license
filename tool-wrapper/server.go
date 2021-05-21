@@ -25,7 +25,6 @@ import (
 const DefaultPort = "8081"
 const BaseDir = "/tmp"
 const ReportBaseUrl ="https://compliance.openeuler.org/report/"
-const StepNum = 5
 
 var db *gorm.DB
 
@@ -204,7 +203,7 @@ func execTool(dir string, toolResult *model.ToolResult) {
 	defer outPipe.Close()
 	done := make(chan int)
 	scanner := bufio.NewScanner(outPipe)
-	stepLength := toolResult.FileCount / StepNum
+	stepLength := toolResult.FileCount / tool.StepNumber
 	step := 0
 
 	go func() {
