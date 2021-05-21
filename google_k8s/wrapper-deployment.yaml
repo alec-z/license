@@ -31,4 +31,4 @@ spec:
                   name: quickstart-es-elastic-user
                   key: elastic
             - name: ES_URL
-              value: 'https://quickstart-es-http:9200'
+              value: 'http://es-cluster-ip:9200'
