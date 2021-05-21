@@ -15,7 +15,7 @@ spec:
       volumes:
         - name: db-es-pv
           persistentVolumeClaim:
-            claimName: db-mysql-pvc
+            claimName: db-es-pvc
       containers:
         - name: elasticsearch
           image: docker.elastic.co/elasticsearch/elasticsearch:7.12.1
@@ -29,4 +29,3 @@ spec:
           volumeMounts:
             - name: db-es-pv
               mountPath: /usr/share/elasticsearch/data
-              subPath: elasticsearch
