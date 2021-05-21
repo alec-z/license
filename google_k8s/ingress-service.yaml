@@ -87,4 +87,3 @@ spec:
               serviceName: back-cluster-ip
               servicePort: 8080
             path: /gitee_redirect
-

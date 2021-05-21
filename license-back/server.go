@@ -34,36 +34,11 @@ func main() {
 	router.Use(auth.Middleware(db))
 	router.Handle("/api_test", playground.Handler("GraphQL playground", "/graphql"))
 	router.Handle("/graphql", srv)
-	router.HandleFunc("/ci", handleCI)
 	router.HandleFunc("/github_redirect", handleOAuth2Github)
 	router.HandleFunc("/gitee_redirect", handleOAuth2Gitee)
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
-}
-
-
-
-func handleCI(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Content-Type", "application/json")
-	var request model.CIRequest
-	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	var result model.CIResult
-	result.Pass = true
-	result.Synchronous = false
-	result.ReportFlag = "INFO"
-	result.ReportSummary = request.Action + ":" + request.ActionParameter + ":" + request.Repo + ":" + request.Branch + ":" + "Report will be generate in 10-15 minutes, please check the report url since then"
-	result.ReportUrl = "http://compliance.openeuler.org/xxx"
-	resultBytes, err := json.Marshal(result)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	fmt.Fprint(w, string(resultBytes))
 }
 
 
