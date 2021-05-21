@@ -7,5 +7,5 @@ spec:
   selector:
     component: elasticsearch
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 9200
+      targetPort: 9200

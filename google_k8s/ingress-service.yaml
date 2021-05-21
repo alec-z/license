@@ -87,3 +87,7 @@ spec:
               serviceName: back-cluster-ip
               servicePort: 8080
             path: /gitee_redirect
+          - backend:
+              serviceName: es-cluster-ip
+              servicePort: 9200
+              path: /scan_file_results
