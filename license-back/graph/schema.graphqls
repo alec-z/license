@@ -68,7 +68,7 @@ type ToolResult {
     fileCount: Int!
     scanedFileCount: Int!
     beginAt: Time!
-    finishAt: Time!
+    finishAt: Time
 }
 
 

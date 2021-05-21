@@ -6,6 +6,7 @@ package graph
 import (
 	"context"
 	"fmt"
+
 	"github.com/alec-z/license-back/graph/auth"
 	"github.com/alec-z/license-back/graph/generated"
 	"github.com/alec-z/license-back/graph/model"
@@ -100,13 +101,12 @@ func (r *queryResolver) ListLicensesByName(ctx context.Context, name string, lim
 }
 
 func (r *queryResolver) Oauth2AuthURL(ctx context.Context, provider string) (string, error) {
-
 	var url string
 	if provider == "github" {
 		url = model.OAuth2ConfigObj.GithubConfig.AuthCodeURL("state", oauth2.AccessTypeOnline)
 	} else {
 
-		url =  model.OAuth2ConfigObj.GiteeConfig.AuthCodeURL("state", oauth2.AccessTypeOnline)
+		url = model.OAuth2ConfigObj.GiteeConfig.AuthCodeURL("state", oauth2.AccessTypeOnline)
 	}
 	return url, nil
 }
