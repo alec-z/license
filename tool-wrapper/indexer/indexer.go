@@ -79,12 +79,12 @@ func BulkIndexer(result *model.ToolResult) {
 			},
 		)
 		if err != nil {
-			log.Fatalf("Unexpected error: %s", err)
+			log.Printf("Unexpected error: %s", err)
 		}
 	}
 
 	if err := bi.Close(context.Background()); err != nil {
-		log.Fatalf("Unexpected error: %s", err)
+		log.Printf("Unexpected error: %s", err)
 	}
 }
 
@@ -101,16 +101,16 @@ func Search(query string) {
 		ES.Search.WithPretty(),
 	)
 	if err != nil {
-		log.Fatalf("Error getting response: %s", err)
+		log.Printf("Error getting response: %s", err)
 	}
 	defer res.Body.Close()
 	if res.IsError() {
 		var e map[string]interface{}
 		if err := json.NewDecoder(res.Body).Decode(&e); err != nil {
-			log.Fatalf("Error parsing the response body: %s", err)
+			log.Printf("Error parsing the response body: %s", err)
 		} else {
 			// Print the response status and error information.
-			log.Fatalf("[%s] %s: %s",
+			log.Printf("[%s] %s: %s",
 				res.Status(),
 				e["error"].(map[string]interface{})["type"],
 				e["error"].(map[string]interface{})["reason"],
@@ -118,7 +118,7 @@ func Search(query string) {
 		}
 	}
 	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
-		log.Fatalf("Error parsing the response body: %s", err)
+		log.Printf("Error parsing the response body: %s", err)
 	}
 	log.Printf(
 		"[%s] %d hits; took: %dms",
