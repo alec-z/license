@@ -62,9 +62,6 @@ const BadLicenseFiles = `
               "LGPL-1.0-only","LGPL-1.0-or-later","LGPL-2.0-only","LGPL-2.0-or-later","LGPL-3.0-only","LGPL-3.0-or-later"
               ]} },
             { "term": {"repo_branch_hash": "$repoBranchHash"} }
-          ],
-          "must_not": [
-            { "exists": {"field": "license_expressions"}}
           ]
         }
       }
