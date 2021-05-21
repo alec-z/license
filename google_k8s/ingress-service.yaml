@@ -28,12 +28,14 @@ spec:
                 port:
                   number: 80
             path: /
+            pathType: Prefix
           - backend:
               service:
                 name: interests-back-cluster-ip
                 port:
                   number: 3000
             path: /api
+            pathType: Prefix
     - host: youdaodai.com
       http:
         paths:
@@ -43,12 +45,14 @@ spec:
                 port:
                   number: 3000
             path: /
+            pathType: Prefix
           - backend:
               service:
                 name: interests-back-cluster-ip
                 port:
                   number: 3000
             path: /api
+            pathType: Prefix
     - host: license.youdaodai.com
       http:
         paths:
@@ -58,24 +62,28 @@ spec:
                 port:
                   number: 80
             path: /
+            pathType: Prefix
           - backend:
               service:
                 name: back-cluster-ip
                 port:
                   number: 8080
             path: /graphql
+            pathType: Prefix
           - backend:
               service:
                 name: back-cluster-ip
                 port:
                   number: 8080
             path: /api_test
+            pathType: Prefix
           - backend:
               service:
                 name: back-cluster-ip
                 port:
                   number: 8080
             path: /oauth2
+            pathType: Prefix
     - host: compliance.openeuler.org
       http:
         paths:
@@ -85,24 +93,28 @@ spec:
                 port:
                   number: 80
             path: /
+            pathType: Prefix
           - backend:
               service:
                 name: back-cluster-ip
                 port:
                   number: 80
             path: /graphql
+            pathType: Prefix
           - backend:
               service:
                 name: back-cluster-ip
                 port:
                   number: 8080
             path: /api_test
+            pathType: Prefix
           - backend:
               service:
                 name: wrapper-cluster-ip
                 port:
                   number: 8081
             path: /ci
+            pathType: Prefix
           - backend:
               service:
                 name: back-cluster-ip
