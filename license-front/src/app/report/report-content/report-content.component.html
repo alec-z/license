@@ -2,11 +2,11 @@
   <mat-expansion-panel (opened)="panelOpenStates[0] = true"
                        (closed)="panelOpenStates[0] = false">
     <mat-expansion-panel-header>
-      <mat-panel-title>
-        找到<span class="warning">{{noneLicenseFilesCount}}</span>个缺乏license申明的文本文件
+      <mat-panel-title [ngClass]="{'warning': noneLicenseFilesCount > 0, 'success': noneLicenseFilesCount === 0}">
+        找到{{noneLicenseFilesCount}}个缺乏license申明的文本文件
       </mat-panel-title>
       <mat-panel-description>
-        Find {{noneLicenseFilesCount}} text-files lack of license header
+        Found {{noneLicenseFilesCount}} text files lacking a license statement
       </mat-panel-description>
     </mat-expansion-panel-header>
     <app-report-file-list (resultsCountChange)="noneLicenseFilesCount = $event" [repoBranchHash]="toolResult.repoBranchHash" listType="NoneLicenseFiles"></app-report-file-list>
@@ -16,7 +16,7 @@
   <mat-expansion-panel (opened)="panelOpenStates[1] = true"
                        (closed)="panelOpenStates[1] = false">
     <mat-expansion-panel-header>
-      <mat-panel-title>
+      <mat-panel-title [ngClass]="{'warning': badLicenseFilesCount > 0, 'success': badLicenseFilesCount === 0}">
         找到{{badLicenseFilesCount}}个文件疑似申明了传染性license
       </mat-panel-title>
       <mat-panel-description>
@@ -30,11 +30,11 @@
   <mat-expansion-panel (opened)="panelOpenStates[2] = true"
                        (closed)="panelOpenStates[2] = false">
     <mat-expansion-panel-header>
-      <mat-panel-title>
+      <mat-panel-title [ngClass]="{'warning': licenseTypesCount > 1 || licenseTypesCount <= 0, 'success': licenseTypesCount === 1}">
         该项目疑似申明了{{licenseTypesCount}}种不同的license
       </mat-panel-title>
       <mat-panel-description>
-        Currently I am {{panelOpenStates[2] ? 'open' : 'closed'}}
+        The project seems to have declared {{licenseTypesCount}} different licenses
       </mat-panel-description>
     </mat-expansion-panel-header>
     <app-report-buckets (resultsCountChange)="licenseTypesCount = $event" [repoBranchHash]="toolResult.repoBranchHash" listType="LicenseTypes"></app-report-buckets>
@@ -44,11 +44,11 @@
   <mat-expansion-panel (opened)="panelOpenStates[3] = true"
                        (closed)="panelOpenStates[3] = false">
     <mat-expansion-panel-header>
-      <mat-panel-title>
+      <mat-panel-title [ngClass]="{'warning': noneCopyrightFilesCount > 1, 'success': noneCopyrightFilesCount === 0}">
         找到<span class="warning">{{noneCopyrightFilesCount}}</span>个缺乏Copyright申明的文本文件
       </mat-panel-title>
       <mat-panel-description>
-        Currently I am {{panelOpenStates[3] ? 'open' : 'closed'}}
+        Found {{noneCopyrightFilesCount}} text-files lacking  copyright statement
       </mat-panel-description>
     </mat-expansion-panel-header>
     <app-report-file-list (resultsCountChange)="noneCopyrightFilesCount = $event" [repoBranchHash]="toolResult.repoBranchHash" listType="NoneCopyrightFiles"></app-report-file-list>
@@ -58,11 +58,11 @@
   <mat-expansion-panel (opened)="panelOpenStates[4] = true"
                        (closed)="panelOpenStates[4] = false">
     <mat-expansion-panel-header>
-      <mat-panel-title>
+      <mat-panel-title [ngClass]="{'warning': copyrightCount > 1 || copyrightCount <= 0, 'success': copyrightCount === 1}">
         该项目疑似申明了{{copyrightCount}}种不同的Copyright
       </mat-panel-title>
       <mat-panel-description>
-        Currently I am {{panelOpenStates[4] ? 'open' : 'closed'}}
+        The project seems to have declared {{copyrightCount}} different copyrights
       </mat-panel-description>
     </mat-expansion-panel-header>
     <app-report-buckets (resultsCountChange)="copyrightCount = $event" [repoBranchHash]="toolResult.repoBranchHash" listType="CopyrightTypes"></app-report-buckets>

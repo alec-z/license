@@ -106,7 +106,7 @@ export class ReportComponent implements AfterViewInit {
       this.loading = loading;
       this.error = error;
       if (this.toolResult.finishAt === undefined || this.toolResult.finishAt === null || this.toolResult.finishAt === '') {
-        let nextRequestInterval = 2000;
+        let nextRequestInterval = 3000;
         if (this.toolResult.fileCount !== 0) {
           this.fileCount = this.toolResult.fileCount;
           this.scanedFileCount = this.toolResult.scanedFileCount;
@@ -124,11 +124,11 @@ export class ReportComponent implements AfterViewInit {
           nextRequestInterval = Math.floor(nextRequestInterval);
           this.currentStep += 1;
         }
-        if (nextRequestInterval < 2000) {
-          nextRequestInterval = 2000;
+        if (nextRequestInterval < 3000) {
+          nextRequestInterval = 3000;
         }
-        if (nextRequestInterval > 2000 * 40) {
-          nextRequestInterval = 2000 * 40;
+        if (nextRequestInterval > 3000 * 20) {
+          nextRequestInterval = 3000 * 20;
         }
         console.log(nextRequestInterval);
         setTimeout(() => { this.refresh.call(this); }, nextRequestInterval);
@@ -147,5 +147,9 @@ export class ReportComponent implements AfterViewInit {
       }
     });
 
+  }
+
+  refreshPage(): void {
+    location.reload();
   }
 }

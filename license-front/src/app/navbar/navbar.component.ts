@@ -25,23 +25,17 @@ export class NavbarComponent implements OnInit {
   name = '';
   loading: boolean;
   error: any;
-  login = false;
-  avatarUrl: string | null;
+  login: boolean;
+  avatarUrl: any;
   constructor(private apollo: Apollo, private authService: AuthService, private router: Router) {
   }
 
   ngOnInit(): void {
+    this.login = (this.authService.userID !== 0);
+    this.avatarUrl = localStorage.getItem('avatarUrl');
     this.authService.isAuthenticated.subscribe((data: boolean) => {
-        if (data) {
-          this.login = true;
-          this.avatarUrl = localStorage.getItem('avatarUrl');
-        } else {
-          const jwt = localStorage.getItem('JWT');
-          if (jwt === undefined || jwt === null || jwt === '') {
-            this.login = false;
-            this.avatarUrl = localStorage.getItem('avatarUrl');
-          }
-        }
+      this.login = (this.authService.userID !== 0);
+      this.avatarUrl = localStorage.getItem('avatarUrl');
       }
     );
   }

@@ -1,15 +1,16 @@
 <mat-card class="report-waiting" *ngIf="!complete">
   <mat-card-header>
+    <img mat-card-avatar src="/assets/images/report-coming-soon.png" style="width: 100px;height:75px;">
     <mat-card-title>报告正在生成中 <span *ngIf="fileCount > -1; else other_content">， 预计 <span class="countdown">{{remainingStr}}</span>后 生成完毕。已扫描/总文件: {{scanedFileCount}} / {{fileCount}}</span>
       <ng-template #other_content>, 请稍后! 预计等待时间计算中...</ng-template>
     </mat-card-title>
     <mat-card-subtitle>Repository: {{toolResult.repo}} </mat-card-subtitle>
     <mat-card-subtitle>Branch: {{toolResult.branch}}</mat-card-subtitle>
   </mat-card-header>
-  <img mat-card-image src="/assets/images/report-coming-soon.png" class="waiting-image">
+  <div style="height: 40px;"></div>
   <mat-card-content>
     <p style="margin-left: 9px;">
-      页面将会自动刷新，你也可以手动刷新页面。
+      页面将会自动刷新，你也可以手动<a (click)="refreshPage()" href="javascript:void(0)">刷新</a>该页面。
     </p>
   </mat-card-content>
   <mat-card-actions>
@@ -28,8 +29,8 @@
   </mat-card-content>
   <mat-card-actions>
     <p style="margin-left: 9px;">
-      你可以用该链接 <a #download alt="Red dot" download="license_report.json" target="_blank" href="data:text/json;charset=utf-8, ccc">license_report.json</a>
-      下载原始报告json文件
+      你可以用链接 <a #download alt="Red dot" download="license_report.json" target="_blank" href="data:text/json;charset=utf-8, ccc">license_report.json</a>
+      下载原始报告JSON文件
     </p>
   </mat-card-actions>
 </mat-card>

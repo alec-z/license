@@ -24,6 +24,9 @@ export class UserComponent implements OnInit {
   goToLink(id: number): void{
     window.open('/report/' + id, '_blank');
   }
+  goToOutLink(url: string): void{
+    window.open(url, '_blank');
+  }
 
 }
 
