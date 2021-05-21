@@ -25,10 +25,5 @@ spec:
                 secretKeyRef:
                   name: mysql-password
                   key: MYSQL_PASSWORD
-            - name: ES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: quickstart-es-elastic-user
-                  key: elastic
             - name: ES_URL
               value: 'http://es-cluster-ip:9200'
