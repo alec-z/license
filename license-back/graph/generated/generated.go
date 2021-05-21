@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -123,8 +124,10 @@ type ComplexityRoot struct {
 	}
 
 	ToolResult struct {
+		BeginAt         func(childComplexity int) int
 		Branch          func(childComplexity int) int
 		FileCount       func(childComplexity int) int
+		FinishAt        func(childComplexity int) int
 		ID              func(childComplexity int) int
 		OutputRawJSON   func(childComplexity int) int
 		Repo            func(childComplexity int) int
@@ -624,6 +627,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Tool.StepNumber(childComplexity), true
 
+	case "ToolResult.beginAt":
+		if e.complexity.ToolResult.BeginAt == nil {
+			break
+		}
+
+		return e.complexity.ToolResult.BeginAt(childComplexity), true
+
 	case "ToolResult.branch":
 		if e.complexity.ToolResult.Branch == nil {
 			break
@@ -637,6 +647,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ToolResult.FileCount(childComplexity), true
+
+	case "ToolResult.finishAt":
+		if e.complexity.ToolResult.FinishAt == nil {
+			break
+		}
+
+		return e.complexity.ToolResult.FinishAt(childComplexity), true
 
 	case "ToolResult.id":
 		if e.complexity.ToolResult.ID == nil {
@@ -869,6 +886,8 @@ type ToolResult {
     outputRawJson: String!
     fileCount: Int!
     scanedFileCount: Int!
+    beginAt: Time!
+    finishAt: Time!
 }
 
 
@@ -898,11 +917,6 @@ input DictInput {
     description: String
 }
 
-
-
-
-
-
 type Mutation {
     createDict(input: DictInput!): Dict!
     updateDict(dictID: Int!, input: DictInput!): Dict!
@@ -924,7 +938,6 @@ type Query {
   toolResult(toolResultID: Int!): ToolResult!
   currentUser: User!
   userVisits: [UserVisit!]!
-
 }
 
 type User {
@@ -939,7 +952,8 @@ type UserVisit {
     id: Int!
     user: User!
     toolResult: ToolResult!
-}`, BuiltIn: false},
+}
+scalar Time`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -3534,6 +3548,76 @@ func (ec *executionContext) _ToolResult_scanedFileCount(ctx context.Context, fie
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ToolResult_beginAt(ctx context.Context, field graphql.CollectedField, obj *model.ToolResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ToolResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BeginAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ToolResult_finishAt(ctx context.Context, field graphql.CollectedField, obj *model.ToolResult) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ToolResult",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FinishAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -5654,6 +5738,16 @@ func (ec *executionContext) _ToolResult(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "beginAt":
+			out.Values[i] = ec._ToolResult_beginAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "finishAt":
+			out.Values[i] = ec._ToolResult_finishAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6233,6 +6327,27 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	}
 
 	return ret
+}
+
+func (ec *executionContext) unmarshalNTime2ᚖtimeᚐTime(ctx context.Context, v interface{}) (*time.Time, error) {
+	res, err := graphql.UnmarshalTime(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNTime2ᚖtimeᚐTime(ctx context.Context, sel ast.SelectionSet, v *time.Time) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := graphql.MarshalTime(*v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) marshalNTool2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐTool(ctx context.Context, sel ast.SelectionSet, v *model.Tool) graphql.Marshaler {

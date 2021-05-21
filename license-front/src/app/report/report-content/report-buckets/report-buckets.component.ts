@@ -81,6 +81,6 @@ export class ReportBucketsComponent implements OnInit, AfterViewInit {
 }
 
 
-const SEARCH_BASE = '/analysis/';
+const SEARCH_BASE = '/';
 
 

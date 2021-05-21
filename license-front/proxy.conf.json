@@ -14,8 +14,8 @@
     "secure": false,
     "ws": false
   },
-  "/analysis": {
-    "target": "http://127.0.0.1:8081",
+  "/scan_file_results": {
+    "target": "http://127.0.0.1:9200",
     "secure": false,
     "ws": false
   }

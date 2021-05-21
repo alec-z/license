@@ -67,6 +67,8 @@ type ToolResult {
     outputRawJson: String!
     fileCount: Int!
     scanedFileCount: Int!
+    beginAt: Time!
+    finishAt: Time!
 }
 
 
@@ -96,11 +98,6 @@ input DictInput {
     description: String
 }
 
-
-
-
-
-
 type Mutation {
     createDict(input: DictInput!): Dict!
     updateDict(dictID: Int!, input: DictInput!): Dict!
@@ -122,7 +119,6 @@ type Query {
   toolResult(toolResultID: Int!): ToolResult!
   currentUser: User!
   userVisits: [UserVisit!]!
-
 }
 
 type User {
@@ -138,3 +134,4 @@ type UserVisit {
     user: User!
     toolResult: ToolResult!
 }
+scalar Time

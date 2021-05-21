@@ -1,4 +1,4 @@
-<mat-card class="report-waiting" [hidden]="complete">
+<mat-card class="report-waiting" *ngIf="!complete">
   <mat-card-header>
     <mat-card-title>报告正在生成中 <span *ngIf="fileCount > -1; else other_content">， 预计 <span class="countdown">{{remainingStr}}</span>后 生成完毕。已扫描/总文件: {{scanedFileCount}} / {{fileCount}}</span>
       <ng-template #other_content>, 请稍后! 预计等待时间计算中...</ng-template>

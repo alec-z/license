@@ -31,6 +31,8 @@ type ToolResult struct {
 	OutputRawJSON   string `json:"outputRawJson"`
 	FileCount       int    `json:"fileCount"`
 	ScanedFileCount int    `json:"scanedFileCount"`
+	BeginAt *time.Time
+	FinishAt *time.Time
 }
 
 type Dict struct {

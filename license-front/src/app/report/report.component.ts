@@ -11,12 +11,13 @@ const GET_TOOL_RESULT = gql`
             repoBranchHash
             fileCount
             scanedFileCount
+            beginAt
+            finishAt
             tool {
                 id
                 stepNumber
                 scanRate
             }
-            outputRawJson
         }
     }
 `;
@@ -92,7 +93,7 @@ export class ReportComponent implements AfterViewInit {
       this.toolResult = data?.toolResult;
       this.loading = loading;
       this.error = error;
-      if (this.toolResult.outputRawJson === '') {
+      if (this.toolResult.finishAt === '') {
         let nextRequestInterval = 2000;
         if (this.toolResult.fileCount !== 0) {
           this.fileCount = this.toolResult.fileCount;
@@ -122,7 +123,7 @@ export class ReportComponent implements AfterViewInit {
       }
       else {
         this.complete = true;
-        const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(this.toolResult.outputRawJson);
+        const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent('cccc');
 
         this.download.nativeElement.setAttribute('href', dataStr);
       }

@@ -105,8 +105,8 @@ func (r *queryResolver) ListLicensesByName(ctx context.Context, name string, lim
 func (r *queryResolver) Oauth2AuthURL(ctx context.Context, provider string) (string, error) {
 	const GithubClientID = "27467ab957f157bfc95b"
 	const GiteeClientID = "faf8951baad9617a1fa7c69dc02894f5a7d6e9ac0e66d3f9624abd6bd168f4a4"
-	const GiteeAuthURL = "https://gitee.com/oauth/authorize?redirect_uri=https://compliance.openeuler.org/oauth2/gitee_redirect"
-	const GiteeTokenURL = "https://gitee.com/oauth/token?redirect_uri=https://compliance.openeuler.org/oauth2/gitee_redirect"
+	const GiteeAuthURL = "https://gitee.com/oauth/authorize?redirect_uri=https://compliance.openeuler.org/gitee_redirect"
+	const GiteeTokenURL = "https://gitee.com/oauth/token?redirect_uri=https://compliance.openeuler.org/gitee_redirect"
 
 	if provider == "github" {
 		githubSecret := os.Getenv("GITHUB_SECRET")
@@ -172,3 +172,11 @@ func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+type toolResultResolver struct{ *Resolver }
