@@ -1,4 +1,4 @@
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: ingress-service
@@ -23,103 +23,65 @@ spec:
       http:
         paths:
           - backend:
-              service:
-                name: interests-front-cluster-ip
-                port:
-                  number: 80
+              serviceName: interests-front-cluster-ip
+              servicePort: 80
             path: /
-            pathType: Prefix
           - backend:
-              service:
-                name: interests-back-cluster-ip
-                port:
-                  number: 3000
+              serviceName: interests-back-cluster-ip
+              servicePort: 3000
             path: /api
-            pathType: Prefix
     - host: youdaodai.com
       http:
         paths:
           - backend:
-              service:
-                name: interests-front-cluster-ip
-                port:
-                  number: 3000
+              serviceName: interests-front-cluster-ip
+              servicePort: 80
             path: /
-            pathType: Prefix
           - backend:
-              service:
-                name: interests-back-cluster-ip
-                port:
-                  number: 3000
+              serviceName: interests-back-cluster-ip
+              servicePort: 3000
             path: /api
-            pathType: Prefix
     - host: license.youdaodai.com
       http:
         paths:
           - backend:
-              service:
-                name: front-cluster-ip
-                port:
-                  number: 80
+              serviceName: front-cluster-ip
+              servicePort: 80
             path: /
-            pathType: Prefix
           - backend:
-              service:
-                name: back-cluster-ip
-                port:
-                  number: 8080
+              serviceName: back-cluster-ip
+              servicePort: 8080
             path: /graphql
-            pathType: Exact
           - backend:
-              service:
-                name: back-cluster-ip
-                port:
-                  number: 8080
+              serviceName: back-cluster-ip
+              servicePort: 8080
             path: /api_test
-            pathType: Exact
           - backend:
-              service:
-                name: back-cluster-ip
-                port:
-                  number: 8080
+              serviceName: back-cluster-ip
+              servicePort: 8080
             path: /oauth2
-            pathType: Prefix
     - host: compliance.openeuler.org
       http:
         paths:
           - backend:
-              service:
-                name: front-cluster-ip
-                port:
-                  number: 80
+              serviceName: front-cluster-ip
+              servicePort: 80
             path: /
-            pathType: Prefix
           - backend:
-              service:
-                name: back-cluster-ip
-                port:
-                  number: 80
+              serviceName: back-cluster-ip
+              servicePort: 8080
             path: /graphql
-            pathType: Exact
           - backend:
-              service:
-                name: back-cluster-ip
-                port:
-                  number: 8080
+              serviceName: back-cluster-ip
+              servicePort: 8080
             path: /api_test
-            pathType: Exact
           - backend:
-              service:
-                name: wrapper-cluster-ip
-                port:
-                  number: 8081
+              serviceName: wrapper-cluster-ip
+              servicePort: 8081
             path: /ci
-            pathType: Exact
           - backend:
-              service:
-                name: back-cluster-ip
-                port:
-                  number: 8080
+              serviceName: back-cluster-ip
+              servicePort: 8080
             path: /oauth2
             pathType: Prefix
 
