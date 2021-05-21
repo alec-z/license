@@ -55,6 +55,10 @@ export class LicenseShowComponent implements OnInit {
       pluck('id'),
       tap((id) => {
         this.id = id;
+        this.apollo.mutate<any>({
+          mutation: UPDATE_USER_LICENSE_VISIT,
+          variables: {id: this.id}
+        }).subscribe();
       })
     ).subscribe((id) => {
       this.apollo.query<any>({
@@ -66,10 +70,6 @@ export class LicenseShowComponent implements OnInit {
         this.error = error;
       });
     });
-    this.apollo.mutate<any>({
-      mutation: UPDATE_USER_LICENSE_VISIT,
-      variables: {id: this.id}
-    }).subscribe();
   }
 
 }
