@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { concatAll, concatMap, map, pluck } from 'rxjs/operators';
+import { concatAll, concatMap, map, pluck, tap } from 'rxjs/operators';
 import { Apollo, gql } from 'apollo-angular';
 
 const GET_LICENSE = gql`
@@ -44,12 +44,17 @@ export class LicenseShowComponent implements OnInit {
   license: any = {};
   loading = true;
   error: any;
+  id: any;
 
   constructor(private route: ActivatedRoute, private apollo: Apollo) { }
 
   ngOnInit(): void {
+    this.id = this.route.snapshot.params.id;
     this.route.params.pipe(
       pluck('id'),
+      tap((id) => {
+        this.id = id;
+      })
     ).subscribe((id) => {
       this.apollo.query<any>({
         query: GET_LICENSE,
@@ -60,8 +65,18 @@ export class LicenseShowComponent implements OnInit {
         this.error = error;
       });
     });
-
-
+    this.apollo.mutate<any>({
+      mutation: UPDATE_USER_LICENSE_VISIT,
+      variables: {id: this.id}
+    }).subscribe();
   }
 
 }
+
+const UPDATE_USER_LICENSE_VISIT = gql`
+    mutation CreateUserLicenseVisit($id: Int!){
+        createUserLicenseVisit(licenseID: $id) {
+            id
+        }
+    }
+`;

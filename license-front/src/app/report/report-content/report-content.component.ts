@@ -7,6 +7,7 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class ReportContentComponent implements OnInit {
 
+
   panelOpenStates = [false, false, false, false, false, false];
   noneLicenseFilesCount = 0;
   badLicenseFilesCount = 0;

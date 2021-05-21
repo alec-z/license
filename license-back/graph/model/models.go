@@ -167,6 +167,7 @@ type User struct {
 	AuthRawJson string
 	AvatarUrl string `json:"avatarUrl"`
 	UserVisits []*UserVisit
+	UserLicenseVisits []*UserLicenseVisit
 }
 
 type UserVisit struct {
@@ -176,6 +177,17 @@ type UserVisit struct {
 	DeletedAt *time.Time `sql:"index"`
 	ToolResult *ToolResult  `json:"toolResult"`
 	ToolResultID int
+	User *User  `json:"user"`
+	UserID int
+}
+
+type UserLicenseVisit struct {
+	ID        int `gorm:"primary_key"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time `sql:"index"`
+	License *License  `json:"toolResult"`
+	LicenseID int
 	User *User  `json:"user"`
 	UserID int
 }

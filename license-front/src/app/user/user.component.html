@@ -1,50 +1,85 @@
 <div class="container">
-<mat-tab-group>
-  <mat-tab label="我浏览过的报告">
+  <mat-tab-group>
+    <mat-tab label="我浏览过的报告">
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef> Report Id</th>
+          <td mat-cell *matCellDef="let element">
+            <a [href]="'/report/' + element.id" target="_blank">{{element.id}}</a>
+          </td>
+        </ng-container>
 
 
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <ng-container matColumnDef="repo">
+          <th mat-header-cell *matHeaderCellDef> Repository</th>
+          <td mat-cell *matCellDef="let element">
+            <a [href]="element.repo" target="_blank">{{element.repo}}</a>
 
+          </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="branch">
+          <th mat-header-cell *matHeaderCellDef> Branch</th>
+          <td mat-cell *matCellDef="let element"> {{element.branch}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="repoBranchHash">
+          <th mat-header-cell *matHeaderCellDef> Commit Hash</th>
+          <td mat-cell *matCellDef="let element">
+            <a [href]="'/report/' + element.id" target="_blank">{{element.repoBranchHash}}</a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons #page></mat-paginator>
+
+    </mat-tab>
+    <mat-tab label="我浏览过的License">
+    <table mat-table [dataSource]="dataSource2" class="mat-elevation-z8">
       <!--- Note that these columns can be defined in any order.
             The actual rendered columns are set as a property on the row definition" -->
 
       <!-- Position Column -->
       <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef> Report Id </th>
+        <th mat-header-cell *matHeaderCellDef> License Id</th>
         <td mat-cell *matCellDef="let element">
-          <a [href]="'/report/' + element.id" target="_blank">{{element.id}}</a>
+          <a [href]="'/license/' + element.id" target="_blank">{{element.id}}</a>
         </td>
       </ng-container>
-
-
-      <ng-container matColumnDef="repo">
-        <th mat-header-cell *matHeaderCellDef> Repository </th>
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name</th>
         <td mat-cell *matCellDef="let element">
-          <a [href]="element.repo" target="_blank">{{element.repo}}</a>
+          <a [href]="'/license/' + element.id" target="_blank">{{element.name}}</a>
 
         </td>
       </ng-container>
 
       <!-- Name Column -->
-      <ng-container matColumnDef="branch">
-        <th mat-header-cell *matHeaderCellDef> Branch </th>
-        <td mat-cell *matCellDef="let element"> {{element.branch}} </td>
+      <ng-container matColumnDef="spdxName">
+        <th mat-header-cell *matHeaderCellDef>Spdx Name</th>
+        <td mat-cell *matCellDef="let element">
+          <a [href]="'/license/' + element.id" target="_blank">{{element.spdxName}} </a> </td>
       </ng-container>
 
-      <ng-container matColumnDef="repoBranchHash">
-        <th mat-header-cell *matHeaderCellDef> Commit Hash </th>
+      <ng-container matColumnDef="tags">
+        <th mat-header-cell *matHeaderCellDef>Tags</th>
         <td mat-cell *matCellDef="let element">
-          <a [href]="'/report/' + element.id" target="_blank">{{element.repoBranchHash}}</a>
+          <span *ngFor="let lmt of element.licenseMainTags" style="margin-right: 4px;">#{{lmt.mainTag.name}}</span>
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns2;"></tr>
     </table>
-
-
-  </mat-tab>
-  <mat-tab label="我的看板"> 管理员权限有相应的看板，看板开发中 </mat-tab>
-  <mat-tab label="账户设置"> 账户设置开发中 </mat-tab>
-</mat-tab-group>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons #page2></mat-paginator>
+    </mat-tab>
+    <mat-tab label="我的看板"> 管理员权限能查看相应的看板</mat-tab>
+  </mat-tab-group>
 </div>

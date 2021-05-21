@@ -98,15 +98,16 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreateDict       func(childComplexity int, input model.DictInput) int
-		CreateFeatureTag func(childComplexity int, input model.FeatureTagInput) int
-		CreateLicense    func(childComplexity int, input model.LicenseInput) int
-		CreateUserVisit  func(childComplexity int, toolResultID int) int
-		DeleteDict       func(childComplexity int, dictID int) int
-		DeleteLicense    func(childComplexity int, licenseID int) int
-		UpdateDict       func(childComplexity int, dictID int, input model.DictInput) int
-		UpdateFeatureTag func(childComplexity int, featureTagID int, input model.FeatureTagInput) int
-		UpdateLicense    func(childComplexity int, licenseID int, input model.LicenseInput) int
+		CreateDict             func(childComplexity int, input model.DictInput) int
+		CreateFeatureTag       func(childComplexity int, input model.FeatureTagInput) int
+		CreateLicense          func(childComplexity int, input model.LicenseInput) int
+		CreateUserLicenseVisit func(childComplexity int, licenseID int) int
+		CreateUserVisit        func(childComplexity int, toolResultID int) int
+		DeleteDict             func(childComplexity int, dictID int) int
+		DeleteLicense          func(childComplexity int, licenseID int) int
+		UpdateDict             func(childComplexity int, dictID int, input model.DictInput) int
+		UpdateFeatureTag       func(childComplexity int, featureTagID int, input model.FeatureTagInput) int
+		UpdateLicense          func(childComplexity int, licenseID int, input model.LicenseInput) int
 	}
 
 	Query struct {
@@ -117,6 +118,7 @@ type ComplexityRoot struct {
 		ListLicensesByType func(childComplexity int, indexType string, limit int) int
 		Oauth2AuthURL      func(childComplexity int, provider string) int
 		ToolResult         func(childComplexity int, toolResultID int) int
+		UserLicenseVisits  func(childComplexity int) int
 		UserVisits         func(childComplexity int) int
 	}
 
@@ -148,6 +150,12 @@ type ComplexityRoot struct {
 		ID        func(childComplexity int) int
 	}
 
+	UserLicenseVisit struct {
+		ID      func(childComplexity int) int
+		License func(childComplexity int) int
+		User    func(childComplexity int) int
+	}
+
 	UserVisit struct {
 		ID         func(childComplexity int) int
 		ToolResult func(childComplexity int) int
@@ -165,6 +173,7 @@ type MutationResolver interface {
 	UpdateLicense(ctx context.Context, licenseID int, input model.LicenseInput) (*model.License, error)
 	DeleteLicense(ctx context.Context, licenseID int) (bool, error)
 	CreateUserVisit(ctx context.Context, toolResultID int) (*model.UserVisit, error)
+	CreateUserLicenseVisit(ctx context.Context, licenseID int) (*model.UserLicenseVisit, error)
 }
 type QueryResolver interface {
 	Licenses(ctx context.Context) ([]*model.License, error)
@@ -175,6 +184,7 @@ type QueryResolver interface {
 	ToolResult(ctx context.Context, toolResultID int) (*model.ToolResult, error)
 	CurrentUser(ctx context.Context) (*model.User, error)
 	UserVisits(ctx context.Context) ([]*model.UserVisit, error)
+	UserLicenseVisits(ctx context.Context) ([]*model.UserLicenseVisit, error)
 }
 
 type executableSchema struct {
@@ -457,6 +467,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateLicense(childComplexity, args["input"].(model.LicenseInput)), true
 
+	case "Mutation.createUserLicenseVisit":
+		if e.complexity.Mutation.CreateUserLicenseVisit == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createUserLicenseVisit_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateUserLicenseVisit(childComplexity, args["licenseID"].(int)), true
+
 	case "Mutation.createUserVisit":
 		if e.complexity.Mutation.CreateUserVisit == nil {
 			break
@@ -603,6 +625,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ToolResult(childComplexity, args["toolResultID"].(int)), true
 
+	case "Query.userLicenseVisits":
+		if e.complexity.Query.UserLicenseVisits == nil {
+			break
+		}
+
+		return e.complexity.Query.UserLicenseVisits(childComplexity), true
+
 	case "Query.userVisits":
 		if e.complexity.Query.UserVisits == nil {
 			break
@@ -742,6 +771,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.ID(childComplexity), true
+
+	case "UserLicenseVisit.id":
+		if e.complexity.UserLicenseVisit.ID == nil {
+			break
+		}
+
+		return e.complexity.UserLicenseVisit.ID(childComplexity), true
+
+	case "UserLicenseVisit.license":
+		if e.complexity.UserLicenseVisit.License == nil {
+			break
+		}
+
+		return e.complexity.UserLicenseVisit.License(childComplexity), true
+
+	case "UserLicenseVisit.user":
+		if e.complexity.UserLicenseVisit.User == nil {
+			break
+		}
+
+		return e.complexity.UserLicenseVisit.User(childComplexity), true
 
 	case "UserVisit.id":
 		if e.complexity.UserVisit.ID == nil {
@@ -941,6 +991,7 @@ type Mutation {
     updateLicense(licenseID: Int!, input: LicenseInput!): License!
     deleteLicense(licenseID: Int!): Boolean!
     createUserVisit(toolResultID: Int!): UserVisit!
+    createUserLicenseVisit(licenseID: Int!): UserLicenseVisit!
 }
 
 type Query {
@@ -952,6 +1003,7 @@ type Query {
   toolResult(toolResultID: Int!): ToolResult!
   currentUser: User!
   userVisits: [UserVisit!]!
+  userLicenseVisits: [UserLicenseVisit!]!
 }
 
 type User {
@@ -967,6 +1019,13 @@ type UserVisit {
     user: User!
     toolResult: ToolResult!
 }
+
+type UserLicenseVisit {
+    id: Int!
+    user: User!
+    license: License!
+}
+
 scalar Time`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -1032,6 +1091,21 @@ func (ec *executionContext) field_Mutation_createLicense_args(ctx context.Contex
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createUserLicenseVisit_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["licenseID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("licenseID"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["licenseID"] = arg0
 	return args, nil
 }
 
@@ -2794,6 +2868,48 @@ func (ec *executionContext) _Mutation_createUserVisit(ctx context.Context, field
 	return ec.marshalNUserVisit2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐUserVisit(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_createUserLicenseVisit(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createUserLicenseVisit_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateUserLicenseVisit(rctx, args["licenseID"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.UserLicenseVisit)
+	fc.Result = res
+	return ec.marshalNUserLicenseVisit2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐUserLicenseVisit(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_licenses(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3104,6 +3220,41 @@ func (ec *executionContext) _Query_userVisits(ctx context.Context, field graphql
 	res := resTmp.([]*model.UserVisit)
 	fc.Result = res
 	return ec.marshalNUserVisit2ᚕᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐUserVisitᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_userLicenseVisits(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().UserLicenseVisits(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.UserLicenseVisit)
+	fc.Result = res
+	return ec.marshalNUserLicenseVisit2ᚕᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐUserLicenseVisitᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3837,6 +3988,111 @@ func (ec *executionContext) _User_avatarUrl(ctx context.Context, field graphql.C
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _UserLicenseVisit_id(ctx context.Context, field graphql.CollectedField, obj *model.UserLicenseVisit) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "UserLicenseVisit",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _UserLicenseVisit_user(ctx context.Context, field graphql.CollectedField, obj *model.UserLicenseVisit) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "UserLicenseVisit",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _UserLicenseVisit_license(ctx context.Context, field graphql.CollectedField, obj *model.UserLicenseVisit) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "UserLicenseVisit",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.License, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.License)
+	fc.Result = res
+	return ec.marshalNLicense2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐLicense(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _UserVisit_id(ctx context.Context, field graphql.CollectedField, obj *model.UserVisit) (ret graphql.Marshaler) {
@@ -5552,6 +5808,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "createUserLicenseVisit":
+			out.Values[i] = ec._Mutation_createUserLicenseVisit(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5682,6 +5943,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_userVisits(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "userLicenseVisits":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_userLicenseVisits(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -5846,6 +6121,43 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "avatarUrl":
 			out.Values[i] = ec._User_avatarUrl(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var userLicenseVisitImplementors = []string{"UserLicenseVisit"}
+
+func (ec *executionContext) _UserLicenseVisit(ctx context.Context, sel ast.SelectionSet, obj *model.UserLicenseVisit) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userLicenseVisitImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserLicenseVisit")
+		case "id":
+			out.Values[i] = ec._UserLicenseVisit_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "user":
+			out.Values[i] = ec._UserLicenseVisit_user(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "license":
+			out.Values[i] = ec._UserLicenseVisit_license(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -6487,6 +6799,57 @@ func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑ
 		return graphql.Null
 	}
 	return ec._User(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNUserLicenseVisit2githubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐUserLicenseVisit(ctx context.Context, sel ast.SelectionSet, v model.UserLicenseVisit) graphql.Marshaler {
+	return ec._UserLicenseVisit(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUserLicenseVisit2ᚕᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐUserLicenseVisitᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.UserLicenseVisit) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNUserLicenseVisit2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐUserLicenseVisit(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNUserLicenseVisit2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐUserLicenseVisit(ctx context.Context, sel ast.SelectionSet, v *model.UserLicenseVisit) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._UserLicenseVisit(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNUserVisit2githubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐUserVisit(ctx context.Context, sel ast.SelectionSet, v model.UserVisit) graphql.Marshaler {

@@ -149,6 +149,6 @@ func initDB() {
 	// Comment out if running multiple times - You may see an error otherwise
 
 	// Migration to create tables for Order and Item schema
-	db.AutoMigrate(&model.License{}, &model.Dict{}, &model.LicenseFeatureTag{}, &model.FeatureTag{}, &model.User{}, &model.UserVisit{})
+	db.AutoMigrate(&model.License{}, &model.Dict{}, &model.LicenseFeatureTag{}, &model.FeatureTag{}, &model.User{}, &model.UserVisit{}, &model.UserLicenseVisit{})
 	model.DB = db
 }

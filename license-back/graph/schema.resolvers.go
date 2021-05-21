@@ -76,6 +76,18 @@ func (r *mutationResolver) CreateUserVisit(ctx context.Context, toolResultID int
 	return &userVisit, nil
 }
 
+func (r *mutationResolver) CreateUserLicenseVisit(ctx context.Context, licenseID int) (*model.UserLicenseVisit, error) {
+	var userLicenseVisit model.UserLicenseVisit
+	user := auth.ForContext(ctx)
+	if user == nil {
+		return &userLicenseVisit, nil
+	}
+	userLicenseVisit.UserID = user.ID
+	userLicenseVisit.LicenseID = licenseID
+	r.DB.FirstOrCreate(&userLicenseVisit, model.UserLicenseVisit{UserID: user.ID, LicenseID: licenseID})
+	return &userLicenseVisit, nil
+}
+
 func (r *queryResolver) Licenses(ctx context.Context) ([]*model.License, error) {
 	var licenses []*model.License
 	r.DB.Preload("LicenseMainTags.MainTag").Preload("LicenseFeatureTags").Find(&licenses)
@@ -140,6 +152,16 @@ func (r *queryResolver) UserVisits(ctx context.Context) ([]*model.UserVisit, err
 	return visits, fmt.Errorf("Access denied")
 }
 
+func (r *queryResolver) UserLicenseVisits(ctx context.Context) ([]*model.UserLicenseVisit, error) {
+	var visits []*model.UserLicenseVisit
+	if user := auth.ForContext(ctx); user != nil {
+		r.DB.Model(user).Association("UserLicenseVisits")
+		r.DB.Where("user_id = ?", user.ID).Preload("License.LicenseMainTags.MainTag").Find(&visits)
+		return visits, nil
+	}
+	return visits, fmt.Errorf("Access denied")
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
@@ -155,4 +177,5 @@ type queryResolver struct{ *Resolver }
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
+type userLicenseVisitResolver struct{ *Resolver }
 type toolResultResolver struct{ *Resolver }

@@ -111,6 +111,7 @@ type Mutation {
     updateLicense(licenseID: Int!, input: LicenseInput!): License!
     deleteLicense(licenseID: Int!): Boolean!
     createUserVisit(toolResultID: Int!): UserVisit!
+    createUserLicenseVisit(licenseID: Int!): UserLicenseVisit!
 }
 
 type Query {
@@ -122,6 +123,7 @@ type Query {
   toolResult(toolResultID: Int!): ToolResult!
   currentUser: User!
   userVisits: [UserVisit!]!
+  userLicenseVisits: [UserLicenseVisit!]!
 }
 
 type User {
@@ -137,4 +139,11 @@ type UserVisit {
     user: User!
     toolResult: ToolResult!
 }
+
+type UserLicenseVisit {
+    id: Int!
+    user: User!
+    license: License!
+}
+
 scalar Time
