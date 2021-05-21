@@ -13,14 +13,14 @@ import (
 	"os"
 	"time"
 )
-var es *elasticsearch.Client
+var ES *elasticsearch.Client
 var bi esutil.BulkIndexer
 func init() {
 	retryBackoff := backoff.NewExponentialBackOff()
 	var err error
 	esURL := os.Getenv("ES_URL")
 	esPassword := os.Getenv("ES_PASSWORD")
-	es, err = elasticsearch.NewClient(elasticsearch.Config{
+	ES, err = elasticsearch.NewClient(elasticsearch.Config{
 		Addresses: []string{
 			esURL,
 		},
@@ -48,9 +48,9 @@ func init() {
 		fmt.Println(err)
 	}
 	bi, err = esutil.NewBulkIndexer(esutil.BulkIndexerConfig{
-		Index:         "scan_file_results",
-		Client:        es,
-		NumWorkers:    3,
+		Index:      "scan_file_results",
+		Client:     ES,
+		NumWorkers: 3,
 	})
 }
 
@@ -97,12 +97,12 @@ func Search(query string) {
 	var buf bytes.Buffer
 	var r map[string]interface{}
 	// Perform the search request.
-	res, err := es.Search(
-		es.Search.WithContext(context.Background()),
-		es.Search.WithIndex("license_scan_general"),
-		es.Search.WithBody(&buf),
-		es.Search.WithTrackTotalHits(true),
-		es.Search.WithPretty(),
+	res, err := ES.Search(
+		ES.Search.WithContext(context.Background()),
+		ES.Search.WithIndex("license_scan_general"),
+		ES.Search.WithBody(&buf),
+		ES.Search.WithTrackTotalHits(true),
+		ES.Search.WithPretty(),
 	)
 	if err != nil {
 		log.Fatalf("Error getting response: %s", err)

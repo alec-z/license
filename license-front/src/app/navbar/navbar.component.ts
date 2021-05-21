@@ -35,8 +35,11 @@ export class NavbarComponent implements OnInit {
           this.login = true;
           this.avatarUrl = localStorage.getItem('avatarUrl');
         } else {
-          this.login = false;
-          this.avatarUrl = localStorage.getItem('avatarUrl');
+          const jwt = localStorage.getItem('JWT');
+          if (jwt === undefined || jwt === null || jwt ==='') {
+            this.login = false;
+            this.avatarUrl = localStorage.getItem('avatarUrl');
+          }
         }
       }
     );

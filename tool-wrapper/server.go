@@ -38,10 +38,30 @@ func main() {
 	initDB()
 	router := chi.NewRouter()
 	router.HandleFunc("/ci", handleCI)
+	router.HandleFunc("/analysis*", transportES)
 	log.Printf("connect to http://localhost:%s/ for tool wrapper", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }
 
+func transportES(w http.ResponseWriter, r *http.Request) {
+	r.RequestURI = r.RequestURI[len("/analysis") : ]
+	response, err := indexer.ES.Perform(r)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	body, err2 := ioutil.ReadAll(response.Body)
+	if err2 != nil {
+		fmt.Println(err2)
+		return
+	}
+
+	w.Header().Set("Content-Type", response.Header.Get("Content-Type"))
+	w.Header().Set("Content-Type", response.Header.Get("Content-Encoding"))
+	w.Write(body)
+
+}
 func handleCI(w http.ResponseWriter, r *http.Request) {
 
 	defer func() {
