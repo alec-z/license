@@ -23,6 +23,14 @@ const GET_TOOL_RESULT = gql`
 `;
 
 
+const GET_TOOL_RESULT2 = gql`
+    query ToolResult($id: Int!){
+        toolResult(toolResultID: $id) {
+            outputRawJson
+        }
+    }
+`;
+
 const UPDATE_USER_VISIT = gql`
     mutation CreateUserVisit($id: Int!){
         createUserVisit(toolResultID: $id) {
@@ -69,7 +77,11 @@ export class ReportComponent implements AfterViewInit {
     if (this.timer !== -1) {
       clearInterval(this.timer);
     }
-    this.timer = setInterval(() => {this.countDown.call(this); }, 1000);
+    if (!this.complete) {
+      this.timer = setInterval(() => {
+        this.countDown.call(this);
+      }, 1000);
+    }
 
   }
 
@@ -123,9 +135,15 @@ export class ReportComponent implements AfterViewInit {
       }
       else {
         this.complete = true;
-        const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent('cccc');
 
-        this.download.nativeElement.setAttribute('href', dataStr);
+        this.apollo.query<any>({
+          query: GET_TOOL_RESULT2,
+          variables: {id: this.id},
+          fetchPolicy: 'network-only'
+        }).subscribe((res) => {
+          const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(res.data.toolResult?.outputRawJson);
+          this.download.nativeElement.setAttribute('href', dataStr);
+        });
       }
     });
 
