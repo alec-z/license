@@ -3,6 +3,7 @@ import { Apollo, gql } from 'apollo-angular';
 import { map } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { AuthService } from '../service/auth.service';
+import { Router } from '@angular/router';
 
 const LIST_LICENSES = gql`
     query listLicenseBytName($name: String!){
@@ -26,7 +27,7 @@ export class NavbarComponent implements OnInit {
   error: any;
   login = false;
   avatarUrl: string | null;
-  constructor(private apollo: Apollo, private authService: AuthService) {
+  constructor(private apollo: Apollo, private authService: AuthService, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -36,7 +37,7 @@ export class NavbarComponent implements OnInit {
           this.avatarUrl = localStorage.getItem('avatarUrl');
         } else {
           const jwt = localStorage.getItem('JWT');
-          if (jwt === undefined || jwt === null || jwt ==='') {
+          if (jwt === undefined || jwt === null || jwt === '') {
             this.login = false;
             this.avatarUrl = localStorage.getItem('avatarUrl');
           }
@@ -60,5 +61,11 @@ export class NavbarComponent implements OnInit {
 
   goToLink(url: string): void{
     window.open(url, '_blank');
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/']);
+
   }
 }

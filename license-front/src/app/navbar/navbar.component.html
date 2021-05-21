@@ -20,8 +20,7 @@
     <button mat-button routerLink="/login" routerLinkActive="mat-accent" *ngIf="!login">
       登录
     </button>
-
-    <button mat-button routerLink="/user" routerLinkActive="mat-accent" *ngIf="login">
+    <button mat-button routerLinkActive="mat-accent" *ngIf="login" [mat-menu-trigger-for]="menu2" >
       <img [src]="avatarUrl" class="avatar-user" />
     </button>
   </div>
@@ -29,6 +28,19 @@
     <mat-icon>menu</mat-icon>
   </button>
 </mat-toolbar>
+
+<mat-menu  #menu2="matMenu" >
+
+  <button mat-menu-item routerLink="/user">
+    主页
+  </button>
+
+  <button mat-menu-item (click)="logout()">
+    退出
+  </button>
+</mat-menu>
+
+
 <mat-menu  #menu="matMenu" fxHide>
   <button  mat-menu-item routerLink="/browser">
     浏览
