@@ -82,6 +82,9 @@ spec:
           - backend:
               serviceName: back-cluster-ip
               servicePort: 8080
-            path: /oauth2
-            pathType: Prefix
+            path: /oauth2/github_redirect
+          - backend:
+              serviceName: back-cluster-ip
+              servicePort: 8080
+            path: /oauth2/gitee_redirect
 
