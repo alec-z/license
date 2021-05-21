@@ -90,7 +90,7 @@ func (r *queryResolver) License(ctx context.Context, licenseID int) (*model.Lice
 
 func (r *queryResolver) ListLicensesByType(ctx context.Context, indexType string, limit int) ([]*model.License, error) {
 	var licenses []*model.License
-	r.DB.Where("index_type = ?", indexType).Preload("LicenseFeatureTags").Limit(limit).Find(&licenses)
+	r.DB.Where("index_type = ?", indexType).Preload("LicenseMainTags.MainTag").Preload("LicenseFeatureTags").Limit(limit).Find(&licenses)
 	return licenses, nil
 }
 

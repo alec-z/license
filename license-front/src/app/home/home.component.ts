@@ -7,6 +7,11 @@ const LIST_LICENSES = gql`
             id,
             name,
             spdxName,
+            licenseMainTags {
+                mainTag {
+                    name
+                }
+            }
             mustFeatureTags {
                 id,
                 name
