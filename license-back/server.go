@@ -35,8 +35,8 @@ func main() {
 	router.Handle("/api_test", playground.Handler("GraphQL playground", "/graphql"))
 	router.Handle("/graphql", srv)
 	router.HandleFunc("/ci", handleCI)
-	router.HandleFunc("/oauth2/github_redirect", handleOAuth2Github)
-	router.HandleFunc("/oauth2/gitee_redirect", handleOAuth2Gitee)
+	router.HandleFunc("/github_redirect", handleOAuth2Github)
+	router.HandleFunc("/gitee_redirect", handleOAuth2Gitee)
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
