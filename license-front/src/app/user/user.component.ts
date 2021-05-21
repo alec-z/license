@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import * as _ from 'lodash';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-user',
@@ -23,13 +24,15 @@ export class UserComponent implements OnInit {
     this.apollo.query<any>({
       query: GET_VISITS
     }).subscribe(({data, loading, error}) => {
-      this.dataSource = _(data.userVisits).map(v => v.toolResult).value();
+      this.dataSource = new MatTableDataSource<any>(_(data.userVisits).map(v => v.toolResult).value());
+      this.dataSource.paginator = this.paginator;
     });
 
     this.apollo.query<any>({
       query: GET_LICENSE_VISITS
     }).subscribe(({data, loading, error}) => {
-      this.dataSource2 = _(data.userLicenseVisits).map(v => v.license).value();
+      this.dataSource2 = new MatTableDataSource<any>(_(data.userLicenseVisits).map(v => v.license).value());
+      this.dataSource2.paginator = this.paginator2;
     });
   }
 

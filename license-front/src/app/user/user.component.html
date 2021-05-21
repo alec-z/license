@@ -38,7 +38,7 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
-      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons #page></mat-paginator>
+      <mat-paginator [pageSizeOptions]="[10, 20, 30]" showFirstLastButtons #page></mat-paginator>
 
     </mat-tab>
     <mat-tab label="我浏览过的License">
@@ -78,7 +78,7 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns2;"></tr>
     </table>
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons #page2></mat-paginator>
+    <mat-paginator [pageSizeOptions]="[10, 20, 30]" showFirstLastButtons #page2></mat-paginator>
     </mat-tab>
     <mat-tab label="我的看板"> 管理员权限能查看相应的看板</mat-tab>
   </mat-tab-group>
