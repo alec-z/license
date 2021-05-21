@@ -105,7 +105,7 @@ export class ReportComponent implements AfterViewInit {
       this.toolResult = data?.toolResult;
       this.loading = loading;
       this.error = error;
-      if (this.toolResult.finishAt === '') {
+      if (this.toolResult.finishAt === undefined || this.toolResult.finishAt === null || this.toolResult.finishAt === '') {
         let nextRequestInterval = 2000;
         if (this.toolResult.fileCount !== 0) {
           this.fileCount = this.toolResult.fileCount;
