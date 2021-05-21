@@ -22,14 +22,16 @@ export class UserComponent implements OnInit {
 
   ngOnInit(): void {
     this.apollo.query<any>({
-      query: GET_VISITS
+      query: GET_VISITS,
+      fetchPolicy: 'network-only'
     }).subscribe(({data, loading, error}) => {
       this.dataSource = new MatTableDataSource<any>(_(data.userVisits).map(v => v.toolResult).value());
       this.dataSource.paginator = this.paginator;
     });
 
     this.apollo.query<any>({
-      query: GET_LICENSE_VISITS
+      query: GET_LICENSE_VISITS,
+      fetchPolicy: 'network-only'
     }).subscribe(({data, loading, error}) => {
       this.dataSource2 = new MatTableDataSource<any>(_(data.userLicenseVisits).map(v => v.license).value());
       this.dataSource2.paginator = this.paginator2;
