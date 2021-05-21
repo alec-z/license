@@ -31,10 +31,12 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.login = (this.authService.userID !== 0);
+    let jwt = localStorage.getItem('jwt');
+    this.login = (jwt !== undefined && jwt !== null && jwt !== '');
     this.avatarUrl = localStorage.getItem('avatarUrl');
     this.authService.isAuthenticated.subscribe((data: boolean) => {
-      this.login = (this.authService.userID !== 0);
+      jwt = localStorage.getItem('jwt');
+      this.login = (jwt !== undefined && jwt !== null && jwt !== '');
       this.avatarUrl = localStorage.getItem('avatarUrl');
       }
     );
