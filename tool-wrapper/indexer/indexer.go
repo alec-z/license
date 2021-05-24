@@ -19,12 +19,15 @@ func init() {
 	retryBackoff := backoff.NewExponentialBackOff()
 	var err error
 	esURL := os.Getenv("ES_URL")
+	esPassword := os.Getenv("ES_PASSWORD")
 	ES, err = elasticsearch.NewClient(elasticsearch.Config{
 		Addresses: []string{
 			esURL,
 		},
 		// Retry on 429 TooManyRequests statuses
 		//
+		Username: "elastic",
+		Password: esPassword,
 		RetryOnStatus: []int{502, 503, 504, 429},
 
 		// Configure the backoff function
