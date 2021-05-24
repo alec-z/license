@@ -38,7 +38,7 @@ import { ReportContentComponent } from './report/report-content/report-content.c
 import { ReportFileListComponent } from './report/report-content/report-file-list/report-file-list.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { YesNoPipe } from './yes-no.pipe';
+import { YesNoPipe } from './pipe/yes-no.pipe';
 import { ReportBucketsComponent } from './report/report-content/report-buckets/report-buckets.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { UserComponent } from './user/user.component';

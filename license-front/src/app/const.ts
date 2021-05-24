@@ -53,13 +53,13 @@ const BadLicenseFiles = `
         "bool": {
           "must": [
             { "terms": {"license_expressions.keyword": [
-              "GPL", "LGPL", "AGPL",
-              "AGPL-1.0","AGPL-2.0","AGPL-3.0",
-              "GPL-1.0","GPL-2.0","GPL-3.0",
-              "AGPL-1.0","AGPL-2.0","AGPL-3.0",
-               "AGPL-1.0-only","AGPL-1.0-or-later","AGPL-2.0-only","AGPL-2.0-or-later","AGPL-3.0-only","AGPL-3.0-or-later",
-              "GPL-1.0-only","GPL-1.0-or-later","GPL-2.0-only","GPL-2.0-or-later","GPL-3.0-only","GPL-3.0-or-later",
-              "LGPL-1.0-only","LGPL-1.0-or-later","LGPL-2.0-only","LGPL-2.0-or-later","LGPL-3.0-only","LGPL-3.0-or-later"
+              "gpl", "Lgpl", "agpl",
+              "agpl-1.0","agpl-2.0","agpl-3.0",
+              "gpl-1.0","gpl-2.0","gpl-3.0",
+              "lgpl-1.0","lgpl-2.0","lgpl-3.0",
+               "agpl-1.0-only","agpl-1.0-or-later","agpl-2.0-only","agpl-2.0-or-later","agpl-3.0-only","agpl-3.0-or-later",
+              "gpl-1.0-only","gpl-1.0-or-later","gpl-2.0-only","gpl-2.0-or-later","gpl-3.0-only","gpl-3.0-or-later",
+              "lgpl-1.0-only","lgpl-1.0-or-later","lgpl-2.0-only","lgpl-2.0-or-later","lgpl-3.0-only","lgpl-3.0-or-later"
               ]} },
             { "term": {"repo_branch_hash": "$repoBranchHash"} }
           ]
