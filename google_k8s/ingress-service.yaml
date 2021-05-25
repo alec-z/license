@@ -88,6 +88,6 @@ spec:
               servicePort: 8080
             path: /gitee_redirect
           - backend:
-              serviceName: quickstart-es-http
-              servicePort: 9200
+              serviceName: wrapper-cluster-ip
+              servicePort: 8081
             path: /es_endpoint
