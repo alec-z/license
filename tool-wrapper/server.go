@@ -37,8 +37,26 @@ func main() {
 	initDB()
 	router := chi.NewRouter()
 	router.HandleFunc("/ci", handleCI)
+	router.HandleFunc("/es_endpoint/*", esTransport)
 	log.Printf("connect to http://localhost:%s/ for tool wrapper", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
+}
+
+func esTransport(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Path
+	r.URL.Path = strings.ReplaceAll(path, "/es_endpoint/", "/")
+	resp, err := indexer.EsTransport.Perform(r)
+	if err != nil {
+		log.Println(err)
+	}
+	for k,_ := range resp.Header {
+		w.Header().Set(k, resp.Header.Get(k))
+	}
+	defer resp.Body.Close()
+
+
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Fprint(w, string(body))
 }
 
 func handleCI(w http.ResponseWriter, r *http.Request) {

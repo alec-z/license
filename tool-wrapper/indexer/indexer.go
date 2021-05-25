@@ -8,19 +8,22 @@ import (
 	"github.com/alec-z/tool-wrapper/model"
 	"github.com/cenkalti/backoff/v4"
 	"github.com/elastic/go-elasticsearch/v7"
+	"github.com/elastic/go-elasticsearch/v7/estransport"
 	"github.com/elastic/go-elasticsearch/v7/esutil"
 	"log"
+	"net/url"
 	"os"
 	"time"
 )
 var ES *elasticsearch.Client
 var bi esutil.BulkIndexer
+var EsTransport *estransport.Client
 func init() {
 	retryBackoff := backoff.NewExponentialBackOff()
 	var err error
 	esURL := os.Getenv("ES_URL")
 	esPassword := os.Getenv("ES_PASSWORD")
-	ES, err = elasticsearch.NewClient(elasticsearch.Config{
+	esConfig := elasticsearch.Config{
 		Addresses: []string{
 			esURL,
 		},
@@ -42,15 +45,43 @@ func init() {
 		// Retry up to 5 attempts
 		//
 		MaxRetries: 3,
-	})
+	}
+	ES, err = elasticsearch.NewClient(esConfig)
 	if err != nil {
 		fmt.Println(err)
+	}
+	urlES, _ := url.Parse(esURL)
+
+
+
+	esConfig2 := estransport.Config{
+		// Retry on 429 TooManyRequests statuses
+		//
+		URLs: []*url.URL{ urlES },
+		Username: "elastic",
+		Password: esPassword,
+		RetryOnStatus: []int{502, 503, 504, 429},
+
+		// Configure the backoff function
+		//
+		RetryBackoff: func(i int) time.Duration {
+			if i == 1 {
+				retryBackoff.Reset()
+			}
+			return retryBackoff.NextBackOff()
+		},
+
+		// Retry up to 5 attempts
+		//
+		MaxRetries: 3,
 	}
 	bi, err = esutil.NewBulkIndexer(esutil.BulkIndexerConfig{
 		Index:      "scan_file_results",
 		Client:     ES,
 		NumWorkers: 3,
 	})
+
+	EsTransport, err = estransport.New(esConfig2)
 }
 
 func BulkIndexer(result *model.ToolResult) {
