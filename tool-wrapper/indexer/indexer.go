@@ -3,6 +3,7 @@ package indexer
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"github.com/alec-z/tool-wrapper/model"
@@ -11,6 +12,7 @@ import (
 	"github.com/elastic/go-elasticsearch/v7/estransport"
 	"github.com/elastic/go-elasticsearch/v7/esutil"
 	"log"
+	"net/http"
 	"net/url"
 	"os"
 	"time"
@@ -23,6 +25,7 @@ func init() {
 	var err error
 	esURL := os.Getenv("ES_URL")
 	esPassword := os.Getenv("ES_PASSWORD")
+
 	esConfig := elasticsearch.Config{
 		Addresses: []string{
 			esURL,
@@ -32,6 +35,9 @@ func init() {
 		Username: "elastic",
 		Password: esPassword,
 		RetryOnStatus: []int{502, 503, 504, 429},
+		Transport: &http.Transport{
+			TLSClientConfig:    &tls.Config{InsecureSkipVerify: true},
+		},
 
 		// Configure the backoff function
 		//
@@ -69,6 +75,9 @@ func init() {
 				retryBackoff.Reset()
 			}
 			return retryBackoff.NextBackOff()
+		},
+		Transport: &http.Transport{
+			TLSClientConfig:    &tls.Config{InsecureSkipVerify: true},
 		},
 
 		// Retry up to 5 attempts
