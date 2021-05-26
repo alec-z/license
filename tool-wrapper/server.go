@@ -45,6 +45,7 @@ func main() {
 func esTransport(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 	r.URL.Path = strings.ReplaceAll(path, "/es_endpoint/", "/")
+	r.Header.Del("Authorization")
 	resp, err := indexer.EsTransport.Perform(r)
 	if err != nil {
 		log.Println(err)
