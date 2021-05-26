@@ -38,7 +38,7 @@ func main() {
 	router := chi.NewRouter()
 	router.HandleFunc("/ci", handleCI)
 	router.HandleFunc("/es_endpoint/*", esTransport)
-	log.Printf("connect to http://localhost:%s/ for tool wrapper", port)
+	log.Printf("connect to http://wrapper-tool:%s/ for tool wrapper", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }
 
