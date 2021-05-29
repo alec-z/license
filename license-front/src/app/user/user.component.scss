@@ -4,9 +4,12 @@ table, p.right {
   margin-top: 30px;
 }
 .scan-header {
+  padding-left: 2.5%;
+  padding-right: 2.5%;
+  display: flex;
   margin-top: 20px;
   margin-bottom: 30px;
-  .mat-form-field, .mat-button {
-    margin-left: 15px;
+  .mat-form-field {
+    margin-right: 15px;
   }
 }

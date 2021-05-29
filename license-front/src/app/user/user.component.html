@@ -12,7 +12,11 @@
           <input matInput  [(ngModel)]="branch">
         </mat-form-field>
 
-        <button mat-raised-button color="primary" (click)="scan()">Scan</button>
+        <mat-form-field appearance="fill">
+          <button mat-raised-button color="primary" (click)="scan()">Scan</button>
+        </mat-form-field>
+
+
       </div>
 
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
