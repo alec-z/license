@@ -1,6 +1,20 @@
 <div class="container">
   <mat-tab-group>
     <mat-tab label="我浏览过的报告">
+      <div class="scan-header">
+        <mat-form-field appearance="fill">
+          <mat-label>Repository</mat-label>
+          <input matInput [(ngModel)]="repository">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Input</mat-label>
+          <input matInput  [(ngModel)]="branch">
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" (click)="scan()">Scan</button>
+      </div>
+
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <!--- Note that these columns can be defined in any order.
               The actual rendered columns are set as a property on the row definition" -->

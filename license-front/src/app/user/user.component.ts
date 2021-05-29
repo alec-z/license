@@ -3,6 +3,8 @@ import { Apollo, gql } from 'apollo-angular';
 import * as _ from 'lodash';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-user',
@@ -14,11 +16,13 @@ export class UserComponent implements OnInit {
   displayedColumns2: string[] = ['id', 'name', 'spdxName', 'tags'];
   dataSource: any;
   dataSource2: any;
+  repository = '';
+  branch = '';
 
   @ViewChild('page') paginator: MatPaginator;
   @ViewChild('page2') paginator2: MatPaginator;
 
-  constructor(private apollo: Apollo) { }
+  constructor(private apollo: Apollo, private http: HttpClient) { }
 
   ngOnInit(): void {
     this.apollo.query<any>({
@@ -36,6 +40,17 @@ export class UserComponent implements OnInit {
       this.dataSource2 = new MatTableDataSource<any>(_(data.userLicenseVisits).map(v => v.license).value());
       this.dataSource2.paginator = this.paginator2;
     });
+  }
+
+  scan(): void {
+    const url = '/ci';
+    const headers = new HttpHeaders({'Content-Type': 'application/json; charset=utf-8'});
+    this.http.post(url, {repo: this.repository, branch: this.branch, action: 'license_scan_general'}, { headers }).subscribe(
+      (data: any) => {
+        window.open(data.report_url, '_blank');
+      }
+    );
+
   }
 
 
@@ -68,7 +83,7 @@ const GET_LICENSE_VISITS = gql`
                         description
                     }
                 },
-                
+
             }
         }
     }
