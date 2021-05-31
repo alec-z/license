@@ -42,7 +42,8 @@ func init() {
 		ClientID:     GiteeClientID,
 		ClientSecret: giteeSecret,
 		Scopes:       []string{"user_info"},
-		RedirectURL: "https://compliance.openeuler.org/gitee_redirect",
+		//RedirectURL: "https://compliance.openeuler.org/gitee_redirect",
+		RedirectURL: "http://localhost:4200/gitee_redirect",
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  GiteeAuthURL,
 			TokenURL: GiteeTokenURL,
@@ -54,9 +55,10 @@ func init() {
 		ClientID:     GithubClientID,
 		ClientSecret: githubSecret,
 		Scopes:       []string{},
+		RedirectURL: "http://compliance.openeuler.org/github_redirect",
 		Endpoint: oauth2.Endpoint{
-		AuthURL:  github.Endpoint.AuthURL,
-		TokenURL: github.Endpoint.TokenURL,
+			AuthURL:  github.Endpoint.AuthURL,
+			TokenURL: github.Endpoint.TokenURL,
 		},
 	}
 	OAuth2ConfigObj.Ctx = context.Background()
