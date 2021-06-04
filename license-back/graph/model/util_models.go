@@ -55,7 +55,7 @@ func init() {
 		ClientID:     GithubClientID,
 		ClientSecret: githubSecret,
 		Scopes:       []string{},
-		RedirectURL: "http://compliance.openeuler.org/github_redirect",
+		RedirectURL: "https://compliance.openeuler.org/github_redirect",
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  github.Endpoint.AuthURL,
 			TokenURL: github.Endpoint.TokenURL,
