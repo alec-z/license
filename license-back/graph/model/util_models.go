@@ -42,8 +42,8 @@ func init() {
 		ClientID:     GiteeClientID,
 		ClientSecret: giteeSecret,
 		Scopes:       []string{"user_info"},
-		//RedirectURL: "https://compliance.openeuler.org/gitee_redirect",
-		RedirectURL: "http://localhost:4200/gitee_redirect",
+		RedirectURL: "https://compliance.openeuler.org/gitee_redirect",
+		//RedirectURL: "http://localhost:4200/gitee_redirect",
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  GiteeAuthURL,
 			TokenURL: GiteeTokenURL,
