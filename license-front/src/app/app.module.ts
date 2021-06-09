@@ -24,7 +24,7 @@ import { TagItemComponent } from './license-show/feature-tags-box/tag-item/tag-i
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCardModule } from '@angular/material/card';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthorComponent } from './author/author.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -66,6 +66,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     UserComponent
   ],
   imports: [
+    ReactiveFormsModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,

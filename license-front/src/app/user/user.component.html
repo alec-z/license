@@ -3,20 +3,21 @@
     <mat-tab label="我浏览过的报告">
       <div class="scan-header">
         <mat-form-field appearance="fill" style="width: 400px;">
-          <mat-label>Repository</mat-label>
-          <input matInput [(ngModel)]="repository">
+          <mat-label>Enter Target Repository</mat-label>
+          <input matInput [(ngModel)]="repository" placeholder="https://gitee.com/example_user/example_repo" required [formControl]="repoControl">
+          <mat-error *ngIf="repoControl.invalid">{{getErrorMessage()}}</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
           <mat-label>Branch</mat-label>
-          <input matInput  [(ngModel)]="branch">
+          <input matInput  [(ngModel)]="branch" placeholder="master" required [formControl]="branchControl">
+          <mat-error *ngIf="branchControl.invalid">{{getBranchErrorMessage()}}</mat-error>
         </mat-form-field>
+          <button mat-raised-button color="primary" (click)="scan()" [disabled]="scanning">
+            <span [hidden]="scanning">Scan</span>
+            <mat-spinner [hidden]="!scanning" diameter="32"></mat-spinner>
 
-
-          <button mat-raised-button color="primary" (click)="scan()">Scan</button>
-
-
-
+          </button>
       </div>
 
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">

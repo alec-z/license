@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Router} from '@angular/router';
+import { FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-user',
@@ -18,9 +19,28 @@ export class UserComponent implements OnInit {
   dataSource2: any;
   repository = '';
   branch = '';
-
+  scanning = false;
+  repoControl = new FormControl('', [Validators.required, Validators.pattern('^(https:\/\/gitee.com/|https:\/\/github.com\/).+')]);
+  branchControl = new FormControl('', [Validators.required]);
   @ViewChild('page') paginator: MatPaginator;
   @ViewChild('page2') paginator2: MatPaginator;
+
+  getErrorMessage(): string {
+    if (this.repoControl.hasError('required')) {
+      return 'You must enter a value';
+    }
+
+    return this.repoControl.hasError('pattern') ? 'Not a valid repository URL' : '';
+  }
+  getBranchErrorMessage(): string {
+    if (this.branchControl.hasError('required')) {
+      return 'You must enter a value';
+    }
+
+    return '';
+  }
+
+
 
   constructor(private apollo: Apollo, private http: HttpClient) { }
 
@@ -44,9 +64,16 @@ export class UserComponent implements OnInit {
 
   scan(): void {
     const url = '/ci';
+    this.branchControl.markAllAsTouched();
+    this.repoControl.markAllAsTouched();
+    if (this.branchControl.invalid || this.repoControl.invalid) {
+      return;
+    }
+    this.scanning = true;
     const headers = new HttpHeaders({'Content-Type': 'application/json; charset=utf-8'});
     this.http.post(url, {repo: this.repository, branch: this.branch, action: 'license_scan_general'}, { headers }).subscribe(
       (data: any) => {
+        this.scanning = false;
         window.open(data.report_url, '_blank');
       }
     );

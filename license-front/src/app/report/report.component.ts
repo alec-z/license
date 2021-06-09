@@ -68,10 +68,7 @@ export class ReportComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.id = this.activeRoute.snapshot.params.id;
-    this.apollo.mutate<any>({
-      mutation: UPDATE_USER_VISIT,
-      variables: {id: this.id}
-    }).subscribe();
+
 
     this.refresh();
     if (this.timer !== -1) {
@@ -101,10 +98,12 @@ export class ReportComponent implements AfterViewInit {
       query: GET_TOOL_RESULT,
       variables: {id: this.id},
       fetchPolicy: 'network-only'
-    }).subscribe(({data, loading, error}) => {
+    }).subscribe(({data}) => {
       this.toolResult = data?.toolResult;
-      this.loading = loading;
-      this.error = error;
+      this.apollo.mutate<any>({
+        mutation: UPDATE_USER_VISIT,
+        variables: {id: this.id}
+      }).subscribe();
       if (this.toolResult.finishAt === undefined || this.toolResult.finishAt === null || this.toolResult.finishAt === '') {
         let nextRequestInterval = 3000;
         if (this.toolResult.fileCount !== 0) {
@@ -135,7 +134,6 @@ export class ReportComponent implements AfterViewInit {
       }
       else {
         this.complete = true;
-
         this.apollo.query<any>({
           query: GET_TOOL_RESULT2,
           variables: {id: this.id},
