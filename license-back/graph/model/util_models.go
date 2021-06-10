@@ -38,6 +38,7 @@ func init() {
 	const GiteeAuthURL = "https://gitee.com/oauth/authorize"
 	const GiteeTokenURL = "https://gitee.com/oauth/token"
 
+
 	
 	OAuth2ConfigObj.GiteeConfig = &oauth2.Config{
 		ClientID:     GiteeClientID,
