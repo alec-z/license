@@ -40,3 +40,10 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_SECRET
+            - name: ES_URL
+              value: 'https://quickstart-es-http:9200'
+            - name: ES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: quickstart-es-elastic-user
+                  key: elastic
