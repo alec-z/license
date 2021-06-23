@@ -115,7 +115,7 @@ func (r *queryResolver) ListLicensesByType(ctx context.Context, indexType string
 func (r *queryResolver) ListLicensesByName(ctx context.Context, name string, limit int) ([]*model.License, error) {
 	//输入长度小于4 不查询
 	length := len(name)
-	if length < 4 {
+	if length < 3 {
 		return nil, nil
 	}
 
