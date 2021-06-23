@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -31,6 +32,7 @@ var ESClient *elastic.Client
 
 
 func main() {
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
