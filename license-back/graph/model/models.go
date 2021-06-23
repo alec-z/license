@@ -2,10 +2,12 @@ package model
 
 import (
 	"github.com/jinzhu/gorm"
+	"github.com/olivere/elastic"
 	"time"
 )
 
 var DB *gorm.DB
+var ELS *elastic.Client
 type Tool struct {
 	ID        int `gorm:"primary_key"`
 	CreatedAt time.Time
