@@ -6,4 +6,8 @@
 (对于第一步拉起的docker中的mysql,其值为127.0.0.1和root)，还需要设置，ES_URL 这个elasticsearch相关的环境变量（对于第一步拉起的
 elasticsearch，其值为http://127.0.0.1:9200）
 5. 启动后端license-back, 需要设置环境变量MYSQL_HOST, MYSQL_PASSWORD
-5. 启动前端license-front, 命令`npm run-script ng serve -- --proxy-config=proxy.conf.json`
+6. 启动前端license-front, 命令bash```
+npm install
+
+npm run-script ng serve -- --proxy-config=proxy.conf.json
+'''
