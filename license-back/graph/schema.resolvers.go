@@ -6,11 +6,13 @@ package graph
 import (
 	"context"
 	"fmt"
-
 	"github.com/alec-z/license-back/graph/auth"
 	"github.com/alec-z/license-back/graph/generated"
+	"github.com/alec-z/license-back/graph/index"
 	"github.com/alec-z/license-back/graph/model"
+	"github.com/olivere/elastic"
 	"golang.org/x/oauth2"
+	"reflect"
 )
 
 func (r *mutationResolver) CreateDict(ctx context.Context, input model.DictInput) (*model.Dict, error) {
@@ -47,6 +49,7 @@ func (r *mutationResolver) UpdateFeatureTag(ctx context.Context, featureTagID in
 func (r *mutationResolver) CreateLicense(ctx context.Context, input model.LicenseInput) (*model.License, error) {
 	license := createLicenseFromInput(r.DB, &input)
 	r.DB.Create(license)
+	index.RebuildIndex()
 	return license, nil
 }
 
@@ -54,15 +57,18 @@ func (r *mutationResolver) UpdateLicense(ctx context.Context, licenseID int, inp
 	license := createLicenseFromInput(r.DB, &input)
 	license.ID = licenseID
 	r.DB.Model(&license).Updates(license)
-
+	index.RebuildIndex()
 	return license, nil
 }
 
 func (r *mutationResolver) DeleteLicense(ctx context.Context, licenseID int) (bool, error) {
 	license := model.License{ID: licenseID}
 	r.DB.Delete(&license)
+	//调用els 重载数据
+	index.RebuildIndex()
 	return true, nil
 }
+
 
 func (r *mutationResolver) CreateUserVisit(ctx context.Context, toolResultID int) (*model.UserVisit, error) {
 	var userVisit model.UserVisit
@@ -107,8 +113,40 @@ func (r *queryResolver) ListLicensesByType(ctx context.Context, indexType string
 }
 
 func (r *queryResolver) ListLicensesByName(ctx context.Context, name string, limit int) ([]*model.License, error) {
+	//输入长度小于4 不查询
+	length := len(name)
+	if length < 4 {
+		return nil, nil
+	}
+
 	var licenses []*model.License
-	r.DB.Where("MATCH (spdx_name, name) AGAINST (?)", name).Preload("LicenseFeatureTags").Limit(limit).Find(&licenses)
+	var typeLicenses *model.License
+	els := model.ELS
+	//设置查询条件
+	queryName := elastic.NewBoolQuery()
+	querySpdxName := elastic.NewBoolQuery()
+	queryKeyName := elastic.NewBoolQuery()
+	queryKeySpdxName := elastic.NewBoolQuery()
+	query := elastic.NewDisMaxQuery()
+
+	queryName.Should(elastic.NewMatchPhrasePrefixQuery("name", name).Slop(10).Boost(1))
+	querySpdxName.Should(elastic.NewMatchPhrasePrefixQuery("spdxName",name).Slop(10).Boost(1.5))
+	queryKeySpdxName.Should(elastic.NewPrefixQuery("spdxName.keyword",name).Boost(2))
+	queryKeyName.Should(elastic.NewPrefixQuery("name.keyword",name).Boost(0.5))
+	query.TieBreaker(0.3).Query(queryName).Query(querySpdxName).Query(queryKeyName).Query(queryKeySpdxName)
+
+	//获取查询结果
+	var res *elastic.SearchResult
+	res, err := els.Search().Index("licenses").Type("licenses").Query(query).RestTotalHitsAsInt(true).Pretty(true).Do(context.Background())
+	if err != nil {
+		panic(err)
+	}
+	//将结果转为对象输出
+	for _, item := range res.Each(reflect.TypeOf(typeLicenses)) {
+		t := item.(*model.License)
+		licenses = append(licenses, t)
+	}
+
 	return licenses, nil
 }
 

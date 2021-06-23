@@ -8,10 +8,12 @@ import (
 	"github.com/alec-z/license-back/graph"
 	"github.com/alec-z/license-back/graph/auth"
 	"github.com/alec-z/license-back/graph/generated"
+	"github.com/alec-z/license-back/graph/index"
 	"github.com/alec-z/license-back/graph/model"
 	"github.com/go-chi/chi/v5"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
+	"github.com/olivere/elastic"
 	"golang.org/x/oauth2"
 	"io/ioutil"
 	"log"
@@ -25,12 +27,16 @@ const defaultPort = "8080"
 
 var db *gorm.DB
 
+var ESClient *elastic.Client
+
+
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
 	}
 	initDB()
+	initEls()
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{ DB: db}}))
 	router := chi.NewRouter()
 	router.Use(auth.Middleware(db))
@@ -152,3 +158,19 @@ func initDB() {
 	db.AutoMigrate(&model.License{}, &model.Dict{}, &model.LicenseFeatureTag{}, &model.FeatureTag{}, &model.User{}, &model.UserVisit{}, &model.UserLicenseVisit{})
 	model.DB = db
 }
+
+
+func initEls() {
+	esURL := os.Getenv("ES_URL")
+	esPassword := os.Getenv("ES_PASSWORD")
+	esUser := "elastic"
+
+	ESClient, err := elastic.NewClient(elastic.SetSniff(false), elastic.SetURL(esURL),elastic.SetBasicAuth(esUser,esPassword))
+	if err != nil {
+		fmt.Println(err)
+		panic("Failed to build elasticsearch connection")
+	}
+	model.ELS = ESClient
+	index.RebuildIndex()
+}
+
