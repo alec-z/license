@@ -24,8 +24,9 @@ func (r *mutationResolver) CreateDict(ctx context.Context, input model.DictInput
 func (r *mutationResolver) UpdateDict(ctx context.Context, dictID int, input model.DictInput) (*model.Dict, error) {
 	dict := createDictFromInput(&input)
 	dict.ID = dictID
-	r.DB.Model(&dict).Updates(&dict)
 	index.RebuildIndex()
+	//r.DB.Model(&dict).Updates(&dict)
+
 	return dict, nil
 }
 
