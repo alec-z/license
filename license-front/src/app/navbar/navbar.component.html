@@ -60,8 +60,8 @@
   </button>
 </mat-menu>
 
-<mat-autocomplete #auto="matAutocomplete" panelWidth="600px">
+<mat-autocomplete #auto="matAutocomplete" panelWidth="500px">
   <mat-option *ngFor="let license of licenses$ | async" [value]="license.name" [routerLink]="['/license', license.id]">
-    {{license.name}} <span *ngIf="license.spdxName">({{license.spdxName}}) </span> {{license.id}}
+    {{license.name}} <span *ngIf="license.spdxName">({{license.spdxName}}) </span>
   </mat-option>
 </mat-autocomplete>
