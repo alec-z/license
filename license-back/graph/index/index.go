@@ -18,13 +18,15 @@ func RebuildIndex() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	if exists {
+		els.DeleteIndex("licenses").Do(context.Background())
+
+	}
 	//索引不存在则创建索引
 	//索引不存在时查询会报错，但索引不存在的时候可以直接插入
-	if !exists {
-		_, err := els.CreateIndex("licenses").Do(context.Background())
-		if err != nil {
-			fmt.Println(err)
-		}
+	_, err2 := els.CreateIndex("licenses").Do(context.Background())
+	if err2 != nil {
+		fmt.Println(err)
 	}
 
 	//写入els

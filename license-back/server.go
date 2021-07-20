@@ -9,7 +9,6 @@ import (
 	"github.com/alec-z/license-back/graph"
 	"github.com/alec-z/license-back/graph/auth"
 	"github.com/alec-z/license-back/graph/generated"
-	"github.com/alec-z/license-back/graph/index"
 	"github.com/alec-z/license-back/graph/model"
 	"github.com/go-chi/chi/v5"
 	_ "github.com/go-sql-driver/mysql"
@@ -173,6 +172,5 @@ func initEls() {
 		panic("Failed to build elasticsearch connection")
 	}
 	model.ELS = ESClient
-	index.RebuildIndex()
 }
 

@@ -25,6 +25,7 @@ func (r *mutationResolver) UpdateDict(ctx context.Context, dictID int, input mod
 	dict := createDictFromInput(&input)
 	dict.ID = dictID
 	r.DB.Model(&dict).Updates(&dict)
+	index.RebuildIndex()
 	return dict, nil
 }
 
