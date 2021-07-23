@@ -1,10 +1,10 @@
 <div class="tags-box" [ngClass]="tagType">
   <div class="header">
-    {{tagType | titlecase}}
+    {{tagType | titlecase}} <span class="sub-title">({{ getSubTitle() }})</span>
   </div>
   <div class="body">
     <mat-accordion>
-      <app-tag-item *ngFor="let tag of featureTags" [featureTag]="tag"></app-tag-item>
+      <app-tag-item *ngFor="let tag of sortedFeatureTags" [featureTag]="tag"></app-tag-item>
     </mat-accordion>
   </div>
 </div>

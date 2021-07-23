@@ -68,6 +68,7 @@ type ComplexityRoot struct {
 	}
 
 	FeatureTag struct {
+		CnName      func(childComplexity int) int
 		Description func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Name        func(childComplexity int) int
@@ -299,6 +300,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Dict.Type(childComplexity), true
+
+	case "FeatureTag.cnName":
+		if e.complexity.FeatureTag.CnName == nil {
+			break
+		}
+
+		return e.complexity.FeatureTag.CnName(childComplexity), true
 
 	case "FeatureTag.description":
 		if e.complexity.FeatureTag.Description == nil {
@@ -924,6 +932,7 @@ type FeatureTag {
   id: Int!
   order: Int!
   name: String!
+  cnName: String!
   description: String!
 }
 
@@ -1942,6 +1951,41 @@ func (ec *executionContext) _FeatureTag_name(ctx context.Context, field graphql.
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FeatureTag_cnName(ctx context.Context, field graphql.CollectedField, obj *model.FeatureTag) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FeatureTag",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CnName, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5593,6 +5637,11 @@ func (ec *executionContext) _FeatureTag(ctx context.Context, sel ast.SelectionSe
 			}
 		case "name":
 			out.Values[i] = ec._FeatureTag_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "cnName":
+			out.Values[i] = ec._FeatureTag_cnName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

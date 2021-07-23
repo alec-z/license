@@ -1,5 +1,5 @@
 <mat-toolbar color="primary" class="nav-toolbar">
-  <button mat-button routerLink="/"><mat-icon>assignment</mat-icon> Licenses Show Room</button>
+  <button mat-button routerLink="/" fxHide.lt-md><mat-icon>assignment</mat-icon> Licenses Show Room</button>
   <div class="search-input-group-auto" matAutocompleteOrigin #origin="matAutocompleteOrigin">
   <div class="search-input-group">
     <input class="search-input" placeholder="Lookup Licenses"
@@ -60,7 +60,7 @@
   </button>
 </mat-menu>
 
-<mat-autocomplete #auto="matAutocomplete" panelWidth="500px">
+<mat-autocomplete #auto="matAutocomplete" panelWidth="460px">
   <mat-option *ngFor="let license of licenses$ | async" [value]="license.name" [routerLink]="['/license', license.id]">
     {{license.name}} <span *ngIf="license.spdxName">({{license.spdxName}}) </span>
   </mat-option>

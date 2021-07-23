@@ -2,8 +2,8 @@
   <div class="header"><a [routerLink]="['/license', license.id]">{{license.name}}</a></div>
   <div class="middle"><span *ngFor="let lmt of license.licenseMainTags" class="main-tag">#{{lmt.mainTag.name}}</span></div>
   <div class="footer">
-    <span class="can">{{license.canFeatureTags.length}} Rules</span>
-    <span class="cannot">{{license.cannotFeatureTags.length}} Rules</span>
-    <span class="must">{{license.mustFeatureTags.length}} Rules</span>
+    <span class="can">{{license.canFeatureTags.length}} Rights</span>
+    <span class="cannot">{{license.cannotFeatureTags.length}} Limitations</span>
+    <span class="must">{{license.mustFeatureTags.length}} Obligations</span>
   </div>
 </div>

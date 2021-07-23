@@ -142,6 +142,7 @@ type FeatureTag struct {
 
 	Order int
 	Name string
+	CnName string
 	Description string
 }
 

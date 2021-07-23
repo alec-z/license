@@ -6,13 +6,15 @@ package graph
 import (
 	"context"
 	"fmt"
+	"github.com/jinzhu/gorm"
+	"reflect"
+
 	"github.com/alec-z/license-back/graph/auth"
 	"github.com/alec-z/license-back/graph/generated"
 	"github.com/alec-z/license-back/graph/index"
 	"github.com/alec-z/license-back/graph/model"
 	"github.com/olivere/elastic"
 	"golang.org/x/oauth2"
-	"reflect"
 )
 
 func (r *mutationResolver) CreateDict(ctx context.Context, input model.DictInput) (*model.Dict, error) {
@@ -25,7 +27,7 @@ func (r *mutationResolver) UpdateDict(ctx context.Context, dictID int, input mod
 	dict := createDictFromInput(&input)
 	dict.ID = dictID
 	index.RebuildIndex()
-	//r.DB.Model(&dict).Updates(&dict)
+	//	r.DB.Model(&dict).Updates(&dict)
 
 	return dict, nil
 }
@@ -71,7 +73,6 @@ func (r *mutationResolver) DeleteLicense(ctx context.Context, licenseID int) (bo
 	return true, nil
 }
 
-
 func (r *mutationResolver) CreateUserVisit(ctx context.Context, toolResultID int) (*model.UserVisit, error) {
 	var userVisit model.UserVisit
 	user := auth.ForContext(ctx)
@@ -104,13 +105,19 @@ func (r *queryResolver) Licenses(ctx context.Context) ([]*model.License, error) 
 
 func (r *queryResolver) License(ctx context.Context, licenseID int) (*model.License, error) {
 	var license model.License
-	r.DB.Preload("LicenseMainTags.MainTag").Preload("LicenseFeatureTags").First(&license, licenseID)
+
+	r.DB.Preload("LicenseMainTags", func(db *gorm.DB) *gorm.DB {
+		return db.Joins("inner join `dicts` on dicts.id=`license_main_tags`.main_tag_id ").Order("`dicts`.order")
+	}).Preload("LicenseMainTags.MainTag").Preload("LicenseFeatureTags").First(&license, licenseID)
 	return &license, nil
 }
 
 func (r *queryResolver) ListLicensesByType(ctx context.Context, indexType string, limit int) ([]*model.License, error) {
 	var licenses []*model.License
-	r.DB.Where("index_type = ?", indexType).Preload("LicenseMainTags.MainTag").Preload("LicenseFeatureTags").Limit(limit).Find(&licenses)
+	r.DB.Where("index_type = ?", indexType).Preload("LicenseMainTags", func(db *gorm.DB) *gorm.DB {
+		return db.Joins("inner join `dicts` on dicts.id=`license_main_tags`.main_tag_id ").Order("`dicts`.order")
+	}).Preload("LicenseMainTags.MainTag").Preload("LicenseFeatureTags").Find(&licenses)
+
 	return licenses, nil
 }
 
@@ -132,9 +139,9 @@ func (r *queryResolver) ListLicensesByName(ctx context.Context, name string, lim
 	query := elastic.NewDisMaxQuery()
 
 	queryName.Should(elastic.NewMatchPhrasePrefixQuery("name", name).Slop(10).Boost(1))
-	querySpdxName.Should(elastic.NewMatchPhrasePrefixQuery("spdxName",name).Slop(10).Boost(1.5))
-	queryKeySpdxName.Should(elastic.NewPrefixQuery("spdxName.keyword",name).Boost(2))
-	queryKeyName.Should(elastic.NewPrefixQuery("name.keyword",name).Boost(0.5))
+	querySpdxName.Should(elastic.NewMatchPhrasePrefixQuery("spdxName", name).Slop(10).Boost(1.5))
+	queryKeySpdxName.Should(elastic.NewPrefixQuery("spdxName.keyword", name).Boost(2))
+	queryKeyName.Should(elastic.NewPrefixQuery("name.keyword", name).Boost(0.5))
 	query.TieBreaker(0.3).Query(queryName).Query(querySpdxName).Query(queryKeyName).Query(queryKeySpdxName)
 
 	//获取查询结果

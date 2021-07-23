@@ -1,11 +1,14 @@
 .header {
-  height:160px;
+  height:170px;
   background-color:#3f51b5;
   color: #FFFFFF;
   .title {
     padding-top: 50px;
-    font-size: 2em;
+    font-size:3em;
     line-height: 1.5em;
+  }
+  .sub-title {
+    margin-top: 4px;
   }
   border-bottom: 1px solid #FFFFFF;
   .free {
@@ -25,8 +28,8 @@
   }
   margin: 30px auto;
   .title {
-    padding: 0.5em 0em 1em 0em;
-    font-size: 3em;
+    padding: 0.3em 0em 0.7em 0em;
+    font-size: 2em;
     font-weight: bold;
   }
   .body {
@@ -38,6 +41,9 @@
 
 .license-main-tag {
   margin: 0 10px;
+  font-size: 12px;
+  height: 30px;
+  line-height: 30px;
 }
 
 .tooltip-warning {

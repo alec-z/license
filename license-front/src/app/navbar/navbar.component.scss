@@ -1,26 +1,36 @@
 .search-input {
   border: none;
   color: #777;
-  font-size: 14px;
+  font-size: 18px;
   outline: none;
   padding: 5px 7px;
   box-shadow: none;
   background: #fff;
   border-radius: 0px;
-  height: 16px;
+  height: 22px;
+  border: 1px solid #FFFFFF;
+  display: block;
+  width: 300px;
 
 }
 .search-input-group{
   vertical-align: middle;
   display: flex;
   align-items: center;
+  justify-content: center;
+  height: 40px;
 }
 .search-input-group-auto {
-  padding-right: 160px;
+  padding-right: 120px;
 }
-.search-input-group mat-icon {
+.search-input-group .mat-icon {
   border: 1px solid #FFFFFF;
   border-radius: 0px;
+  width: 32px;
+  height: 32px;
+  font-size: 30px;
+  margin-top: -2px;
+  display: block;
 }
 .nav-toolbar {
   box-shadow: 0 3px 5px -1px rgb(0 0 0 / 20%), 0 6px 10px 0 rgb(0 0 0 / 14%), 0 1px 18px 0 rgb(0 0 0 / 12%);
@@ -36,4 +46,7 @@
   vertical-align: middle;
 
   border-radius: 50%;
+}
+::ng-deep .mat-autocomplete-panel {
+  max-height: 512px !important;
 }

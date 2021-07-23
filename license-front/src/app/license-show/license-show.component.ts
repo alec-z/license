@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { concatAll, concatMap, map, pluck, tap } from 'rxjs/operators';
 import { Apollo, gql } from 'apollo-angular';
+import * as _ from 'lodash';
+
 
 const GET_LICENSE = gql`
     query License($id: Int!){
@@ -20,16 +22,22 @@ const GET_LICENSE = gql`
             mustFeatureTags {
                 id
                 name
+                cnName
+                order
                 description
             }
             canFeatureTags {
                 id
                 name
+                cnName
+                order
                 description
             }
             cannotFeatureTags {
                 id
                 name
+                cnName
+                order
                 description
             }
         }

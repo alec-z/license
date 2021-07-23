@@ -4,18 +4,16 @@
       {{ license.name }}
     </div>
     <div class="sub-title">
-      <button mat-button
+      <button mat-raised-button
               [matTooltip]="lmt.mainTag.description"
               matTooltipClass="tooltip-warning"
               aria-label="Button that shows a red tooltip"
               *ngFor="let lmt of license.licenseMainTags"
               class="license-main-tag"
+              color="basic"
               >
         #{{lmt.mainTag.name}}
       </button>
-
-
-
     </div>
   </div>
 </div>
@@ -28,19 +26,17 @@
         <div class="title">
           Quick Summary
         </div>
-        <div class="body">
-          {{license.summary }}
+        <div class="body" style="white-space:pre-wrap" [innerHTML]="license.summary">
+
         </div>
         </mat-card>
       </div>
 
       <div fxLayout="row" fxLayoutAlign="space-between stretch">
         <app-feature-tags-box fxFlex="30" tagType="can" [featureTags]="license.canFeatureTags"></app-feature-tags-box>
-        <app-feature-tags-box fxFlex="30" tagType="cannot" [featureTags]="license.cannotFeatureTags"></app-feature-tags-box>
         <app-feature-tags-box fxFlex="30" tagType="must" [featureTags]="license.mustFeatureTags"></app-feature-tags-box>
+        <app-feature-tags-box fxFlex="30" tagType="cannot" [featureTags]="license.cannotFeatureTags"></app-feature-tags-box>
       </div>
-
-
     </mat-tab>
     <mat-tab label="Full Text">
       <div class="full-text wider">
