@@ -1,7 +1,7 @@
 <div class="banner">
   <div class="container">
     <div class="app-name">
-      License Show Room
+      貂蝉 <span style="font-size: 50px;">License Show Room</span>
     </div>
     <div class="app-description">
       Anything important you should know about licenses
@@ -14,10 +14,10 @@
 
 </div>
 <div class="container">
-  <div fxLayout="row" fxLayout="row" fxLayoutAlign="space-between stretch" *ngIf="!loading">
-    <app-license-list title="Featured" fxFlex="30" title="featured" [licenses]="featuredLicenses"></app-license-list>
-    <app-license-list title="Most POPULAR" fxFlex="30" [licenses]="popularLicenses"></app-license-list>
-    <app-license-list title="NEWEST" fxFlex="30" [licenses]="newLicenses"></app-license-list>
+  <div fxLayout="row" fxLayout="row" fxLayoutAlign="space-between stretch" fxLayoutAlign.lt-md="space-around stretch" *ngIf="!loading">
+    <app-license-list title="Featured" fxFlex="30" title="featured" [licenses]="featuredLicenses" fxHide.lt-md></app-license-list>
+    <app-license-list title="Most POPULAR" fxFlex="30" [licenses]="popularLicenses" fxFlex.lt-md="80"></app-license-list>
+    <app-license-list title="NEWEST" fxFlex="30" [licenses]="newLicenses" fxHide.lt-md></app-license-list>
 
 
   </div>

@@ -32,10 +32,10 @@
         </mat-card>
       </div>
 
-      <div fxLayout="row" fxLayoutAlign="space-between stretch">
-        <app-feature-tags-box fxFlex="30" tagType="can" [featureTags]="license.canFeatureTags"></app-feature-tags-box>
-        <app-feature-tags-box fxFlex="30" tagType="must" [featureTags]="license.mustFeatureTags"></app-feature-tags-box>
-        <app-feature-tags-box fxFlex="30" tagType="cannot" [featureTags]="license.cannotFeatureTags"></app-feature-tags-box>
+      <div fxLayout="row" fxLayoutAlign="space-between stretch"  fxLayoutAlign.lt-md="space-around" fxLayout.lt-md="row wrap">
+        <app-feature-tags-box fxFlex="30" fxFlex.lt-md="90" tagType="can" [featureTags]="license.canFeatureTags"></app-feature-tags-box>
+        <app-feature-tags-box fxFlex="30" fxFlex.lt-md="90" tagType="must" [featureTags]="license.mustFeatureTags"></app-feature-tags-box>
+        <app-feature-tags-box fxFlex="30" fxFlex.lt-md="90" tagType="cannot" [featureTags]="license.cannotFeatureTags"></app-feature-tags-box>
       </div>
     </mat-tab>
     <mat-tab label="Full Text">
