@@ -48,7 +48,6 @@ const GET_LICENSE = gql`
   selector: 'app-license-show',
   templateUrl: './license-show.component.html',
   styleUrls: ['./license-show.component.scss'],
-  encapsulation: ViewEncapsulation.None,
 })
 export class LicenseShowComponent implements OnInit {
   license: any = {};
