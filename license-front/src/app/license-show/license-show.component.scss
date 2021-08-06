@@ -48,4 +48,45 @@
   margin-bottom: 8px;
   font-size: 16px;
 }
+.breadcrumb {
+  margin-top: 25px;
+}
 
+#content-header h1 {
+  color: #58595b;
+}
+
+.page h2, h3, h4, h5 {
+  color: #4597cb;
+}
+
+.page h1 {
+  font-size: 2em;
+}
+
+.page h2 {
+  font-size: 1.5em;
+}
+
+a, a:visited, a:hover {
+  color: #4597cb;
+}
+
+.replacable-license-text {
+  color: #CC0000;
+}
+
+.replacable-license-text p var {
+  color: #CC0000;
+}
+
+.optional-license-text {
+  color: #0000cc;
+}
+
+.optional-license-text p var {
+  color: #0000cc;
+}
+ul, ol, li {
+  margin: 10px 0 10px 0;
+}
