@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { concatAll, concatMap, map, pluck, tap } from 'rxjs/operators';
 import { Apollo, gql } from 'apollo-angular';
@@ -47,7 +47,8 @@ const GET_LICENSE = gql`
 @Component({
   selector: 'app-license-show',
   templateUrl: './license-show.component.html',
-  styleUrls: ['./license-show.component.scss']
+  styleUrls: ['./license-show.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class LicenseShowComponent implements OnInit {
   license: any = {};
