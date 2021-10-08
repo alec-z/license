@@ -4,11 +4,6 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"github.com/alec-z/tool-wrapper/indexer"
-	"github.com/alec-z/tool-wrapper/model"
-	"github.com/go-chi/chi/v5"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 	"io"
 	"io/ioutil"
 	"log"
@@ -20,14 +15,19 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/alec-z/tool-wrapper/indexer"
+	"github.com/alec-z/tool-wrapper/model"
+	"github.com/go-chi/chi/v5"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 const DefaultPort = "8081"
 const BaseDir = "/tmp"
-const ReportBaseUrl ="https://compliance.openeuler.org/report/"
+const ReportBaseUrl = "https://compliance.openeuler.org/report/"
 
 var db *gorm.DB
-
 
 func main() {
 	port := os.Getenv("PORT")
@@ -50,11 +50,10 @@ func esTransport(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	for k,_ := range resp.Header {
+	for k, _ := range resp.Header {
 		w.Header().Set(k, resp.Header.Get(k))
 	}
 	defer resp.Body.Close()
-
 
 	body, _ := ioutil.ReadAll(resp.Body)
 	fmt.Fprint(w, string(body))
@@ -76,7 +75,6 @@ func handleCI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	toolResult := findOrCreateToolResult(request.Action, request.Repo, request.Branch)
 
 	go runTool(toolResult, request.Repo, request.Branch)
@@ -96,14 +94,13 @@ func handleCI(w http.ResponseWriter, r *http.Request) {
 }
 func findOrCreateToolResult(toolName string, repo string, branch string) *model.ToolResult {
 
-
 	var tool model.Tool
 	db.Where("name = ?", toolName).First(&tool)
 	if tool.ID == 0 {
 		log.Println("Cannot find this tool " + toolName)
 		panic("Cannot find this tool " + toolName)
 	}
-	tagHash :=checkBranch(repo, branch)
+	tagHash := checkBranch(repo, branch)
 	var toolResult model.ToolResult
 	db.Where(model.ToolResult{ToolID: tool.ID, RepoBranchHash: tagHash}).FirstOrCreate(&toolResult)
 	if toolResult.Repo != repo || toolResult.Branch != branch {
@@ -127,7 +124,6 @@ func runTool(toolResult *model.ToolResult, repo string, branch string) {
 		dir := BaseDir + "/" + tool.Name + "/" + workDir
 		createWorkDir(dir)
 
-
 		fileCount := gitCloneAndCount(dir, repo, branch)
 		toolResult.FileCount = fileCount
 		db.Save(toolResult)
@@ -144,7 +140,7 @@ func runTool(toolResult *model.ToolResult, repo string, branch string) {
 }
 
 func checkBranch(repo, branch string) string {
-	cmd := exec.Command("git","ls-remote", repo, branch)
+	cmd := exec.Command("git", "ls-remote", repo, "refs/heads/"+branch)
 	result, err := cmd.Output()
 	if err != nil {
 		log.Println("git ls-remote " + repo + " " + branch + "Execute Command failed:" + err.Error())
@@ -152,7 +148,7 @@ func checkBranch(repo, branch string) string {
 	}
 	re := regexp.MustCompile("\\s+")
 
-	log.Println("git ls-remote " + repo + " " + branch  + "Execute Command finished.")
+	log.Println("git ls-remote " + repo + " " + branch + "Execute Command finished.")
 	split := re.Split(string(result), -1)
 	if len(split) >= 2 {
 		return split[0]
@@ -161,7 +157,7 @@ func checkBranch(repo, branch string) string {
 	}
 }
 func createWorkDir(dir string) {
-	cmd := exec.Command("mkdir","-p", dir)
+	cmd := exec.Command("mkdir", "-p", dir)
 	err := cmd.Run()
 	if err != nil {
 		log.Println("mkdir " + dir + " Execute Command failed:" + err.Error())
@@ -170,10 +166,9 @@ func createWorkDir(dir string) {
 	log.Println("mkdir " + dir + "Execute Command finished.")
 }
 
-
 func gitCloneAndCount(dir string, repo string, branch string) int {
 	repoName := extractRepoName(repo)
-	cmd := exec.Command("git", "clone", "-b", branch, repo, dir + "/" + repoName)
+	cmd := exec.Command("git", "clone", "-b", branch, repo, dir+"/"+repoName)
 	err := cmd.Run()
 	if err != nil {
 		log.Println("Git clone Execute Command failed:" + err.Error())
@@ -194,7 +189,7 @@ func gitCloneAndCount(dir string, repo string, branch string) int {
 	return resInt
 }
 
-func extractRepoName (repo string) string {
+func extractRepoName(repo string) string {
 	split := strings.Split(repo, "/")
 	return split[len(split)-1]
 }
@@ -207,7 +202,7 @@ func execTool(dir string, toolResult *model.ToolResult) {
 	for i, v := range split {
 		if v == "{output-file}" {
 			split[i] = dir + "/output.json"
-		} else if v == "{input-dir}"{
+		} else if v == "{input-dir}" {
 			split[i] = dir + "/" + repoName
 		}
 	}
@@ -234,7 +229,7 @@ func execTool(dir string, toolResult *model.ToolResult) {
 			matches := scannedFlag.FindAllStringIndex(line, -1)
 			if len(matches) > 0 {
 				scannedCount += len(matches)
-				if scannedCount >= (step + 1) * stepLength {
+				if scannedCount >= (step+1)*stepLength {
 					step += 1
 					toolResult.ScanedFileCount = scannedCount
 					db.Save(toolResult)
@@ -245,10 +240,8 @@ func execTool(dir string, toolResult *model.ToolResult) {
 		// We're all done, unblock the channel
 		done <- scannedCount
 
-
 	}()
 	var err error
-
 
 	if err = cmd.Start(); err != nil {
 		fmt.Println(err)
@@ -277,9 +270,8 @@ func readOutput(dir string) string {
 	return string(content)
 }
 
-
 func clearUp(dir string) {
-	cmd := exec.Command("rm","-rf", dir)
+	cmd := exec.Command("rm", "-rf", dir)
 	err := cmd.Run()
 	if err != nil {
 		log.Println("rm clear up Execute Command failed:" + err.Error())
@@ -287,9 +279,6 @@ func clearUp(dir string) {
 	}
 	log.Println("rm clear up " + dir + "Execute Command finished.")
 }
-
-
-
 
 func initDB() {
 	// init log
