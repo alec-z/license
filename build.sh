@@ -21,7 +21,7 @@ else
   cp -rf ./scancode-toolkit ./tool-wrapper 
   rm -rf ./tool-wrapper/scancode-toolkit/bin ./tool-wrapper/scancode-toolkit/lib
   docker build -t aleczheng/tool-wrapper -t "aleczheng/tool-wrapper:$SHA" -f ./tool-wrapper/Dockerfile ./tool-wrapper
-  rm -rf ./scancode-toolkit
+  rm -rf ./tool-wrapper/scancode-toolkit
 fi
 
 
