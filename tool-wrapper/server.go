@@ -223,18 +223,20 @@ func execTool(dir string, toolResult *model.ToolResult) {
 	go func() {
 		scannedFlag := regexp.MustCompile(tool.ProcessFileFeature)
 		scannedCount := 0
+		preLine := ""
 		// Read line by line and process it
 		for scanner.Scan() {
 			line := scanner.Text()
 			matches := scannedFlag.FindAllStringIndex(line, -1)
-			if len(matches) > 0 {
-				scannedCount += (len(matches) / 2)
+			if len(matches) > 0 && line != preLine {
+				scannedCount += (len(matches))
 				if scannedCount >= (step+1)*stepLength {
 					step += 1
 					toolResult.ScanedFileCount = scannedCount
 					db.Save(toolResult)
 				}
 			}
+			preLine = line
 		}
 
 		// We're all done, unblock the channel
