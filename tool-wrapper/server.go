@@ -228,7 +228,7 @@ func execTool(dir string, toolResult *model.ToolResult) {
 			line := scanner.Text()
 			matches := scannedFlag.FindAllStringIndex(line, -1)
 			if len(matches) > 0 {
-				scannedCount += len(matches)
+				scannedCount += (len(matches) / 2)
 				if scannedCount >= (step+1)*stepLength {
 					step += 1
 					toolResult.ScanedFileCount = scannedCount
