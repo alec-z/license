@@ -4,6 +4,13 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"net/url"
+	"os"
+	"strings"
+
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/alec-z/license-back/graph"
@@ -15,12 +22,6 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/olivere/elastic"
 	"golang.org/x/oauth2"
-	"io/ioutil"
-	"log"
-	"net/http"
-	"net/url"
-	"os"
-	"strings"
 )
 
 const defaultPort = "8080"
@@ -28,7 +29,6 @@ const defaultPort = "8080"
 var db *gorm.DB
 
 var ESClient *elastic.Client
-
 
 func main() {
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
@@ -38,7 +38,7 @@ func main() {
 	}
 	initDB()
 	initEls()
-	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{ DB: db}}))
+	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{DB: db}}))
 	router := chi.NewRouter()
 	router.Use(auth.Middleware(db))
 	router.Handle("/api_test", playground.Handler("GraphQL playground", "/graphql"))
@@ -50,17 +50,13 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }
 
-
-
 func handleOAuth2Gitee(w http.ResponseWriter, r *http.Request) {
 	code := r.URL.Query().Get("code")
 
-
-
-	respToken, errToken := http.PostForm(model.OAuth2ConfigObj.GiteeConfig.Endpoint.TokenURL +
-		"?grant_type=authorization_code&code=" + code + "&client_id=" +
-		model.OAuth2ConfigObj.GiteeConfig.ClientID +
-		"&redirect_uri=" + model.OAuth2ConfigObj.GiteeConfig.RedirectURL,
+	respToken, errToken := http.PostForm(model.OAuth2ConfigObj.GiteeConfig.Endpoint.TokenURL+
+		"?grant_type=authorization_code&code="+code+"&client_id="+
+		model.OAuth2ConfigObj.GiteeConfig.ClientID+
+		"&redirect_uri="+model.OAuth2ConfigObj.GiteeConfig.RedirectURL,
 		url.Values{
 			"client_secret": {model.OAuth2ConfigObj.GiteeConfig.ClientSecret},
 		})
@@ -73,9 +69,7 @@ func handleOAuth2Gitee(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-
-
-	client :=  model.OAuth2ConfigObj.GiteeConfig.Client(model.OAuth2ConfigObj.Ctx, &token)
+	client := model.OAuth2ConfigObj.GiteeConfig.Client(model.OAuth2ConfigObj.Ctx, &token)
 	resp, err := client.Get("https://gitee.com/api/v5/user")
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -109,8 +103,8 @@ func handleOAuth2Github(w http.ResponseWriter, r *http.Request) {
 		log.Println("An error occurred while trying to exchange the authorisation code with the Github API." + err.Error())
 		return
 	}
-	client :=  model.OAuth2ConfigObj.GithubConfig.Client(model.OAuth2ConfigObj.Ctx, token)
- 	if err != nil {
+	client := model.OAuth2ConfigObj.GithubConfig.Client(model.OAuth2ConfigObj.Ctx, token)
+	if err != nil {
 		return
 	}
 	resp, err := client.Get("https://api.github.com/user")
@@ -136,7 +130,6 @@ func handleOAuth2Github(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/auth-redirect", http.StatusFound)
 }
 
-
 func initDB() {
 	var err error
 	mysqlHost := os.Getenv("MYSQL_HOST")
@@ -160,17 +153,15 @@ func initDB() {
 	model.DB = db
 }
 
-
 func initEls() {
 	esURL := os.Getenv("ES_URL")
 	esPassword := os.Getenv("ES_PASSWORD")
 	esUser := "elastic"
 
-	ESClient, err := elastic.NewClient(elastic.SetSniff(false), elastic.SetURL(esURL),elastic.SetBasicAuth(esUser,esPassword))
+	ESClient, err := elastic.NewClient(elastic.SetSniff(false), elastic.SetURL(esURL), elastic.SetBasicAuth(esUser, esPassword))
 	if err != nil {
 		fmt.Println(err)
 		panic("Failed to build elasticsearch connection")
 	}
 	model.ELS = ESClient
 }
-

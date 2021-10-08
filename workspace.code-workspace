@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "license-back"
+		},
+		{
+			"path": "license-front"
+		},
+		{
+			"path": "tool-wrapper"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "scancode-toolkit"
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true
+	}
+}

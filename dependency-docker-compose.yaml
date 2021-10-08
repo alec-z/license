@@ -7,6 +7,8 @@ services:
       - '3306:3306'
     environment:
       - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - license-network
   es01:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.13.0
     container_name: es01
@@ -15,6 +17,8 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ports:
       - 9200:9200
+    networks:
+      - license-network
   kibana01:
     image: docker.elastic.co/kibana/kibana:7.13.0
     container_name: kibana01
@@ -23,3 +27,8 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ports:
       - 5601:5601
+    networks:
+      - license-network
+networks:
+  license-network:
+    driver: bridge

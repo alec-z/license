@@ -1,0 +1,33 @@
+version: '3'
+services:
+  front:
+    image:
+      aleczheng/license-front
+    ports:
+      - '80:80'
+    environment:
+      - BACKEND_HOST=back
+    networks: [license-network]  
+  back:
+    image:
+      aleczheng/license-back
+    ports:
+      - '8080:8080'
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_PASSWORD=root
+      - ES_URL=http://es01:9200
+    networks: [license-network]
+  tool-wrapper:
+    image:
+      aleczheng/tool-wrapper
+    ports:
+      - '8081:8081'
+    environment:
+      - ES_URL=http://es01:9200
+      - MYSQL_HOST=db
+      - MYSQL_PASSWORD=root
+    networks: [license-network]
+networks:
+  license-network:
+    driver: bridge    
