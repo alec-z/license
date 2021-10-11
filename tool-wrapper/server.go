@@ -291,8 +291,10 @@ func initDB() {
 	mysqlPassword := os.Getenv("MYSQL_PASSWORD")
 
 	dataSourceName := fmt.Sprintf("root:%s@tcp(%s:3306)/license?charset=utf8mb4&parseTime=True&loc=Local", mysqlPassword, mysqlHost)
-
+	mysqldb := mysql.Open(dataSourceName)
+	mysqldb.SetConnMaxIdleTime(280)
 	db, err = gorm.Open(mysql.Open(dataSourceName), &gorm.Config{})
+	db.DB
 
 	if err != nil {
 		log.Println(err)

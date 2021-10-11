@@ -1,12 +1,13 @@
+#!/usr/bin/env bash
 SHA=$(git rev-parse main)
-if [ -q $(git show main --name-status | grep license-front/) ]; then
+if [[ -z $(git show main --name-status | grep license-front/) ]]; then
   docker tag aleczheng/license-front "aleczheng/license-front:$SHA"
 else
   echo 'buiding license-front'
   docker build -t aleczheng/license-front -t "aleczheng/license-front:$SHA" -f ./license-front/Dockerfile ./license-front
 fi
 
-if [ -q $(git show main --name-status | grep license-back/) ]; then
+if [[ -z $(git show main --name-status | grep license-back/) ]]; then
   docker tag aleczheng/license-back "aleczheng/license-back:$SHA"
 else
   echo 'buiding license-back'
@@ -14,7 +15,7 @@ else
 fi
 
 
-if [ -q $(git show main --name-status | grep tool-wrapper/) ] && [ -q $(git show main --name-status | grep scancode-toolkit/) ]; then
+if [[ -z $(git show main --name-status | grep tool-wrapper/)  &&  -z $(git show main --name-status | grep scancode-toolkit/) ]]; then
   docker tag aleczheng/tool-wrapper "aleczheng/tool-wrapper:$SHA"
 else
   echo 'buiding tool-wrapper'
