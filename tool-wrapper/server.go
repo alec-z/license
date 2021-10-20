@@ -206,6 +206,9 @@ func execTool(dir string, toolResult *model.ToolResult) {
 			split[i] = dir + "/" + repoName
 		}
 	}
+	log.Println("Main exec command ", tool.Command, " ", split)
+	log.Println("Println array", split)
+
 	cmd := exec.Command(tool.Command, split...)
 	var outPipe io.ReadCloser
 	if tool.ProcessPipe == "stdErr" {
@@ -219,12 +222,14 @@ func execTool(dir string, toolResult *model.ToolResult) {
 	scanner := bufio.NewScanner(outPipe)
 	stepLength := toolResult.FileCount / tool.StepNumber
 	step := 0
+	log.Println("ready to start scanner!")
 
 	go func() {
 		scannedFlag := regexp.MustCompile(tool.ProcessFileFeature)
 		scannedCount := 0
 		preLine := ""
 		// Read line by line and process it
+		log.Println("scanner! starting")
 		for scanner.Scan() {
 			line := scanner.Text()
 			matches := scannedFlag.FindAllStringIndex(line, -1)
@@ -233,6 +238,7 @@ func execTool(dir string, toolResult *model.ToolResult) {
 				if scannedCount >= (step+1)*stepLength {
 					step += 1
 					toolResult.ScanedFileCount = scannedCount
+					log.Println("ready to save process for toolResult", scannedCount, step)
 					db.Save(toolResult)
 				}
 			}
@@ -244,15 +250,17 @@ func execTool(dir string, toolResult *model.ToolResult) {
 
 	}()
 	var err error
-
+	log.Println("ready to start command!")
 	if err = cmd.Start(); err != nil {
 		fmt.Println(err)
 	}
+	log.Println("start command already")
 
 	scannedFileCount := <-done
-	fmt.Println(scannedFileCount)
+	log.Println("scannedCode done", scannedFileCount)
 
 	err = cmd.Wait()
+	fmt.Println(scannedFileCount)
 
 	if err != nil {
 		log.Println("scancode Execute Command failed:" + err.Error())
@@ -279,7 +287,7 @@ func clearUp(dir string) {
 		log.Println("rm clear up Execute Command failed:" + err.Error())
 		panic("rm clear up Execute Command failed:" + err.Error())
 	}
-	log.Println("rm clear up " + dir + "Execute Command finished.")
+	log.Println("rm clear up " + dir + " Execute Command finished.")
 }
 
 func initDB() {
