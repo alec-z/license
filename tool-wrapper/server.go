@@ -12,6 +12,7 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"time"
@@ -217,7 +218,14 @@ func execTool(dir string, toolResult *model.ToolResult) {
 		outPipe, _ = cmd.StdoutPipe()
 	}
 
-	defer outPipe.Close()
+	defer func() {
+		if err := recover(); err != nil {
+			log.Println("exception err", err)
+			log.Println("Println array", string(debug.Stack()))
+		}
+		panic("exec command error")
+		outPipe.Close()
+	}()
 	done := make(chan int)
 	scanner := bufio.NewScanner(outPipe)
 	stepLength := toolResult.FileCount / tool.StepNumber
