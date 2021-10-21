@@ -16,24 +16,23 @@ RUN sed -i s@/deb.debian.org/@/mirrors.aliyun.com/@g /etc/apt/sources.list \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
  && mkdir -p /app
 
-COPY --from=builder /app/tool-wrapper /app
-
 # Create directory for scancode sources
 RUN mkdir -p /tools/scancode-toolkit
 
 # Copy sources into docker container
 COPY ./scancode-toolkit /tools/scancode-toolkit
 
-# Set workdir
 
 # Run scancode once for initial configuration, with --reindex-licenses to create the base license index
 ENV PYPI_LINKS=https://pypi.doubanio.com/simple/
 
-RUN cd /tools/scancode-toolkit && ./scancode --reindex-licenses && ln -s /tools/scancode-toolkit/scancode /tools/scancode
+RUN cd /tools/scancode-toolkit &&    && ln -s /tools/scancode-toolkit/scancode /tools/scancode
 
 
 # Add scancode to path
 ENV PATH=/tools/scancode-toolkit/scancode-toolkit:$PATH
+
+COPY --from=builder /app/tool-wrapper /app
 
 # Set entrypoint to be the scancode command, allows to run the generated docker image directly with the scancode arguments: `docker run (...) <containername> <scancode arguments>`
 CMD ["/app/tool-wrapper"]

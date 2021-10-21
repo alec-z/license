@@ -64,7 +64,7 @@ func handleCI(w http.ResponseWriter, r *http.Request) {
 
 	defer func() {
 		if e := recover(); e != nil {
-			log.Println("recover from request")
+			log.Println("recover from request", e)
 		}
 	}()
 
@@ -226,53 +226,41 @@ func execTool(dir string, toolResult *model.ToolResult) {
 		}
 		outPipe.Close()
 	}()
-	done := make(chan int)
+
 	scanner := bufio.NewScanner(outPipe)
+	scanner.Split(bufio.ScanLines)
 	stepLength := toolResult.FileCount / tool.StepNumber
 	step := 0
-	log.Println("ready to start scanner!")
-
-	go func() {
-		scannedFlag := regexp.MustCompile(tool.ProcessFileFeature)
-		scannedCount := 0
-		preLine := ""
-		// Read line by line and process it
-		log.Println("scanner! starting")
-		for scanner.Scan() {
-			line := scanner.Text()
-			matches := scannedFlag.FindAllStringIndex(line, -1)
-			if len(matches) > 0 && line != preLine {
-				scannedCount += (len(matches))
-				if scannedCount >= (step+1)*stepLength {
-					step += 1
-					toolResult.ScanedFileCount = scannedCount
-					log.Println("ready to save process for toolResult", scannedCount, step)
-					db.Save(toolResult)
-				}
-			}
-			preLine = line
-		}
-
-		// We're all done, unblock the channel
-		done <- scannedCount
-
-	}()
 	var err error
-	log.Println("ready to start command!")
-	if err = cmd.Start(); err != nil {
-		fmt.Println(err)
+	if err := cmd.Start(); err != nil {
+		log.Println("cmd.start", err)
+		panic("cmd.start error")
 	}
-	log.Println("start command already")
 
-	scannedFileCount := <-done
-	log.Println("scannedCode done", scannedFileCount)
+	scannedFlag := regexp.MustCompile(tool.ProcessFileFeature)
+	scannedCount := 0
+	preLine := ""
+	// Read line by line and process it
+	log.Println("scanner! starting")
+	for scanner.Scan() {
+		line := scanner.Text()
+		matches := scannedFlag.FindAllStringIndex(line, -1)
+		if len(matches) > 0 && line != preLine {
+			scannedCount += (len(matches))
+			if scannedCount >= (step+1)*stepLength {
+				step += 1
+				toolResult.ScanedFileCount = scannedCount
+				log.Println("ready to save process for toolResult", scannedCount, step)
+				db.Save(toolResult)
+			}
+		}
+		preLine = line
+	}
 
-	err = cmd.Wait()
-	fmt.Println(scannedFileCount)
-
-	if err != nil {
-		log.Println("scancode Execute Command failed:" + err.Error())
-		panic("scancode Execute Command failed:" + err.Error())
+	// We're all done, unblock the channel
+	if err = cmd.Wait(); err != nil {
+		log.Println("cmd.wait", err)
+		panic("cmd.wait error")
 	}
 
 	log.Println("scancode " + dir + "Execute Command finished.")
