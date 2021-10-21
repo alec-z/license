@@ -26,7 +26,7 @@ COPY ./scancode-toolkit /tools/scancode-toolkit
 # Run scancode once for initial configuration, with --reindex-licenses to create the base license index
 ENV PYPI_LINKS=https://pypi.doubanio.com/simple/
 
-RUN cd /tools/scancode-toolkit &&    && ln -s /tools/scancode-toolkit/scancode /tools/scancode
+RUN cd /tools/scancode-toolkit && ./scancode --reindex-licenses && ln -s /tools/scancode-toolkit/scancode /tools/scancode
 
 
 # Add scancode to path
