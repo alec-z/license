@@ -222,8 +222,8 @@ func execTool(dir string, toolResult *model.ToolResult) {
 		if err := recover(); err != nil {
 			log.Println("exception err", err)
 			log.Println("Println array", string(debug.Stack()))
+			panic("exec command error")
 		}
-		panic("exec command error")
 		outPipe.Close()
 	}()
 	done := make(chan int)
