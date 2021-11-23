@@ -85,14 +85,14 @@ func init() {
 		//
 		MaxRetries: 3,
 	}
-	bi, err = esutil.NewBulkIndexer(esutil.BulkIndexerConfig{
+	bi, _ = esutil.NewBulkIndexer(esutil.BulkIndexerConfig{
 		Index:      "scan_file_results",
 		Client:     ES,
 		NumWorkers: 1,
 		FlushBytes: 1024 * 50,
 	})
 
-	EsTransport, err = estransport.New(esConfig2)
+	EsTransport, _ = estransport.New(esConfig2)
 }
 
 func BulkIndexer(result *model.ToolResult) {
