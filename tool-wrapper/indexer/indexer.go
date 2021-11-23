@@ -6,16 +6,17 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"github.com/alec-z/tool-wrapper/model"
-	"github.com/cenkalti/backoff/v4"
-	"github.com/elastic/go-elasticsearch/v7"
-	"github.com/elastic/go-elasticsearch/v7/estransport"
-	"github.com/elastic/go-elasticsearch/v7/esutil"
 	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"time"
+
+	"github.com/alec-z/tool-wrapper/model"
+	"github.com/cenkalti/backoff/v4"
+	"github.com/elastic/go-elasticsearch/v7"
+	"github.com/elastic/go-elasticsearch/v7/estransport"
+	"github.com/elastic/go-elasticsearch/v7/esutil"
 )
 var ES *elasticsearch.Client
 var bi esutil.BulkIndexer
@@ -87,7 +88,9 @@ func init() {
 	bi, err = esutil.NewBulkIndexer(esutil.BulkIndexerConfig{
 		Index:      "scan_file_results",
 		Client:     ES,
-		NumWorkers: 3,
+		NumWorkers: 1,
+		FlushBytes: 1024 * 50,
+	
 	})
 
 	EsTransport, err = estransport.New(esConfig2)
@@ -126,6 +129,7 @@ func BulkIndexer(result *model.ToolResult) {
 		if err != nil {
 			log.Printf("Unexpected error: %s", err)
 		}
+		bi.
 	}
 
 	if err := bi.Close(context.Background()); err != nil {
