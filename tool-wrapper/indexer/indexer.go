@@ -18,9 +18,11 @@ import (
 	"github.com/elastic/go-elasticsearch/v7/estransport"
 	"github.com/elastic/go-elasticsearch/v7/esutil"
 )
+
 var ES *elasticsearch.Client
 var bi esutil.BulkIndexer
 var EsTransport *estransport.Client
+
 func init() {
 	retryBackoff := backoff.NewExponentialBackOff()
 	var err error
@@ -33,11 +35,11 @@ func init() {
 		},
 		// Retry on 429 TooManyRequests statuses
 		//
-		Username: "elastic",
-		Password: esPassword,
+		Username:      "elastic",
+		Password:      esPassword,
 		RetryOnStatus: []int{502, 503, 504, 429},
 		Transport: &http.Transport{
-			TLSClientConfig:    &tls.Config{InsecureSkipVerify: true},
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
 
 		// Configure the backoff function
@@ -59,14 +61,12 @@ func init() {
 	}
 	urlES, _ := url.Parse(esURL)
 
-
-
 	esConfig2 := estransport.Config{
 		// Retry on 429 TooManyRequests statuses
 		//
-		URLs: []*url.URL{ urlES },
-		Username: "elastic",
-		Password: esPassword,
+		URLs:          []*url.URL{urlES},
+		Username:      "elastic",
+		Password:      esPassword,
 		RetryOnStatus: []int{502, 503, 504, 429},
 
 		// Configure the backoff function
@@ -78,7 +78,7 @@ func init() {
 			return retryBackoff.NextBackOff()
 		},
 		Transport: &http.Transport{
-			TLSClientConfig:    &tls.Config{InsecureSkipVerify: true},
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
 
 		// Retry up to 5 attempts
@@ -90,7 +90,6 @@ func init() {
 		Client:     ES,
 		NumWorkers: 1,
 		FlushBytes: 1024 * 50,
-	
 	})
 
 	EsTransport, err = estransport.New(esConfig2)
@@ -104,8 +103,6 @@ func BulkIndexer(result *model.ToolResult) {
 	outputJSON := result.OutputRawJson
 	json.Unmarshal([]byte(outputJSON), &r)
 	files := r["files"].([]interface{})
-
-
 
 	for _, file := range files {
 		// Prepare the data payload: encode article to JSON
@@ -129,9 +126,7 @@ func BulkIndexer(result *model.ToolResult) {
 		if err != nil {
 			log.Printf("Unexpected error: %s", err)
 		}
-		bi.
 	}
-
 	if err := bi.Close(context.Background()); err != nil {
 		log.Printf("Unexpected error: %s", err)
 	}
@@ -176,4 +171,3 @@ func Search(query string) {
 		int(r["took"].(float64)),
 	)
 }
-
