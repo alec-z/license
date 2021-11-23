@@ -89,7 +89,7 @@ func init() {
 		Index:      "scan_file_results",
 		Client:     ES,
 		NumWorkers: 1,
-		FlushBytes: 1024 * 50,
+		FlushBytes: 1024 * 900,
 	})
 
 	EsTransport, _ = estransport.New(esConfig2)
