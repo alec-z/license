@@ -10,11 +10,11 @@
 			"path": "tool-wrapper"
 		},
 		{
-			"path": "."
+			"path": "scancode-toolkit"
 		},
 		{
-			"path": "scancode-toolkit"
-		}
+			"path": ".",
+		},
 	],
 	"settings": {
 		"git.ignoreLimitWarning": true

@@ -10,7 +10,7 @@ services:
     networks:
       - license-network
   es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.0
+    image: elasticsearch:6.8.22
     container_name: es01
     environment:
       - discovery.type=single-node
@@ -20,7 +20,7 @@ services:
     networks:
       - license-network
   kibana01:
-    image: docker.elastic.co/kibana/kibana:7.13.0
+    image: kibana:6.8.22
     container_name: kibana01
     environment:
       - ELASTICSEARCH_HOSTS=http://es01:9200
