@@ -92,3 +92,8 @@ spec:
               servicePort: 8081
             path: /es_endpoint
             pathType: Prefix
+          - backend:
+              serviceName: lvmeng-cluster-ip
+              servicePort: 8080
+            path: /lvmeng
+            pathType: Prefix  

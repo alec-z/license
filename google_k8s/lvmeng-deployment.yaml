@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lvmeng
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      component: lvmeng
+  template:
+    metadata:
+      labels:
+        component: lvmeng
+    spec:
+      containers:
+        - name: lvmeng
+          image: plosa/lvmeng:2.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ES_JAVA_OPTS
+              value: "-Xms512m -Xmx512m"
+ 
