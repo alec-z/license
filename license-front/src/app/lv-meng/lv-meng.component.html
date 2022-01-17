@@ -1,0 +1,94 @@
+<div class="page">
+    <div class="row-item-center ">
+        <div class="col-6">
+            <form>
+                <div class="card">
+                    <div class="li-textarea">
+                        <textarea 
+                                class="license_text" 
+                                id="textarea" 
+                                name="text" 
+                                placeholder="请在此粘贴License文本进行比对" 
+                                spellcheck="false" 
+                                maxlength="10000"
+                                [(ngModel)]="text"
+                                (ngModelChange)="updateWordsLength()"
+                                ></textarea>
+                        <span class="text_input_count" id="wordsLength">
+                            {{wordsLength}}
+                        </span>
+                    </div>
+                    <div class="row-item-center">
+                        <button class="li-button" (click)="textIdentify()" [disabled]="loading">{{loading?"loading":"提交"}}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="page" *ngIf="hasResult">
+    <div class="row">
+        <h4 class="page-title">识别结果如下:</h4>
+        <span class="i-remind" title="{{result.summary}}">?</span>
+    </div>
+    <div class="row">
+        <div  class="col-6">
+            <ng-container *ngFor="let scanResult of result.scanResultList;let index = index" class="row">
+                <div class="card" *ngIf="index % 2 == 0">
+                    <div class="card-header">
+                        <span>{{ scanResult.algorithm }}</span>
+                    </div>
+                    <div class="card-body">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>spdx_identifier</th>
+                                <th>全称</th>
+                                <th>相似度</th>
+                                <th>相似类型</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let license of scanResult.licenses">
+                                <td>{{ license.spdx_license_identifier }}</td>
+                                <td>{{ license.name }}</td>
+                                <td>{{ license.sim_score }}</td>
+                                <td>{{ license.sim_type }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+        <div  class="col-6">
+            <ng-container *ngFor="let scanResult of result.scanResultList;let index = index" class="row">
+                <div class="card" *ngIf="index % 2 == 1">
+                    <div class="card-header">
+                        <span>{{ scanResult.algorithm }}</span>
+                    </div>
+                    <div class="card-body">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>spdx_identifier</th>
+                                <th>全称</th>
+                                <th>相似度</th>
+                                <th>相似类型</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let license of scanResult.licenses">
+                                <td>{{ license.spdx_license_identifier }}</td>
+                                <td>{{ license.name }}</td>
+                                <td>{{ license.sim_score }}</td>
+                                <td>{{ license.sim_type }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>

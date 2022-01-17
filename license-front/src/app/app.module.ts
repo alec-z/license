@@ -43,6 +43,9 @@ import { ReportBucketsComponent } from './report/report-content/report-buckets/r
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { UserComponent } from './user/user.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { LvMengComponent, LvMengService } from './lv-meng/lv-meng.component';
+import {HashLocationStrategy, LocationStrategy} from '@angular/common';
+
 
 @NgModule({
   declarations: [
@@ -63,7 +66,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     ReportFileListComponent,
     YesNoPipe,
     ReportBucketsComponent,
-    UserComponent
+    UserComponent,
+    LvMengComponent
   ],
   imports: [
     ReactiveFormsModule,
@@ -90,11 +94,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     FormsModule,
     MatProgressSpinnerModule,
     FontAwesomeModule,
-    NgxChartsModule
+    NgxChartsModule,
+    HttpClientModule
 
 
   ],
-  providers: [CookieService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
+  providers: [CookieService, 
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: LvMengService},
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

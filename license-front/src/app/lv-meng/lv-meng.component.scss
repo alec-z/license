@@ -1,0 +1,133 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+.row-item-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+.page {
+    padding: 0 30px;
+}
+.card {
+    background-color: #fff;
+    width: 70%;
+    border-radius: 5px 5px 5px 0;
+    box-shadow:1px 1px 15px 0 rgba(69,65,78,.08);
+    padding: 10px;
+    margin:10px auto;
+    font-family: Arial;
+}
+.card-header {
+    padding: 1rem;
+    border-bottom: 1px solid #ebecec;
+    font-size: 18px;
+    color: #575962;
+}
+.card-body {
+    padding: 1rem;
+}
+.li-textarea {
+    display: flex;
+    position: relative;
+    align-items: center;
+    width: 100%; /*这里设置宽度为100%，但是card又有内边距，从而实现textarea左右有间隙地居中*/
+}
+.license_text {
+    border-radius: 5px;
+    font-family: Arial;
+    resize: none;
+    width: 100%;
+    height: 600px;
+    padding: 15px;
+}
+.license_text:focus {
+    outline: none;
+    border-color: #6767e7;
+}
+.text_input_count {
+    font-size: 2px;
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+    color: #2cba93;
+}
+.col-6 {
+    width: 50%;
+    /*flex-shrink: 0;*/
+}
+.withrightborder {
+    border-right-style: dotted;
+    border-right-width: 10px;
+    border-right-color: #6767e7;
+    margin: -10px; /* 这里要用负margin抵消border带来的宽度，否者会导致换行，当然也可以通过取消row的flex-wrap: wrap;实现 */
+}
+.hidden {
+    display: none;
+}
+.li-button {
+    margin: 15px;
+    padding: 5px 10px;
+    color: white;
+    border-radius: 5px;
+    border: 1px solid rgb(23, 125, 255);
+    background-color: rgb(23, 125, 255);
+}
+.li-button:enabled:hover {
+    opacity: 0.9;
+    transition: 0.3s;
+}
+.li-button:disabled {
+    opacity: 0.5;
+    transition: 0.3s;
+}
+.li-flex {
+    display: flex;
+}
+.i-remind {
+    border-radius: 10px;
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+    text-align: center;
+    background-color: rgb(85 164 149);
+    margin: auto 0;
+}
+.page-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 15px;
+}
+p {
+    margin: 1rem 0;
+}
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+table thead th {
+    color: #554;
+    font-size: 18px;
+    font-weight: 600;
+    border-bottom: solid 2px rgb(235, 237, 242);
+    padding: 12px;
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+table tbody td {
+    color: #554;
+    font-size: 13px;
+    font-weight: 400;
+    border-bottom: solid 1px rgb(235, 237, 242);
+    padding: 12px;
+    text-align: left;
+    vertical-align: middle;
+}

@@ -16,6 +16,7 @@
   <div class="flex-spacer"></div>
   <div fxHide fxShow.gt-sm="">
     <button mat-button (click)="goToLink('/api_test')" routerLinkActive="mat-accent">API</button>
+    <button mat-button routerLink="/lvmeng" routerLinkActive="mat-accent">吕蒙</button>
     <button mat-button routerLink="/authors" routerLinkActive="mat-accent">作者</button>
     <button mat-button routerLink="/login" routerLinkActive="mat-accent" *ngIf="!login">
       登录

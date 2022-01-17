@@ -8,6 +8,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { AuthFunctionComponent } from './auth-function/auth-function.component';
 import { ReportComponent } from './report/report.component';
 import { UserComponent } from './user/user.component';
+import { LvMengComponent } from './lv-meng/lv-meng.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -17,7 +18,8 @@ const routes: Routes = [
   {path: 'user', component: UserComponent},
   {path: 'profile', component: ProfileComponent},
   {path: 'auth-redirect', component: AuthFunctionComponent},
-  {path: 'report/:id', component: ReportComponent}
+  {path: 'report/:id', component: ReportComponent},
+  {path: 'lvmeng', component: LvMengComponent}
 ];
 
 @NgModule({
