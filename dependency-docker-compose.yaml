@@ -29,6 +29,13 @@ services:
       - 5601:5601
     networks:
       - license-network
+  lvmeng:
+    image: plosa/lvmeng:2.0
+    container_name: lvmeng
+    ports:
+      - 8082:8080
+    networks:
+      - license-network
 networks:
   license-network:
     driver: bridge

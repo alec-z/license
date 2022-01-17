@@ -23,5 +23,11 @@
     "target": "http://127.0.0.1:8081",
     "secure": false,
     "ws": false
+  },
+  "/lvmeng/textIdentify": {
+    "target": "http://127.0.0.1:8082",
+    "changeOrigin": true,
+    "secure": false,
+    "ws": false
   }
 }
