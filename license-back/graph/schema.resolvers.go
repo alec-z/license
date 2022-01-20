@@ -6,8 +6,9 @@ package graph
 import (
 	"context"
 	"fmt"
-	"github.com/jinzhu/gorm"
 	"reflect"
+
+	"github.com/jinzhu/gorm"
 
 	"github.com/alec-z/license-back/graph/auth"
 	"github.com/alec-z/license-back/graph/generated"
@@ -97,10 +98,23 @@ func (r *mutationResolver) CreateUserLicenseVisit(ctx context.Context, licenseID
 	return &userLicenseVisit, nil
 }
 
-func (r *queryResolver) Licenses(ctx context.Context) ([]*model.License, error) {
+func (r *queryResolver) Licenses(ctx context.Context, page int, pageSize int, order string) (*model.LicensePagination, error) {
 	var licenses []*model.License
-	r.DB.Preload("LicenseMainTags.MainTag").Preload("LicenseFeatureTags").Find(&licenses)
-	return licenses, nil
+
+	offset := (page - 1) * pageSize
+
+	r.DB.Preload("LicenseMainTags.MainTag").Preload("LicenseFeatureTags").Order("case when licenses.spdx_name is null then 1 else 0 end, licenses.spdx_name").Offset(offset).Limit(pageSize).Find(&licenses)
+	var licensePagination model.LicensePagination
+	licensePagination.Licenses = licenses
+	licensePagination.Count = len(licenses)
+	licensePagination.Page = page
+	r.DB.Model(&model.License{}).Count(&licensePagination.Total)
+	licensePagination.TotalPages = licensePagination.Total / pageSize
+	if licensePagination.Total%pageSize > 0 {
+		licensePagination.TotalPages++
+	}
+
+	return &licensePagination, nil
 }
 
 func (r *queryResolver) License(ctx context.Context, licenseID int) (*model.License, error) {

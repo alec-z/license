@@ -98,6 +98,14 @@ type ComplexityRoot struct {
 		MainTag func(childComplexity int) int
 	}
 
+	LicensePagination struct {
+		Count      func(childComplexity int) int
+		Licenses   func(childComplexity int) int
+		Page       func(childComplexity int) int
+		Total      func(childComplexity int) int
+		TotalPages func(childComplexity int) int
+	}
+
 	Mutation struct {
 		CreateDict             func(childComplexity int, input model.DictInput) int
 		CreateFeatureTag       func(childComplexity int, input model.FeatureTagInput) int
@@ -114,7 +122,7 @@ type ComplexityRoot struct {
 	Query struct {
 		CurrentUser        func(childComplexity int) int
 		License            func(childComplexity int, licenseID int) int
-		Licenses           func(childComplexity int) int
+		Licenses           func(childComplexity int, page int, pageSize int, order string) int
 		ListLicensesByName func(childComplexity int, name string, limit int) int
 		ListLicensesByType func(childComplexity int, indexType string, limit int) int
 		Oauth2AuthURL      func(childComplexity int, provider string) int
@@ -177,7 +185,7 @@ type MutationResolver interface {
 	CreateUserLicenseVisit(ctx context.Context, licenseID int) (*model.UserLicenseVisit, error)
 }
 type QueryResolver interface {
-	Licenses(ctx context.Context) ([]*model.License, error)
+	Licenses(ctx context.Context, page int, pageSize int, order string) (*model.LicensePagination, error)
 	License(ctx context.Context, licenseID int) (*model.License, error)
 	ListLicensesByType(ctx context.Context, indexType string, limit int) ([]*model.License, error)
 	ListLicensesByName(ctx context.Context, name string, limit int) ([]*model.License, error)
@@ -439,6 +447,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.LicenseMainTag.MainTag(childComplexity), true
 
+	case "LicensePagination.count":
+		if e.complexity.LicensePagination.Count == nil {
+			break
+		}
+
+		return e.complexity.LicensePagination.Count(childComplexity), true
+
+	case "LicensePagination.licenses":
+		if e.complexity.LicensePagination.Licenses == nil {
+			break
+		}
+
+		return e.complexity.LicensePagination.Licenses(childComplexity), true
+
+	case "LicensePagination.page":
+		if e.complexity.LicensePagination.Page == nil {
+			break
+		}
+
+		return e.complexity.LicensePagination.Page(childComplexity), true
+
+	case "LicensePagination.total":
+		if e.complexity.LicensePagination.Total == nil {
+			break
+		}
+
+		return e.complexity.LicensePagination.Total(childComplexity), true
+
+	case "LicensePagination.totalPages":
+		if e.complexity.LicensePagination.TotalPages == nil {
+			break
+		}
+
+		return e.complexity.LicensePagination.TotalPages(childComplexity), true
+
 	case "Mutation.createDict":
 		if e.complexity.Mutation.CreateDict == nil {
 			break
@@ -583,7 +626,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.Licenses(childComplexity), true
+		args, err := ec.field_Query_licenses_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Licenses(childComplexity, args["page"].(int), args["pageSize"].(int), args["order"].(string)), true
 
 	case "Query.listLicensesByName":
 		if e.complexity.Query.ListLicensesByName == nil {
@@ -1004,7 +1052,7 @@ type Mutation {
 }
 
 type Query {
-  licenses: [License!]!
+  licenses(page: Int!, pageSize: Int!, order: String!): LicensePagination!
   license(licenseID: Int!): License!
   listLicensesByType(indexType: String!, limit: Int!): [License!]!
   listLicensesByName(name: String!, limit: Int!): [License!]
@@ -1033,6 +1081,14 @@ type UserLicenseVisit {
     id: Int!
     user: User!
     license: License!
+}
+
+type LicensePagination {
+    page: Int!
+	count:      Int!
+	total:      Int!
+	totalPages: Int!
+    licenses: [License!]!
 }
 
 scalar Time`, BuiltIn: false},
@@ -1262,6 +1318,39 @@ func (ec *executionContext) field_Query_license_args(ctx context.Context, rawArg
 		}
 	}
 	args["licenseID"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_licenses_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["page"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["page"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["pageSize"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pageSize"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["pageSize"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["order"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("order"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["order"] = arg2
 	return args, nil
 }
 
@@ -2534,6 +2623,181 @@ func (ec *executionContext) _LicenseMainTag_mainTag(ctx context.Context, field g
 	return ec.marshalNDict2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐDict(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _LicensePagination_page(ctx context.Context, field graphql.CollectedField, obj *model.LicensePagination) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "LicensePagination",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Page, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _LicensePagination_count(ctx context.Context, field graphql.CollectedField, obj *model.LicensePagination) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "LicensePagination",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Count, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _LicensePagination_total(ctx context.Context, field graphql.CollectedField, obj *model.LicensePagination) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "LicensePagination",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Total, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _LicensePagination_totalPages(ctx context.Context, field graphql.CollectedField, obj *model.LicensePagination) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "LicensePagination",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalPages, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _LicensePagination_licenses(ctx context.Context, field graphql.CollectedField, obj *model.LicensePagination) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "LicensePagination",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Licenses, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.License)
+	fc.Result = res
+	return ec.marshalNLicense2ᚕᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐLicenseᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_createDict(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -2970,9 +3234,16 @@ func (ec *executionContext) _Query_licenses(ctx context.Context, field graphql.C
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_licenses_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Licenses(rctx)
+		return ec.resolvers.Query().Licenses(rctx, args["page"].(int), args["pageSize"].(int), args["order"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2984,9 +3255,9 @@ func (ec *executionContext) _Query_licenses(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.License)
+	res := resTmp.(*model.LicensePagination)
 	fc.Result = res
-	return ec.marshalNLicense2ᚕᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐLicenseᚄ(ctx, field.Selections, res)
+	return ec.marshalNLicensePagination2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐLicensePagination(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_license(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -5797,6 +6068,53 @@ func (ec *executionContext) _LicenseMainTag(ctx context.Context, sel ast.Selecti
 	return out
 }
 
+var licensePaginationImplementors = []string{"LicensePagination"}
+
+func (ec *executionContext) _LicensePagination(ctx context.Context, sel ast.SelectionSet, obj *model.LicensePagination) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, licensePaginationImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LicensePagination")
+		case "page":
+			out.Values[i] = ec._LicensePagination_page(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "count":
+			out.Values[i] = ec._LicensePagination_count(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "total":
+			out.Values[i] = ec._LicensePagination_total(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "totalPages":
+			out.Values[i] = ec._LicensePagination_totalPages(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "licenses":
+			out.Values[i] = ec._LicensePagination_licenses(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -6744,6 +7062,20 @@ func (ec *executionContext) marshalNLicenseMainTag2ᚖgithubᚗcomᚋalecᚑzᚋ
 		return graphql.Null
 	}
 	return ec._LicenseMainTag(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNLicensePagination2githubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐLicensePagination(ctx context.Context, sel ast.SelectionSet, v model.LicensePagination) graphql.Marshaler {
+	return ec._LicensePagination(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNLicensePagination2ᚖgithubᚗcomᚋalecᚑzᚋlicenseᚑbackᚋgraphᚋmodelᚐLicensePagination(ctx context.Context, sel ast.SelectionSet, v *model.LicensePagination) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._LicensePagination(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {

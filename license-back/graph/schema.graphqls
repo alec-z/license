@@ -116,7 +116,7 @@ type Mutation {
 }
 
 type Query {
-  licenses: [License!]!
+  licenses(page: Int!, pageSize: Int!, order: String!): LicensePagination!
   license(licenseID: Int!): License!
   listLicensesByType(indexType: String!, limit: Int!): [License!]!
   listLicensesByName(name: String!, limit: Int!): [License!]
@@ -145,6 +145,14 @@ type UserLicenseVisit {
     id: Int!
     user: User!
     license: License!
+}
+
+type LicensePagination {
+    page: Int!
+	count:      Int!
+	total:      Int!
+	totalPages: Int!
+    licenses: [License!]!
 }
 
 scalar Time
