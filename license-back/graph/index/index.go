@@ -31,7 +31,7 @@ func RebuildIndex() {
 
 	//写入els
 	bulkRequest := els.Bulk()
-	for _,info := range licenses {
+	for _, info := range licenses {
 		req := elastic.NewBulkIndexRequest().Index("licenses").Type("licenses").Id(string(info.ID)).Doc(info)
 		bulkRequest = bulkRequest.Add(req)
 

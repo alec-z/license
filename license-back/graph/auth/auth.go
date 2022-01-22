@@ -16,6 +16,7 @@ var userCtxKey = &contextKey{"user"}
 type contextKey struct {
 	name string
 }
+
 func Middleware(db *gorm.DB) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +60,6 @@ func extractToken(r *http.Request) string {
 	return ""
 }
 
-
 func getUserByID(db *gorm.DB, userID string) *model.User {
 	var user model.User
 
@@ -72,7 +72,7 @@ func CreateToken(userID int) (string, error) {
 	var err error
 	//Creating Access Token
 	atClaims := jwt.StandardClaims{}
-	atClaims.Subject =strconv.Itoa(userID)
+	atClaims.Subject = strconv.Itoa(userID)
 	atClaims.ExpiresAt = time.Now().Add(time.Minute * 60).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(model.OAuth2ConfigObj.JWTSecret))
