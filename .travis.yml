@@ -17,6 +17,10 @@ before_install:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 script:
   - echo "Test Pass"
+  - echo $DOCKER_PASSWORD
+  - echo $DOCKER_USERNAME
+  - echo $encrypted_9f3b5599b056_iv
+  - echo $encrypted_9f3b5599b056_key
 
 deploy:
   provider: script
