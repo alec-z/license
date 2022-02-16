@@ -131,3 +131,15 @@ table tbody td {
     text-align: left;
     vertical-align: middle;
 }
+table {
+    margin: 0;
+    width: 100%;
+}
+th {
+    padding: 8px;
+    text-align: center;
+}
+td {
+    text-align: center;
+    padding: 8px;
+}

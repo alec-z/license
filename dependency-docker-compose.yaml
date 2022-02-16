@@ -36,6 +36,13 @@ services:
       - 8082:8080
     networks:
       - license-network
+  compatiableTable:
+    image: haohaoxuexi2/compatibility:v1
+    container_name: compatibility
+    ports:
+      - 8083:5000
+    networks:
+      - license-network
 networks:
   license-network:
     driver: bridge

@@ -1,0 +1,103 @@
+<h4 class="compatibility">兼容性</h4>
+<div class="row">
+    <div class="col-3"></div>
+    <div class="col-3">
+        <div class="select-license" (click)="reverseDropDownMenuState(1)">
+            <label>{{ license_start }}</label>
+            <label [ngClass]="{'rotate-icon': showDropdownMenu1,'restore-rotate-icon': !showDropdownMenu1}"> > </label>
+            <div class="dropdown-menu" [@dropdown-animation]="showDropdownMenu1?'show':'hide'"
+                    (@dropdown-animation.start)="displayBlockDropdownMenu(1)"
+                    (@dropdown-animation.done)="displayNoneDropdownMenu(1)">
+                <input class="filter" spellcheck="false" (click)="$event.stopPropagation();" [(ngModel)]="filter1">
+                <ul style="list-style: none;">
+                    <li class="divider"></li>
+                    <li class="dropdown-header" (click)="$event.stopPropagation();">
+                        <span>Copyleft许可证</span>
+                    </li>
+                    <ng-container *ngFor="let licenseName of copyleftList">
+                        <li *ngIf="containsIgnoreCase(licenseName, filter1)" class="option" [ngClass]="{'option-selected':license_start==licenseName}" (click)="license_start=licenseName;">{{ licenseName }}</li>
+                    </ng-container>
+                    <li class="divider"></li>
+                    <li class="dropdown-header" (click)="$event.stopPropagation();">
+                        <span>Permissive许可证</span>
+                    </li>
+                    <ng-container *ngFor="let licenseName of permissiveList">
+                        <li *ngIf="containsIgnoreCase(licenseName, filter1)" class="option" [ngClass]="{'option-selected':license_start==licenseName}" (click)="license_start=licenseName;">{{ licenseName }}</li>
+                    </ng-container>      
+                    <li class="divider"></li>
+                    <li class="dropdown-header" (click)="$event.stopPropagation();">
+                        <span>Public Domain许可证</span>
+                    </li>
+                    <ng-container *ngFor="let licenseName of publicDomainList">
+                        <li *ngIf="containsIgnoreCase(licenseName, filter1)" class="option" [ngClass]="{'option-selected':license_start==licenseName}" (click)="license_start=licenseName;">{{ licenseName }}</li>
+                    </ng-container>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="select-license" (click)="reverseDropDownMenuState(2)">
+            <label>{{ license_end }}</label>
+            <label [ngClass]="{'rotate-icon': showDropdownMenu2,'restore-rotate-icon': !showDropdownMenu2}"> > </label>
+            <div class="dropdown-menu" [@dropdown-animation]="showDropdownMenu2?'show':'hide'"
+                    (@dropdown-animation.start)="displayBlockDropdownMenu(2)"
+                    (@dropdown-animation.done)="displayNoneDropdownMenu(2)">
+                <input class="filter" spellcheck="false" (click)="$event.stopPropagation();" [(ngModel)]="filter2">
+                <ul style="list-style: none;">
+                    <li class="divider"></li>
+                    <li class="dropdown-header" (click)="$event.stopPropagation();">
+                        <span>Copyleft许可证</span>
+                    </li>
+                    <ng-container *ngFor="let licenseName of copyleftList">
+                        <li *ngIf="containsIgnoreCase(licenseName, filter2)" class="option" [ngClass]="{'option-selected':license_end==licenseName}" (click)="license_end=licenseName;">{{ licenseName }}</li>
+                    </ng-container>
+                    <li class="divider"></li>
+                    <li class="dropdown-header" (click)="$event.stopPropagation();">
+                        <span>Permissive许可证</span>
+                    </li>
+                    <ng-container *ngFor="let licenseName of permissiveList">
+                        <li *ngIf="containsIgnoreCase(licenseName, filter2)" class="option" [ngClass]="{'option-selected':license_end==licenseName}" (click)="license_end=licenseName;">{{ licenseName }}</li>
+                    </ng-container>
+                    <li class="divider"></li>
+                    <li class="dropdown-header" (click)="$event.stopPropagation();">
+                        <span>Public Domain许可证</span>
+                    </li>
+                    <ng-container *ngFor="let licenseName of publicDomainList">
+                        <li *ngIf="containsIgnoreCase(licenseName, filter2)" class="option" [ngClass]="{'option-selected':license_end==licenseName}" (click)="license_end=licenseName;">{{ licenseName }}</li>
+                    </ng-container>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-3"><button class="button" (click)="getCompatability()">搜索</button></div>
+</div>
+<div class="row-item-center">
+    <span class="usage">
+        &nbsp; &nbsp;
+        usage：<input type="radio" name="usage" value="source code" [(ngModel)]="usage">&nbsp;source code&nbsp; &nbsp;
+        <input type="radio" name="usage" value="library" [(ngModel)]="usage">&nbsp;library
+    </span>
+</div>
+<div class="card" *ngIf="hasResult">
+    <div class="card-body">
+        <table style="border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th width="25%">你的项目要组合的许可证</th>
+                    <th width="25%">你的项目使用的许可证</th>
+                    <th width="25%">兼容性关系</th>
+                    <th width="25%">备注</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr [ngClass]="{conflict: isConflict, warning: isWarning, compatible: isCompatible}">
+                <td>{{ license_start_result }}</td>
+                <td>{{ license_end_result }}</td>
+                <td>{{ result }}</td>
+                <td>{{ remarks }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<p class="copyright" style="margin-bottom: -3vh;width: 100%;height: 30px;"> Copyright&#0169; 2021 江宇  &nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;All Rights Reserved </p>
