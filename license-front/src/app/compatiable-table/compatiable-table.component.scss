@@ -1,0 +1,219 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.row {
+    display: flex;
+    flex-wrap: nowrap;
+}
+.row-item-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+.col-3 {
+    width: 25%;
+    padding-left: 7.5px;
+    padding-right: 7.5px;
+    /*flex-shrink: 0;*/
+}
+.select{  
+    background:#fafdfe;  
+    height:28px;  
+    width: 100%; 
+    line-height:28px;  
+    border:1px solid #9bc0dd;  
+    -moz-border-radius:2px;  
+    -webkit-border-radius:2px;  
+    border-radius:2px;
+    color: #575962;
+}
+/* 点击其它地方收起下拉列表，不知道为什么没起效 */
+.select-license:not(:focus) .dropdown-menu {
+    display: none;
+}
+.button {
+    padding: 5px 10px;
+    color: white;
+    border-radius: 5px;
+    border: 1px solid #26a69a;
+    background-color: #26a69a;
+}
+.button:enabled:hover {
+    opacity: 0.9;
+    transition: 0.3s;
+}
+.button:disabled {
+    opacity: 0.5;
+    transition: 0.3s;
+}
+.compatibility {
+    display: block;
+    margin: 15px;
+    border-bottom: 1px solid #e9e9e9;
+    font-size: 16px;
+}
+.table-result {
+    display: block;
+    margin: 0 auto;
+}
+.card {
+    background-color: #fff;
+    width: 50%;
+    border-radius: 5px 5px 5px 0;
+    box-shadow:1px 1px 15px 0 rgba(69,65,78,.08);
+    padding: 10px;
+    margin:30px auto;
+    font-family: Arial;
+}
+.card-body {
+    padding: 1rem;
+}
+.usage {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+table {
+    margin: 0;
+    width: 100%;
+}
+th {
+    padding: 8px;
+    text-align: center;
+}
+td {
+    text-align: center;
+    padding: 8px;
+}
+/*冲突，显示红色*/
+.conflict {
+    background-color: #f2dede;
+}
+/*相容，但不兼容，显示黄色*/
+.warning {
+    background-color: #fcf8e3;
+}
+/*兼容，显示绿色*/
+.compatible {
+    background-color: #dff0d8;
+}
+.copyright {
+    border-top: 1px solid rgba(0,0,0,0.07);
+    background-color: #f3f5f9;
+    padding: 5px;
+    color: #758697;
+}
+.choose-license-label {
+    text-align: center;
+    vertical-align: middle;
+}
+.select-license {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    color: #79848b;
+    padding: 0 10px;
+    border: 1px solid #a3afb8;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.select-license:hover {
+    background-color: #d4d4d4;
+}
+.rotate-icon {
+    transform: rotate(90deg);
+    animation: rotate 0.3s linear 1 normal;
+}
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(90deg);
+    }
+}
+.restore-rotate-icon {
+    transform: rotate(0deg);
+    animation: restore-rotate 0.3s linear 1 normal;
+}
+@keyframes restore-rotate {
+    0% {
+        transform: rotate(90deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
+.show-menu {
+    animation: show 0.3s linear 1 normal;
+}
+@keyframes show {
+    0% {
+        height: 0;
+    }
+    100% {
+        height: 300px;
+    }
+}
+.hide-menu {
+    animation: hide 0.3s linear 1 normal;
+}
+@keyframes hide {
+    0% {
+        height: 300px;
+    }
+    100% {
+        height: 0;
+    }
+}
+.dropdown-menu {
+    position: absolute;
+    width: 100%;
+    left: 0%;
+    top: 100%;
+    max-height: 300px;
+    box-shadow: 0 5px 12px 2px rgb(0 0 0 / 25%);
+    padding: 5px;
+    background-color: white;
+    overflow-y: scroll;
+    text-align: left;
+}
+.filter {
+    width: 100%;
+    border: 1px solid #a3afb8;
+    padding: 5px;
+    outline: none;
+    
+}
+.filter:focus {
+    border-color: #6b6b91;
+}
+.dropdown-header {
+    padding: 5px;
+    color: black;
+    font-size: 15px;
+    font-weight: 600;
+}
+.divider {
+    height: 1px;
+    background-color: #e5e5e5;
+    margin: 9px 0;
+}
+.option {
+    color: #7e878f;
+    padding: 3px 12px;
+    font-size: 13px;
+}
+.option:hover {
+    background-color: #41a5f6;
+    color: white;
+}
+.option-selected {
+    background-color: #41a5f6;
+    color: white;
+}

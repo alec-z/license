@@ -1,0 +1,33 @@
+.change_page_buttons {
+    margin-left: 60%;
+}
+.li-button {
+    margin: 3px;
+    padding: 5px 10px;
+    color: rgb(87, 89, 98);
+    border-radius: 15px;
+    border: 1px solid #a6aaad;
+    background-color: white;
+    height: 32px;
+}
+.li-button:enabled:hover {
+    opacity: 0.9;
+    transition: 0.3s;
+    background-color: #f2f2f2;
+}
+.jumpto {
+    color: rgb(87, 89, 98);
+    margin-left: 5px;
+    margin-right: 5px;
+}
+.jumptopage {
+    height: 32px;
+    width: 32px;
+    margin: auto 0;
+    resize: none;
+}
+.listAllContainer {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    min-height: 500px;
+}

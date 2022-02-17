@@ -18,8 +18,9 @@
     <app-license-list title="Featured" fxFlex="30" title="featured" [licenses]="featuredLicenses" fxHide.lt-md></app-license-list>
     <app-license-list title="Most POPULAR" fxFlex="30" [licenses]="popularLicenses" fxFlex.lt-md="80"></app-license-list>
     <app-license-list title="NEWEST" fxFlex="30" [licenses]="newLicenses" fxHide.lt-md></app-license-list>
-
-
+  </div>
+  <div class=link_to_licenseall>
+    <span class="viewall">你可以在<span class="viewall link" routerLink="/licenseall">这里</span>查看所有license</span>
   </div>
   <mat-spinner *ngIf="loading" diameter="50" style="margin: auto;"></mat-spinner>
 </div>

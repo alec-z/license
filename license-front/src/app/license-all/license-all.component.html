@@ -1,0 +1,17 @@
+<div class="container listAllContainer">
+    <div fxLayout="row" fxLayout="row" fxLayoutAlign="space-between stretch" fxLayoutAlign.lt-md="space-around stretch">
+        <app-license-list-no-feature fxFlex="30" [licenses]="listAllResult.licenses?.slice(0,5)" fxHide.lt-md></app-license-list-no-feature>
+        <app-license-list-no-feature fxFlex="30" [licenses]="listAllResult.licenses?.slice(5,10)" fxFlex.lt-md="80"></app-license-list-no-feature>
+        <app-license-list-no-feature fxFlex="30" [licenses]="listAllResult.licenses?.slice(10,15)" fxHide.lt-md></app-license-list-no-feature>
+    </div>
+</div>
+<div class="change_page_buttons">
+    <button class="li-button" (click)="updatePage(1)">首页</button>
+    <button class="li-button" (click)="updatePreviousPage()">Previous</button>
+    <button class="li-button">{{ page }}</button>
+    <button class="li-button" (click)="updateNextPage()">Next</button>
+    <button class="li-button" (click)="updatePage(this.totalPages)">尾页</button>
+    <span class="jumpto">跳至</span>
+    <input class="jumptopage" spellcheck="false" [(ngModel)]="jumpPageString" (keyup)="jumpToPage($event)">
+    <span class="jumpto">页</span>
+</div>
